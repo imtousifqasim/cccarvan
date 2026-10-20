@@ -109,7 +109,7 @@ export default function CustomerDashboardPage() {
             <div className="space-y-1">
               <h3 className="font-serif text-base font-bold text-[#141414]">No Consignments Placed Yet</h3>
               <p className="text-xs text-[#6b6b6b] max-w-sm mx-auto">
-                You haven't placed any luxury orders with MFE Brand yet. Explore our latest unstitched luxury and festive pret.
+                You haven't placed any luxury orders with CC Carvan yet. Explore our latest unstitched luxury and festive pret.
               </p>
             </div>
             <Link

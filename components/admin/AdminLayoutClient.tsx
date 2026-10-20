@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ShoppingBag, Package, Tag, 
   MessageSquare, Truck, Sliders, Users, Settings, 
   BarChart3, Database, ShieldAlert, History, Menu, X, 
-  ExternalLink, Layers, Sparkles, LogOut, Mail, CreditCard
+  ExternalLink, Layers, Sparkles, LogOut, Mail, CreditCard, Share2
 } from 'lucide-react';
 
 const ADMIN_NAV_GROUPS = [
@@ -24,6 +24,7 @@ const ADMIN_NAV_GROUPS = [
   {
     group: 'Marketing & Customers',
     items: [
+      { href: '/admin/affiliates', label: 'Affiliates & Marketing', icon: Share2 },
       { href: '/admin/subscribers', label: 'VIP Subscribers & SMTP', icon: Mail },
       { href: '/admin/customers', label: 'Customers Directory', icon: Users },
       { href: '/admin/coupons', label: 'Coupons & Promos', icon: Tag },
@@ -88,7 +89,7 @@ export function AdminLayoutClient({
           <Link href="/admin" className="flex items-center gap-3">
             <img
               src="/logo.png"
-              alt="MFE BRAND"
+              alt="CC Carvan"
               className="h-10 w-auto object-contain"
             />
             <span className="text-[10px] text-amber-700 font-bold tracking-[0.2em] uppercase border-l border-slate-200 pl-3">

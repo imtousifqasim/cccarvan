@@ -80,7 +80,7 @@ export function verifyTOTPCode(
 export function getTOTPUri(
   accountName: string,
   secret: string,
-  issuer: string = 'MFE Brand'
+  issuer: string = 'CC Carvan'
 ): string {
   const encodedIssuer = encodeURIComponent(issuer);
   const encodedAccount = encodeURIComponent(accountName);

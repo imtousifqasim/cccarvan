@@ -152,7 +152,7 @@ export default function ComparePage() {
               </td>
               {items.map((p) => (
                 <td key={p.id} className="p-5 text-amber-400 font-bold uppercase tracking-wider text-[11px]">
-                  {p.brand?.name || 'MFE Signature'}
+                  {p.brand?.name || 'CC Carvan Signature'}
                 </td>
               ))}
             </tr>

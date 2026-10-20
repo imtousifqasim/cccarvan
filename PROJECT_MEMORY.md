@@ -157,7 +157,7 @@ All tables are defined in PostgreSQL with Row Level Security (RLS) enabled.
 - Master transactional orders table.
 - Columns:
   - `id` (UUID PK)
-  - `order_number` (TEXT UNIQUE) — Generated via sequence (e.g. `MFE-20260911-0001`)
+  - `order_number` (TEXT UNIQUE) — Generated via sequence (e.g. `CCC-20261020-0001`)
   - `customer_id` (FK profiles NULLABLE for guests)
   - `customer_email`, `customer_phone`, `customer_name`
   - `subtotal`, `discount_amount`, `shipping_amount`, `grand_total`
@@ -251,9 +251,9 @@ All tables are defined in PostgreSQL with Row Level Security (RLS) enabled.
 ## 7. AUTHENTICATION & SECURITY SYSTEM
 
 ### 1. Admin Authentication:
-- Session Cookie: `mfe_admin_session` (HTTP-only, Secure, SameSite=Lax).
+- Session Cookie: `ccc_admin_session` (HTTP-only, Secure, SameSite=Lax; supports legacy `mfe_admin_session`).
 - Token Protocol: Custom tamper-proof HMAC-SHA256 token signed with `ADMIN_JWT_SECRET`.
-- Admin Username: `mfe_admin` (Defined in `.env.local`).
+- Admin Username: `ccc_admin` (Defined in `.env.local`).
 - Password Hashing: `bcrypt` (10 rounds).
 - Rate Limiting: Max 5 failed attempts per IP within 15 minutes, triggering an automatic 15-minute lockout (`lib/auth/admin.ts`).
 - Middleware Gatekeeper: `middleware.ts` intercepts all `/admin/*` routes, redirecting unauthenticated requests to `/admin/login`.
@@ -304,4 +304,4 @@ All tables are defined in PostgreSQL with Row Level Security (RLS) enabled.
 5. **Access Application:**
    - Storefront: `http://localhost:3000`
    - Admin Portal: `http://localhost:3000/admin`
-   - Default Admin Username: `mfe_admin`
+   - Default Admin Username: `ccc_admin` (or `mfe_admin`)

@@ -65,7 +65,7 @@ export function AccountLayoutClient({
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-[#b87414] bg-[#b87414]/10 border border-[#b87414]/20 px-3 py-1 rounded-full">
               <Sparkles className="w-3 h-3 text-[#b87414]" />
-              <span>MFE Patron Lounge • {customer.tier || 'VIP Concierge'}</span>
+              <span>CC Carvan Patron Lounge • {customer.tier || 'VIP Concierge'}</span>
             </span>
             <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-[#141414]">
               Welcome, {customer.full_name}

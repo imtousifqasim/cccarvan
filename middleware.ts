@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ADMIN_COOKIE_NAME, verifyAdminSessionToken } from './lib/auth/token';
+import { AFFILIATE_COOKIE_NAME, verifyAffiliateSessionToken } from './lib/auth/affiliate';
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
@@ -29,7 +30,7 @@ export async function middleware(req: NextRequest) {
 
   // 3. Admin Route Security & Access Control
   if (pathname.startsWith('/admin')) {
-    const sessionCookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
+    const sessionCookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value || req.cookies.get('mfe_admin_session')?.value;
     const session = sessionCookie ? await verifyAdminSessionToken(sessionCookie) : null;
     const isAuthenticated = Boolean(session && session.role === 'super_admin');
 
@@ -53,12 +54,45 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // 4. Affiliate Route Security & Access Control
+  if (pathname.startsWith('/affiliate')) {
+    const isPublicAffiliatePath = 
+      pathname === '/affiliate/login' || 
+      pathname === '/affiliate/register' || 
+      pathname === '/affiliate/terms';
+
+    const sessionCookie = req.cookies.get(AFFILIATE_COOKIE_NAME)?.value;
+    const session = sessionCookie ? await verifyAffiliateSessionToken(sessionCookie) : null;
+
+    if (!session) {
+      if (!isPublicAffiliatePath) {
+        const loginUrl = new URL('/affiliate/login', req.url);
+        return NextResponse.redirect(loginUrl);
+      }
+      return NextResponse.next();
+    }
+
+    // Authenticated affiliate
+    if (session.status !== 'approved') {
+      if (pathname !== '/affiliate/pending') {
+        return NextResponse.redirect(new URL('/affiliate/pending', req.url));
+      }
+      return NextResponse.next();
+    }
+
+    // Approved affiliate visiting auth pages or pending page -> redirect to dashboard
+    if (pathname === '/affiliate/login' || pathname === '/affiliate/register' || pathname === '/affiliate/pending') {
+      return NextResponse.redirect(new URL('/affiliate', req.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     '/admin/:path*',
+    '/affiliate/:path*',
     '/products',
     '/collections/:path*',
   ],

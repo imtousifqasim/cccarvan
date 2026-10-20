@@ -1,4 +1,5 @@
-export const CUSTOMER_COOKIE_NAME = 'mfe_customer_session';
+export const CUSTOMER_COOKIE_NAME = 'ccc_customer_session';
+export const LEGACY_CUSTOMER_COOKIE_NAME = 'mfe_customer_session';
 const CUSTOMER_SESSION_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export interface CustomerSessionPayload {
@@ -50,7 +51,7 @@ function base64UrlDecode(str: string): Uint8Array {
 export async function createCustomerSessionToken(
   customer: Omit<CustomerSessionPayload, 'exp'>
 ): Promise<string> {
-  const secret = (process.env.ADMIN_JWT_SECRET || 'mfe-brand-customer-session-secret-2026').replace(/^['"]|['"]$/g, '').trim();
+  const secret = (process.env.ADMIN_JWT_SECRET || 'ccc-brand-customer-session-secret-2026').replace(/^['"]|['"]$/g, '').trim();
   const key = await getCryptoKey(secret);
 
   const payload: CustomerSessionPayload = {
@@ -80,7 +81,7 @@ export async function verifyCustomerSessionToken(
     const [payloadB64, sigB64] = token.split('.');
     if (!payloadB64 || !sigB64) return null;
 
-    const secret = (process.env.ADMIN_JWT_SECRET || 'mfe-brand-customer-session-secret-2026').replace(/^['"]|['"]$/g, '').trim();
+    const secret = (process.env.ADMIN_JWT_SECRET || 'ccc-brand-customer-session-secret-2026').replace(/^['"]|['"]$/g, '').trim();
     const key = await getCryptoKey(secret);
 
     const enc = new TextEncoder();

@@ -6,6 +6,9 @@ import { EmailService } from '@/services/email.service';
 import { getAllAdminClients, getActiveWriteAdmin } from '@/lib/supabase/admin';
 import bcrypt from 'bcryptjs';
 import { Order, OrderAddress, PaymentMethodCode } from '@/types/database';
+import { cookies } from 'next/headers';
+import { AFFILIATE_REF_COOKIE, LEGACY_AFFILIATE_REF_COOKIE, parseAttributionPayload } from '@/lib/tracking/cookie';
+import { AffiliateRepository } from '@/repositories/affiliate.repository';
 
 export interface CheckoutItemRequest {
   productId: string;
@@ -169,7 +172,28 @@ export class CheckoutService {
       console.error('Error during checkout customer resolution:', accErr);
     }
 
-    // 5. Create Order Atomically
+    // 5. Resolve Affiliate Attribution (Server-side validation from ccc_ref cookie)
+    let affiliateId: string | null = null;
+    let affiliateLinkId: string | null = null;
+
+    try {
+      const cookieStore = await cookies();
+      const rawCookie = cookieStore.get(AFFILIATE_REF_COOKIE)?.value || cookieStore.get(LEGACY_AFFILIATE_REF_COOKIE)?.value;
+      const parsedRef = parseAttributionPayload(rawCookie);
+
+      if (parsedRef?.affiliateId) {
+        const aff = await AffiliateRepository.getAffiliateById(parsedRef.affiliateId);
+        // Ensure affiliate is approved and strictly prevent self-referrals
+        if (aff && aff.status === 'approved' && aff.email.toLowerCase().trim() !== req.customerEmail.toLowerCase().trim()) {
+          affiliateId = aff.id;
+          affiliateLinkId = parsedRef.affiliateLinkId || null;
+        }
+      }
+    } catch (refErr) {
+      console.warn('Could not resolve affiliate attribution cookie:', refErr);
+    }
+
+    // 6. Create Order Atomically
     const order = await OrderRepository.createOrder({
       customerId: finalCustomerId,
       customerEmail: req.customerEmail.trim(),
@@ -185,6 +209,8 @@ export class CheckoutService {
       shippingAddress: req.shippingAddress,
       billingAddress: req.billingAddress || req.shippingAddress,
       notes: req.notes,
+      affiliateId,
+      affiliateLinkId,
     });
 
     // 6. Send Email Confirmation

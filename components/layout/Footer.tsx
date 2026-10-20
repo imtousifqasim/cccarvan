@@ -135,6 +135,9 @@ export function Footer() {
                 <Link href="/track-order" className="text-[#d99026] font-bold hover:underline transition">Track Consignment</Link>
               </li>
               <li>
+                <Link href="/affiliate/register" className="text-[#d99026] font-semibold hover:underline transition">Affiliate Partner Network</Link>
+              </li>
+              <li>
                 <Link href="/wishlist" className="hover:text-white hover:underline transition">Curated Wishlist</Link>
               </li>
               <li>

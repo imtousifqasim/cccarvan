@@ -46,7 +46,7 @@ export function ExternalImage({
       >
         <ImageOff className="w-8 h-8 opacity-60 mb-1" />
         <span className="text-[11px] font-medium tracking-wide uppercase text-center text-slate-500">
-          MFE BRAND
+          CC CARVAN
         </span>
       </div>
     );

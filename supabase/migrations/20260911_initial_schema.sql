@@ -1,5 +1,5 @@
 -- ==============================================================================
--- MFE BRAND — COMPLETE CUSTOM E-COMMERCE DATABASE SCHEMA
+-- CC CARVAN — COMPLETE CUSTOM E-COMMERCE DATABASE SCHEMA
 -- PostgreSQL / Supabase
 -- Zero-storage policy: all media stored as external URLs only.
 -- ==============================================================================
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS public.couriers (
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.orders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    order_number TEXT UNIQUE NOT NULL, -- e.g. "MFE-20260911-0001"
+    order_number TEXT UNIQUE NOT NULL, -- e.g. "CCC-20260911-0001"
     customer_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     customer_email TEXT NOT NULL,
     customer_phone TEXT NOT NULL,
@@ -412,7 +412,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_created ON public.audit_logs(created_at DES
 -- 11. ATOMIC FUNCTIONS & SEQUENCES
 -- ------------------------------------------------------------------------------
 
--- Human-readable Order Number Generator (e.g. MFE-20260911-0001)
+-- Human-readable Order Number Generator (e.g. CCC-20260911-0001)
 CREATE SEQUENCE IF NOT EXISTS public.order_number_seq START 1;
 
 CREATE OR REPLACE FUNCTION public.generate_order_number()
@@ -424,7 +424,7 @@ DECLARE
 BEGIN
     date_str := TO_CHAR(NOW(), 'YYYYMMDD');
     seq_val := NEXTVAL('public.order_number_seq');
-    order_num := 'MFE-' || date_str || '-' || LPAD(seq_val::TEXT, 4, '0');
+    order_num := 'CCC-' || date_str || '-' || LPAD(seq_val::TEXT, 4, '0');
     RETURN order_num;
 END;
 $$ LANGUAGE plpgsql;
@@ -546,11 +546,11 @@ ON CONFLICT (code) DO NOTHING;
 -- Payment Methods
 INSERT INTO public.payment_methods (code, name, instructions, account_details, sort_order) VALUES
 ('cod', 'Cash on Delivery', 'Pay with cash upon delivery of your parcel.', 'Pay exact amount to rider at your doorstep.', 1),
-('jazzcash', 'JazzCash', 'Send payment directly to our official JazzCash merchant account.', 'Account Title: MFE BRAND\nAccount/Till: 03001234567', 2),
-('easypaisa', 'Easypaisa', 'Send payment to our Easypaisa merchant wallet.', 'Account Title: MFE BRAND\nAccount Number: 03451234567', 3),
-('nayapay', 'NayaPay', 'Transfer via NayaPay handle @mfebrand.', 'NayaPay ID: @mfebrand', 4),
-('sadapay', 'SadaPay', 'Transfer to SadaPay account IBAN.', 'IBAN: PK64SADA0000001234567890\nTitle: MFE BRAND', 5),
-('bank_transfer', 'Direct Bank Transfer', 'Make your payment directly into our official bank account. Use Order ID as payment reference.', 'Bank: Meezan Bank Ltd\nAccount Title: MFE BRAND PVT LTD\nAccount No: 02010103456789\nIBAN: PK89MEZN0002010103456789', 6)
+('jazzcash', 'JazzCash', 'Send payment directly to our official JazzCash merchant account.', 'Account Title: CC CARVAN\nAccount/Till: 03001234567', 2),
+('easypaisa', 'Easypaisa', 'Send payment to our Easypaisa merchant wallet.', 'Account Title: CC CARVAN\nAccount Number: 03451234567', 3),
+('nayapay', 'NayaPay', 'Transfer via NayaPay handle @cccarvan.', 'NayaPay ID: @cccarvan', 4),
+('sadapay', 'SadaPay', 'Transfer to SadaPay account IBAN.', 'IBAN: PK64SADA0000001234567890\nTitle: CC CARVAN', 5),
+('bank_transfer', 'Direct Bank Transfer', 'Make your payment directly into our official bank account. Use Order ID as payment reference.', 'Bank: Meezan Bank Ltd\nAccount Title: CC CARVAN (PVT) LTD\nAccount No: 02010103456789\nIBAN: PK89MEZN0002010103456789', 6)
 ON CONFLICT (code) DO NOTHING;
 
 -- Advantages
@@ -563,12 +563,12 @@ ON CONFLICT DO NOTHING;
 
 -- Announcements
 INSERT INTO public.announcements (message, coupon_code, link_url, is_active) VALUES
-('Elevate Your Style: Get 10% OFF Your First Order — Use Code MFE10 at checkout!', 'MFE10', '/products', TRUE)
+('Elevate Your Style: Get 10% OFF Your First Order — Use Code CC10 at checkout!', 'CC10', '/products', TRUE)
 ON CONFLICT DO NOTHING;
 
 -- Coupons
 INSERT INTO public.coupons (code, description, discount_type, discount_value, minimum_spend, maximum_discount, is_active) VALUES
-('MFE10', '10% Welcome Discount for MFE Brand Shoppers', 'percentage', 10, 3000, 1500, TRUE),
+('CC10', '10% Welcome Discount for CC Carvan Shoppers', 'percentage', 10, 3000, 1500, TRUE),
 ('FLAT500', 'Flat PKR 500 discount on orders above PKR 5,000', 'fixed_amount', 500, 5000, 500, TRUE)
 ON CONFLICT (code) DO NOTHING;
 
@@ -590,9 +590,9 @@ ON CONFLICT (slug) DO NOTHING;
 
 -- Brands
 INSERT INTO public.brands (name, slug, logo_url, description, sort_order) VALUES
-('MFE Signature', 'mfe-signature', 'https://images.unsplash.com/photo-1551232864-3f0890e580d9?q=80&w=200&auto=format&fit=crop', 'The premier bespoke line of MFE Brand.', 1),
-('MFE Heritage', 'mfe-heritage', 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?q=80&w=200&auto=format&fit=crop', 'Traditional craftsmanship preserving authentic artisanal weaves.', 2),
-('MFE Pret', 'mfe-pret', 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=200&auto=format&fit=crop', 'Vibrant, chic everyday luxury designed for modern life.', 3)
+('CC Signature', 'cc-signature', 'https://images.unsplash.com/photo-1551232864-3f0890e580d9?q=80&w=200&auto=format&fit=crop', 'The premier bespoke line of CC Carvan.', 1),
+('CC Heritage', 'cc-heritage', 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?q=80&w=200&auto=format&fit=crop', 'Traditional craftsmanship preserving authentic artisanal weaves.', 2),
+('CC Pret', 'cc-pret', 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=200&auto=format&fit=crop', 'Vibrant, chic everyday luxury designed for modern life.', 3)
 ON CONFLICT (slug) DO NOTHING;
 
 -- Notification Settings
@@ -610,15 +610,15 @@ ON CONFLICT (event_key) DO NOTHING;
 -- Site Settings
 INSERT INTO public.site_settings (key, value) VALUES
 ('general', '{
-    "store_name": "MFE BRAND",
-    "tagline": "Luxury Pakistani Apparel & Contemporary Pret",
-    "store_email": "support@mfebrand.com",
-    "store_phone": "+92 300 1234567",
+    "store_name": "CC Carvan",
+    "tagline": "Haute Couture & Luxury Fashion Atelier",
+    "store_email": "support@cccarvan.com",
+    "store_phone": "+92 326 7727318",
     "currency": "PKR",
-    "currency_symbol": "Rs. ",
-    "address": "MFE Tower, Main Boulevard, Gulberg III, Lahore, Pakistan",
+    "currency_symbol": "₨",
+    "address": "CC Carvan Atelier, Lahore, Pakistan",
     "logo_url": "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=400&auto=format&fit=crop",
     "free_shipping_threshold": 5000,
-    "default_shipping_fee": 250
+    "default_shipping_fee": 100
 }'::jsonb)
 ON CONFLICT (key) DO NOTHING;

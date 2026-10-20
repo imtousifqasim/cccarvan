@@ -596,7 +596,7 @@ export default function NewProductPage() {
               type="text"
               value={seoTitle}
               onChange={(e) => setSeoTitle(e.target.value)}
-              placeholder="e.g. Royal Micro Velvet Suit | MFE Brand"
+              placeholder="e.g. Royal Micro Velvet Suit | CC Carvan"
               className="w-full text-xs p-3 rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-2xs"
             />
           </div>

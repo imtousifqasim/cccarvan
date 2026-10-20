@@ -9,25 +9,25 @@ export default async function AdminAuditLogsPage() {
   const sampleLogs = [
     {
       id: 'aud-1',
-      adminEmail: 'admin@mfebrand.com',
+      adminEmail: 'admin@cccarvan.com',
       action: 'ORDER_STATUS_UPDATED',
       entityType: 'order',
-      entityId: 'MFE-20260911-0001',
+      entityId: 'CCC-20261020-0001',
       details: 'Status updated to SHIPPED. Assigned TCS Express Tracking ID: TCS-98471203',
       timestamp: new Date().toISOString(),
     },
     {
       id: 'aud-2',
-      adminEmail: 'admin@mfebrand.com',
+      adminEmail: 'admin@cccarvan.com',
       action: 'PRODUCT_CREATED',
       entityType: 'product',
-      entityId: 'MFE-VEL-001',
+      entityId: 'CCC-VEL-001',
       details: 'Created "Royal Velvet Embroidered 3-Piece Suit" with external CDN image URLs.',
       timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
     },
     {
       id: 'aud-3',
-      adminEmail: 'admin@mfebrand.com',
+      adminEmail: 'admin@cccarvan.com',
       action: 'REVIEW_APPROVED',
       entityType: 'review',
       entityId: 'rev-1',
@@ -36,10 +36,10 @@ export default async function AdminAuditLogsPage() {
     },
     {
       id: 'aud-4',
-      adminEmail: 'superadmin@mfebrand.com',
+      adminEmail: 'superadmin@cccarvan.com',
       action: 'COUPON_CREATED',
       entityType: 'coupon',
-      entityId: 'MFE10',
+      entityId: 'CC10',
       details: 'Enabled 10% welcome coupon with max discount PKR 1,500.',
       timestamp: new Date(Date.now() - 86400000).toISOString(),
     }

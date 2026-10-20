@@ -22,9 +22,9 @@ export default function CustomerAddressesPage() {
   // Load from local storage scoped by customer id and combine with server order addresses
   useEffect(() => {
     if (!customer) return;
-    const storageKey = `mfe_addresses_${customer.id}`;
+    const storageKey = `ccc_addresses_${customer.id}`;
     let localList: Address[] = [];
-    const saved = localStorage.getItem(storageKey);
+    const saved = localStorage.getItem(storageKey) || localStorage.getItem(`mfe_addresses_${customer.id}`);
     if (saved) {
       try {
         localList = JSON.parse(saved);
@@ -60,7 +60,7 @@ export default function CustomerAddressesPage() {
 
   const saveAddressesToStorage = (updated: Address[]) => {
     if (!customer) return;
-    localStorage.setItem(`mfe_addresses_${customer.id}`, JSON.stringify(updated));
+    localStorage.setItem(`ccc_addresses_${customer.id}`, JSON.stringify(updated));
     setAddresses(updated);
   };
 

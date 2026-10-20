@@ -99,7 +99,7 @@ function CustomerLoginForm() {
           <Sparkles className="w-6 h-6" />
         </div>
         <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#141414]">
-          MFE Patron Lounge
+          CC Carvan Patron Lounge
         </h1>
         <p className="text-xs text-[#6b6b6b] mt-1 max-w-xs mx-auto">
           Authenticate to access your private atelier consignments, address book, and couture privileges.

@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         admin: {
           username: session.user,
-          email: 'admin@mfebrand.com',
+          email: 'admin@cccarvan.com',
           full_name: 'Super Administrator',
           role: 'super_admin',
           two_factor_enabled: false,

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
   if (!product) {
     return {
-      title: 'Creations Catalog | MFE BRAND',
+      title: 'Creations Catalog | CC Carvan',
       description: 'The requested luxury creation could not be located.',
     };
   }
@@ -32,9 +32,9 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const rawDescription =
     product.short_description ||
     product.full_description?.slice(0, 160) ||
-    `Order ${product.name} online from MFE BRAND. Handcrafted luxury Pakistani couture with nationwide express delivery.`;
+    `Order ${product.name} online from CC Carvan. Handcrafted luxury Pakistani couture with nationwide express delivery.`;
 
-  const canonicalUrl = `https://mfe-brand.com/products/${product.slug}`;
+  const canonicalUrl = `https://cccarvan.com/products/${product.slug}`;
   const priceFormatted = `PKR ${(product.sale_price ?? product.regular_price).toLocaleString()}`;
 
   return {
@@ -44,23 +44,23 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${product.name} | MFE BRAND`,
+      title: `${product.name} | CC Carvan`,
       description: rawDescription.slice(0, 200),
       url: canonicalUrl,
-      siteName: 'MFE BRAND',
+      siteName: 'CC Carvan',
       images: [
         {
           url: cleanImage,
           width: 1200,
           height: 1600,
-          alt: `${product.name} - MFE BRAND`,
+          alt: `${product.name} - CC Carvan`,
         },
       ],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.name} | MFE BRAND`,
+      title: `${product.name} | CC Carvan`,
       description: `${priceFormatted} - ${rawDescription.slice(0, 140)}`,
       images: [cleanImage],
     },
@@ -86,7 +86,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     .filter((p) => p.id !== product.id)
     .slice(0, 4);
 
-  const productUrl = `https://mfe-brand.com/products/${product.slug}`;
+  const productUrl = `https://cccarvan.com/products/${product.slug}`;
   const images = (product.images || []).map((img) => resolveHighResImageUrl(img.image_url) || img.image_url);
 
   // Structured Data: Product + AggregateRating + Offer + BreadcrumbList
@@ -95,7 +95,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       '@type': 'ListItem',
       'position': 1,
       'name': 'Home',
-      'item': 'https://mfe-brand.com',
+      'item': 'https://cccarvan.com',
     },
   ];
 
@@ -104,7 +104,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       '@type': 'ListItem',
       'position': 2,
       'name': product.category.name,
-      'item': `https://mfe-brand.com/category/${product.category.slug}`,
+      'item': `https://cccarvan.com/category/${product.category.slug}`,
     });
     breadcrumbItems.push({
       '@type': 'ListItem',
@@ -117,7 +117,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       '@type': 'ListItem',
       'position': 2,
       'name': 'Creations',
-      'item': 'https://mfe-brand.com/products',
+      'item': 'https://cccarvan.com/products',
     });
     breadcrumbItems.push({
       '@type': 'ListItem',
@@ -143,11 +143,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         'description':
           product.short_description ||
           product.full_description ||
-          `Handcrafted luxury ${product.name} by MFE BRAND atelier.`,
+          `Handcrafted luxury ${product.name} by CC Carvan atelier.`,
         'sku': product.sku || product.id,
         'brand': {
           '@type': 'Brand',
-          'name': product.brand?.name || 'MFE BRAND',
+          'name': product.brand?.name || 'CC Carvan',
         },
         'category': product.category?.name || 'Haute Couture',
         'offers': {
@@ -162,7 +162,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               : 'https://schema.org/InStock',
           'seller': {
             '@type': 'Organization',
-            'name': 'MFE BRAND',
+            'name': 'CC Carvan',
           },
         },
         'aggregateRating': {

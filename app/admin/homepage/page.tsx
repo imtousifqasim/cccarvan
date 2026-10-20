@@ -209,7 +209,7 @@ export default function AdminHomepageCMSPage() {
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                 className="w-full text-xs p-3 rounded-xl bg-white border border-slate-200 text-amber-700 font-mono font-bold uppercase placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 shadow-2xs"
-                placeholder="e.g. MFE10"
+                placeholder="e.g. CC10"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 This exact code is displayed in the announcement VIP pill.

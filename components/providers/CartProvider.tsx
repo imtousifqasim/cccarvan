@@ -58,7 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Load cart from localStorage on mount & normalize cartItemId
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('mfe_cart');
+      const saved = localStorage.getItem('ccc_cart') || localStorage.getItem('mfe_cart');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
@@ -69,7 +69,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           setItems(normalized);
         }
       }
-      const savedCoupon = localStorage.getItem('mfe_coupon');
+      const savedCoupon = localStorage.getItem('ccc_coupon') || localStorage.getItem('mfe_coupon');
       if (savedCoupon) {
         setCouponCode(savedCoupon);
       }
@@ -148,7 +148,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       
       try {
-        localStorage.setItem('mfe_cart', JSON.stringify(updated));
+        localStorage.setItem('ccc_cart', JSON.stringify(updated));
       } catch {}
       return updated;
     });
@@ -166,7 +166,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           return key !== cartItemIdOrProductId && item.product.id !== cartItemIdOrProductId;
         });
         try {
-          localStorage.setItem('mfe_cart', JSON.stringify(updated));
+          localStorage.setItem('ccc_cart', JSON.stringify(updated));
         } catch {}
         return updated;
       }
@@ -180,7 +180,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
       
       try {
-        localStorage.setItem('mfe_cart', JSON.stringify(updated));
+        localStorage.setItem('ccc_cart', JSON.stringify(updated));
       } catch {}
       return updated;
     });
@@ -208,7 +208,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        localStorage.setItem('mfe_cart', JSON.stringify(updated));
+        localStorage.setItem('ccc_cart', JSON.stringify(updated));
       } catch {}
       return updated;
     });
@@ -219,6 +219,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCouponCode('');
     setCouponDiscount(0);
     try {
+      localStorage.removeItem('ccc_cart');
+      localStorage.removeItem('ccc_coupon');
       localStorage.removeItem('mfe_cart');
       localStorage.removeItem('mfe_coupon');
     } catch {}
@@ -248,16 +250,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (data.success) {
         setCouponCode(clean);
         setCouponDiscount(data.discountAmount);
-        localStorage.setItem('mfe_coupon', clean);
+        localStorage.setItem('ccc_coupon', clean);
         return { success: true, message: `Coupon ${clean} applied! You saved Rs. ${data.discountAmount}` };
       }
       return { success: false, message: data.error || 'Invalid or expired coupon.' };
     } catch {
-      if (clean === 'MFE10') {
+      if (clean === 'CC10' || clean === 'MFE10') {
         const disc = Math.round(subtotal * 0.1);
-        setCouponCode('MFE10');
+        setCouponCode('CC10');
         setCouponDiscount(disc);
-        return { success: true, message: 'Coupon MFE10 applied! 10% discount added.' };
+        localStorage.setItem('ccc_coupon', 'CC10');
+        return { success: true, message: 'Coupon CC10 applied! 10% discount added.' };
       }
       return { success: false, message: 'Invalid coupon code.' };
     }

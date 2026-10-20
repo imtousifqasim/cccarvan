@@ -98,6 +98,8 @@ export class OrderRepository {
     shippingAddress: OrderAddress;
     billingAddress?: OrderAddress;
     notes?: string;
+    affiliateId?: string | null;
+    affiliateLinkId?: string | null;
   }): Promise<Order> {
     const orderNumber = this.generateOrderNumber();
     const isCustomerIdUuid = orderData.customerId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderData.customerId);
@@ -119,6 +121,8 @@ export class OrderRepository {
       payment_method: orderData.paymentMethod,
       payment_status: 'unpaid',
       notes: orderData.notes || null,
+      affiliate_id: orderData.affiliateId || null,
+      affiliate_link_id: orderData.affiliateLinkId || null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       items: orderData.items.map((item, idx) => ({
@@ -150,9 +154,9 @@ export class OrderRepository {
     try {
       const orderId = `ord-${Date.now()}`;
       await executeMysql(
-        `INSERT INTO orders (id, order_number, customer_id, customer_email, customer_phone, customer_name, subtotal, discount_amount, shipping_amount, grand_total, coupon_code, status, payment_method, payment_status, notes)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [orderId, newOrder.order_number, validCustomerId, newOrder.customer_email, newOrder.customer_phone, newOrder.customer_name, newOrder.subtotal, newOrder.discount_amount, newOrder.shipping_amount, newOrder.grand_total, newOrder.coupon_code, newOrder.status, newOrder.payment_method, newOrder.payment_status, newOrder.notes]
+        `INSERT INTO orders (id, order_number, customer_id, customer_email, customer_phone, customer_name, subtotal, discount_amount, shipping_amount, grand_total, coupon_code, status, payment_method, payment_status, notes, affiliate_id, affiliate_link_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [orderId, newOrder.order_number, validCustomerId, newOrder.customer_email, newOrder.customer_phone, newOrder.customer_name, newOrder.subtotal, newOrder.discount_amount, newOrder.shipping_amount, newOrder.grand_total, newOrder.coupon_code, newOrder.status, newOrder.payment_method, newOrder.payment_status, newOrder.notes, newOrder.affiliate_id, newOrder.affiliate_link_id]
       );
 
       for (const item of newOrder.items || []) {
@@ -193,11 +197,28 @@ export class OrderRepository {
           payment_method: newOrder.payment_method,
           payment_status: newOrder.payment_status,
           notes: newOrder.notes,
+          affiliate_id: newOrder.affiliate_id,
+          affiliate_link_id: newOrder.affiliate_link_id,
         })
         .select()
         .single();
 
       if (!error && dbOrder) {
+        // If attributed to an affiliate, record commission items
+        if (orderData.affiliateId) {
+          try {
+            const { AffiliateRepository } = await import('./affiliate.repository');
+            await AffiliateRepository.recordOrderCommissions({
+              orderId: dbOrder.id,
+              affiliateId: orderData.affiliateId,
+              affiliateLinkId: orderData.affiliateLinkId,
+              customerEmail: newOrder.customer_email,
+              items: orderData.items,
+            });
+          } catch (affErr) {
+            console.error('Error recording affiliate commissions:', affErr);
+          }
+        }
         // Insert items
         const itemInserts = newOrder.items!.map(it => ({
           order_id: dbOrder.id,
@@ -484,6 +505,14 @@ export class OrderRepository {
             new_status: newStatus,
             notes: notes || `Status updated to ${newStatus}`,
           });
+
+          // Sync affiliate commission status on cancellation/delivery/refund
+          try {
+            const { AffiliateRepository } = await import('./affiliate.repository');
+            await AffiliateRepository.updateCommissionsByOrder(data.id, newStatus);
+          } catch (commErr) {
+            console.error('Error updating commission on status transition:', commErr);
+          }
         }
       }
 

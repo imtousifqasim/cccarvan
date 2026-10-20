@@ -299,7 +299,7 @@ export default function AdminSettingsPage() {
                     type="text"
                     value={selectedGateway.account_title || ''}
                     onChange={(e) => handleUpdateMethodField(selectedGateway.id, 'account_title', e.target.value)}
-                    placeholder="e.g. MFE LUXURY ATELIER (PVT) LTD"
+                    placeholder="e.g. CC CARVAN (PVT) LTD"
                     className="w-full text-xs p-3 rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 shadow-2xs"
                   />
                 </div>

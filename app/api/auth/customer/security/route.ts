@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     if (action === 'generate_2fa') {
       const secret = generateBase32Secret(20);
-      const totpUri = getTOTPUri(session.email, secret, 'MFE Brand Patron');
+      const totpUri = getTOTPUri(session.email, secret, 'CC Carvan Patron');
       const qrCodeUrl = getQRCodeUrl(totpUri);
 
       return NextResponse.json({

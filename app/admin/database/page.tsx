@@ -66,7 +66,7 @@ export default async function AdminDatabaseMonitoringPage() {
       <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs text-xs space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-2">
           <Layers className="w-4 h-4 text-amber-600" />
-          <span>How Multi-Supabase Sharding Works in MFE Brand</span>
+          <span>How Multi-Supabase Sharding Works in CC Carvan</span>
         </h3>
         <p className="text-slate-600 leading-relaxed">
           Both Supabase projects are connected concurrently:

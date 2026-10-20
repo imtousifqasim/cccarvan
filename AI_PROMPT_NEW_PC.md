@@ -39,7 +39,7 @@ Here is a summary of the project architecture and non-negotiable rules you MUST 
    - Never write direct ad-hoc queries inside page components. Always use or extend the Repository layer in `repositories/` (e.g. `product.repository.ts`, `order.repository.ts`, `coupon.repository.ts`) and Service layer in `services/` (`checkout.service.ts`, `email.service.ts`).
 
 5. AUTHENTICATION & SECURITY:
-   - Admin authentication uses HTTP-only JWT session cookie (`mfe_admin_session`) signed with `ADMIN_JWT_SECRET`.
+   - Admin authentication uses HTTP-only JWT session cookie (`ccc_admin_session`) signed with `ADMIN_JWT_SECRET`.
    - Admin routes under `/admin/*` are strictly protected by `middleware.ts`.
    - Rate limiting (max 5 failed attempts, 15 min lock) is enforced via `lib/auth/admin.ts`.
 

@@ -158,10 +158,13 @@ export function Header() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      if (megaMenuOpen) {
+        setMegaMenuOpen(false);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [megaMenuOpen]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -186,6 +189,28 @@ export function Header() {
     setSearchFocused(false);
     setSearchQuery('');
   }, [pathname]);
+
+  // Handle escape key and cursor leaving the browser window
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMegaMenuOpen(false);
+        setSearchFocused(false);
+      }
+    };
+    const handleWindowMouseLeave = (e: MouseEvent) => {
+      if (!e.relatedTarget && e.clientY <= 0) {
+        setMegaMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mouseleave', handleWindowMouseLeave);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mouseleave', handleWindowMouseLeave);
+    };
+  }, []);
 
   // Handle outside clicks for search dropdown
   useEffect(() => {
@@ -254,9 +279,15 @@ export function Header() {
   };
 
   const handleMouseLeaveMega = () => {
+    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
     megaMenuTimeout.current = setTimeout(() => {
       setMegaMenuOpen(false);
-    }, 200);
+    }, 150);
+  };
+
+  const closeMegaImmediately = () => {
+    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
+    setMegaMenuOpen(false);
   };
 
   return (
@@ -283,7 +314,11 @@ export function Header() {
 
           {/* Logo & Reduced Focused Navigation Links */}
           <div className="flex items-center gap-5 xl:gap-8 min-w-0">
-            <Link href="/" className="flex items-center group py-1 shrink-0">
+            <Link 
+              href="/" 
+              onMouseEnter={closeMegaImmediately}
+              className="flex items-center group py-1 shrink-0"
+            >
               <img
                 src="/logo.png"
                 alt="CC Carvan"
@@ -297,12 +332,22 @@ export function Header() {
               <div 
                 className="relative py-7"
                 onMouseEnter={handleMouseEnterMega}
+                onMouseOver={handleMouseEnterMega}
                 onMouseLeave={handleMouseLeaveMega}
               >
                 <button 
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMegaMenuOpen((prev) => !prev);
+                  }}
+                  onMouseEnter={handleMouseEnterMega}
+                  onMouseOver={handleMouseEnterMega}
                   className={`inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
                     megaMenuOpen ? 'text-[#b87414]' : 'hover:text-[#b87414]'
                   }`}
+                  aria-expanded={megaMenuOpen}
+                  aria-haspopup="true"
                 >
                   <span>Collections</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${megaMenuOpen ? 'rotate-180 text-[#b87414]' : 'text-[#6b6b6b]'}`} />
@@ -315,6 +360,7 @@ export function Header() {
 
               <Link 
                 href="/category/womens-unstitched-stitched-suits" 
+                onMouseEnter={closeMegaImmediately}
                 className={`relative py-7 transition-colors hover:text-[#b87414] whitespace-nowrap ${
                   pathname.includes('womens-unstitched-stitched-suits') ? 'text-[#b87414] font-bold' : ''
                 }`}
@@ -324,6 +370,7 @@ export function Header() {
 
               <Link 
                 href="/category/winter-wear-shawls" 
+                onMouseEnter={closeMegaImmediately}
                 className={`relative py-7 transition-colors hover:text-[#b87414] whitespace-nowrap ${
                   pathname.includes('winter-wear-shawls') ? 'text-[#b87414] font-bold' : ''
                 }`}
@@ -333,6 +380,7 @@ export function Header() {
 
               <Link 
                 href="/category/mens-clothing" 
+                onMouseEnter={closeMegaImmediately}
                 className={`relative py-7 transition-colors hover:text-[#b87414] whitespace-nowrap ${
                   pathname.includes('mens-clothing') ? 'text-[#b87414] font-bold' : ''
                 }`}
@@ -342,6 +390,7 @@ export function Header() {
 
               <Link 
                 href="/products?isBestDeal=true" 
+                onMouseEnter={closeMegaImmediately}
                 className={`relative py-7 inline-flex items-center gap-1 transition-colors whitespace-nowrap ${
                   pathname === '/products?isBestDeal=true' ? 'text-[#b87414] font-bold' : 'hover:text-[#b87414]'
                 }`}
@@ -353,7 +402,11 @@ export function Header() {
           </div>
 
           {/* Prominent, Large Live Search Bar Directly in Header */}
-          <div ref={searchContainerRef} className="relative flex-1 max-w-md hidden md:block">
+          <div 
+            ref={searchContainerRef} 
+            onMouseEnter={closeMegaImmediately}
+            className="relative flex-1 max-w-md hidden md:block"
+          >
             <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <input
                 ref={searchInputRef}
@@ -552,7 +605,10 @@ export function Header() {
           </div>
 
           {/* Right Action Icons (Slide-over Cart Drawer Trigger) */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div 
+            onMouseEnter={closeMegaImmediately}
+            className="flex items-center gap-1.5 sm:gap-3 shrink-0"
+          >
             
             {/* Mobile Search Button */}
             <button
@@ -608,16 +664,29 @@ export function Header() {
         </div>
       </div>
 
+      {/* Mega Menu Backdrop (Closes menu instantly when mouse moves onto page) */}
+      {megaMenuOpen && (
+        <div
+          id="mega-menu-backdrop"
+          className="hidden lg:block fixed inset-0 top-20 sm:top-24 bg-black/20 backdrop-blur-[1px] z-30 transition-opacity animate-in fade-in duration-150"
+          onMouseEnter={closeMegaImmediately}
+          onMouseOver={closeMegaImmediately}
+          onClick={closeMegaImmediately}
+        />
+      )}
+
       {/* Floating Mega Menu */}
       {megaMenuOpen && (
         <div
-          className="hidden lg:block absolute top-full left-0 w-full bg-white/98 backdrop-blur-2xl border-b border-[#eae7e2] shadow-2xl transition-all duration-300 animate-in fade-in slide-in-from-top-2 z-40"
+          id="desktop-mega-menu"
+          className="hidden lg:block absolute top-full left-0 w-full bg-white/98 backdrop-blur-2xl border-b border-[#eae7e2] shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-top-2 z-40"
           onMouseEnter={handleMouseEnterMega}
+          onMouseOver={handleMouseEnterMega}
           onMouseLeave={handleMouseLeaveMega}
         >
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#eae7e2]">
-              <div className="flex items-center gap-3">
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-[#eae7e2]">
+              <div className="flex items-center gap-2.5">
                 <Compass className="w-4 h-4 text-[#b87414]" />
                 <span className="text-xs uppercase font-bold tracking-[0.25em] text-[#6b6b6b]">
                   Curated Haute Couture Collections 2026
@@ -625,6 +694,7 @@ export function Header() {
               </div>
               <Link 
                 href="/products" 
+                onClick={closeMegaImmediately}
                 className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-[#b87414] hover:text-[#d99026] transition"
               >
                 <span>View Full Catalog</span>
@@ -632,36 +702,65 @@ export function Header() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-5 gap-5">
+            <div className="grid grid-cols-4 gap-3">
               {MEGA_CATEGORIES.map((cat) => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
-                  className="group relative flex flex-col rounded-2xl overflow-hidden bg-[#f7f5f2] border border-[#eae7e2] hover:border-[#b87414] hover:shadow-xl transition-all duration-300"
+                  onClick={closeMegaImmediately}
+                  className="group flex items-center gap-3 p-2.5 rounded-xl bg-[#faf8f5] hover:bg-white border border-[#eae7e2] hover:border-[#b87414] hover:shadow-md transition-all duration-200"
                 >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-200">
+                  <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-200 shrink-0 border border-[#eae7e2]">
                     <ExternalImage
                       src={cat.image}
                       alt={cat.name}
                       fill
-                      className="object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out"
+                      sizes="48px"
+                      className="object-cover object-center group-hover:scale-108 transition-transform duration-500 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
-                    <span className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-white/90 text-[#141414] shadow-sm">
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <h4 className="font-serif text-xs font-bold text-[#141414] group-hover:text-[#b87414] transition-colors truncate">
+                        {cat.name}
+                      </h4>
+                      <ArrowRight className="w-3 h-3 text-[#b87414] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shrink-0" />
+                    </div>
+                    <p className="text-[10px] text-[#6b6b6b] line-clamp-1 mt-0.5 font-sans">
+                      {cat.subtitle}
+                    </p>
+                    <span className="inline-block mt-0.5 text-[8.5px] font-bold uppercase tracking-wider text-[#b87414]">
                       {cat.tag}
                     </span>
                   </div>
-
-                  <div className="p-4 bg-white">
-                    <h4 className="font-serif text-base font-bold text-[#141414] group-hover:text-[#b87414] transition-colors">
-                      {cat.name}
-                    </h4>
-                    <p className="text-[11px] text-[#6b6b6b] line-clamp-1 mt-0.5 font-sans">
-                      {cat.subtitle}
-                    </p>
-                  </div>
                 </Link>
               ))}
+
+              {/* 12th card: Complete catalog card to complete the 4x3 grid */}
+              <Link
+                href="/products"
+                onClick={closeMegaImmediately}
+                className="group flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-br from-[#b87414]/10 via-[#b87414]/5 to-transparent hover:bg-[#b87414]/15 border border-[#b87414]/30 hover:border-[#b87414] hover:shadow-md transition-all duration-200"
+              >
+                <div className="w-12 h-12 rounded-lg bg-[#b87414] text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <h4 className="font-serif text-xs font-bold text-[#b87414]">
+                      All Collections
+                    </h4>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#b87414] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                  <p className="text-[10px] text-[#6b6b6b] line-clamp-1 mt-0.5 font-sans">
+                    Explore all couture edits
+                  </p>
+                  <span className="inline-block mt-0.5 text-[8.5px] font-bold uppercase tracking-wider text-[#b87414]">
+                    Browse All Catalog →
+                  </span>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -691,7 +790,7 @@ export function Header() {
                 >
                   <img
                     src="/logo.png"
-                    alt="MFE BRAND"
+                    alt="CC Carvan"
                     className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs"
                   />
                 </Link>
@@ -874,7 +973,7 @@ export function Header() {
                 <span>My Patron Account</span>
               </Link>
               <p className="text-[9.5px] text-[#8c827a] text-center tracking-[0.2em] uppercase font-sans">
-                MFE Atelier Lahore • Karachi • Islamabad
+                CC Carvan Atelier Lahore • Karachi • Islamabad
               </p>
             </div>
           </div>

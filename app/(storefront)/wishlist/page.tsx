@@ -39,9 +39,9 @@ export default function WishlistPage() {
   };
 
   const handleShareWhatsApp = () => {
-    const storeUrl = typeof window !== 'undefined' ? window.location.origin : 'https://mfebrand.com';
+    const storeUrl = typeof window !== 'undefined' ? window.location.origin : 'https://cccarvan.com';
     const garmentsList = items.map((it, idx) => `${idx + 1}. ${it.name} - ${formatPrice(it.sale_price ?? it.regular_price)} (${storeUrl}/products/${it.slug})`).join('\n');
-    const message = `Look at these stunning Haute Couture ensembles from MFE Brand I'm coveting:\n\n${garmentsList}\n\nView more on: ${storeUrl}`;
+    const message = `Look at these stunning Haute Couture ensembles from CC Carvan I'm coveting:\n\n${garmentsList}\n\nView more on: ${storeUrl}`;
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
   };

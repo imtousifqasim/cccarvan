@@ -566,7 +566,7 @@ export default function AdminProfilePage() {
                   </button>
                 </div>
                 <p className="text-[11px] text-slate-500">
-                  Account: MFE Brand Control ({profile?.username})
+                  Account: CC Carvan Control ({profile?.username})
                 </p>
               </div>
             </div>

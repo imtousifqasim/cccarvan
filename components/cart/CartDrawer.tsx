@@ -97,7 +97,7 @@ export function CartDrawer() {
                   </span>
                 </div>
                 <span className="text-[10px] text-[#8c827a] font-sans font-medium">
-                  MFE Haute Couture Atelier
+                  CC Carvan Haute Couture Atelier
                 </span>
               </div>
             </div>
@@ -179,7 +179,7 @@ export function CartDrawer() {
               <div className="p-3 rounded-2xl bg-[#faf8f5] border border-amber-500/25 flex items-center gap-2 max-w-xs">
                 <Tag className="w-4 h-4 text-amber-500 shrink-0" />
                 <span className="text-[11px] text-[#141414] font-medium text-left">
-                  Use code <strong className="font-mono text-[#b87414]">MFE10</strong> at checkout for 10% instant discount!
+                  Use code <strong className="font-mono text-[#b87414]">CC10</strong> at checkout for 10% instant discount!
                 </span>
               </div>
 

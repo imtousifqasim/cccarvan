@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     const secret = generateBase32Secret(20);
-    const totpUri = getTOTPUri(session.user, secret, 'MFE Brand Control');
+    const totpUri = getTOTPUri(session.user, secret, 'CC Carvan Control');
     const qrCodeUrl = getQRCodeUrl(totpUri);
 
     return NextResponse.json({

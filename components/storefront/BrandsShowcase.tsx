@@ -100,7 +100,7 @@ export function BrandsShowcase({ brands }: BrandsShowcaseProps) {
               <span>Artisanal Houses & Sub-Labels</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#141414] tracking-tight">
-              The MFE Design Collective
+              The CC Carvan Design Collective
             </h2>
             <p className="font-sans text-xs sm:text-sm text-[#6b6b6b] mt-2 max-w-xl leading-relaxed">
               Explore our specialized couture houses, each dedicated to a distinct aesthetic — from bespoke royal formals to modern luxury pret.

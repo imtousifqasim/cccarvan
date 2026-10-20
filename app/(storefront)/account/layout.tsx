@@ -3,7 +3,7 @@ import { AccountLayoutClient } from '@/components/account/AccountLayoutClient';
 
 export const metadata: Metadata = {
   title: 'Client Salon Account & Patron Lounge',
-  description: 'Private patron account lounge for MFE BRAND clientele.',
+  description: 'Private patron account lounge for CC Carvan clientele.',
   robots: {
     index: false,
     follow: false,

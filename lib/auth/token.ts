@@ -1,4 +1,4 @@
-export const ADMIN_COOKIE_NAME = 'mfe_admin_session';
+export const ADMIN_COOKIE_NAME = 'ccc_admin_session';
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export interface AdminSessionPayload {
@@ -45,7 +45,7 @@ function base64UrlDecode(str: string): Uint8Array {
 }
 
 export async function createAdminSessionToken(username: string): Promise<string> {
-  const secret = (process.env.ADMIN_JWT_SECRET || 'mfe-brand-secure-session-fallback-secret-2026').replace(/^['"]|['"]$/g, '').trim();
+  const secret = (process.env.ADMIN_JWT_SECRET || 'ccc-brand-secure-session-fallback-secret-2026').replace(/^['"]|['"]$/g, '').trim();
   const key = await getCryptoKey(secret);
 
   const payload: AdminSessionPayload = {
@@ -76,7 +76,7 @@ export async function verifyAdminSessionToken(
     const [payloadB64, sigB64] = token.split('.');
     if (!payloadB64 || !sigB64) return null;
 
-    const secret = (process.env.ADMIN_JWT_SECRET || 'mfe-brand-secure-session-fallback-secret-2026').replace(/^['"]|['"]$/g, '').trim();
+    const secret = (process.env.ADMIN_JWT_SECRET || 'ccc-brand-secure-session-fallback-secret-2026').replace(/^['"]|['"]$/g, '').trim();
     const key = await getCryptoKey(secret);
 
     const enc = new TextEncoder();

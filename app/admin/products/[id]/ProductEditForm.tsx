@@ -641,7 +641,7 @@ export function ProductEditForm({ initialProduct }: ProductEditFormProps) {
               </div>
               <div className="flex justify-between text-slate-500">
                 <span>Brand:</span>
-                <strong className="text-slate-900">{initialProduct.brand?.name || 'MFE'}</strong>
+                <strong className="text-slate-900">{initialProduct.brand?.name || 'CC Carvan'}</strong>
               </div>
             </div>
           </div>

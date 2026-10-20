@@ -27,10 +27,10 @@ export default function AdminSubscribersPage() {
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
-    user: 'notifications@mfebrand.com',
+    user: 'notifications@cccarvan.com',
     pass: '••••••••••••••••',
-    from_name: 'MFE Brand Haute Couture',
-    from_email: 'concierge@mfebrand.com',
+    from_name: 'CC Carvan Haute Couture',
+    from_email: 'concierge@cccarvan.com',
     is_connected: true,
   });
 
@@ -306,7 +306,7 @@ export default function AdminSubscribersPage() {
               <input
                 type="text"
                 required
-                placeholder="e.g. smtp.gmail.com or mail.mfebrand.com"
+                placeholder="e.g. smtp.gmail.com or mail.cccarvan.com"
                 value={smtpConfig.host}
                 onChange={(e) => setSmtpConfig({ ...smtpConfig, host: e.target.value })}
                 className="w-full text-xs p-3 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 shadow-2xs"
@@ -483,7 +483,7 @@ export default function AdminSubscribersPage() {
               <div className="max-w-xl mx-auto rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-md text-slate-900">
                 <div className="p-6 text-center border-b border-slate-100 bg-slate-50">
                   <h3 className="font-serif text-lg font-bold tracking-[0.24em] text-amber-700 uppercase">
-                    MFE BRAND
+                    CC CARVAN
                   </h3>
                   <p className="text-[9px] tracking-[0.34em] text-slate-500 uppercase mt-1">
                     Haute Couture & Private Atelier
@@ -508,7 +508,7 @@ export default function AdminSubscribersPage() {
                 </div>
 
                 <div className="p-4 bg-slate-50 border-t border-slate-100 text-center text-[10px] text-slate-500 space-y-1">
-                  <p className="font-bold text-slate-600">MFE BRAND HAUTE COUTURE • VIP CONCIERGE</p>
+                  <p className="font-bold text-slate-600">CC CARVAN HAUTE COUTURE • VIP CONCIERGE</p>
                   <p>Helpline / WhatsApp: +92 326 7727318 • Near Meezan Bank Branch, Peco Road, Lahore</p>
                   <p className="text-slate-400">Unsubscribe from VIP Bulletin</p>
                 </div>

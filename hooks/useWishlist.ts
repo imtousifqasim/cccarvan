@@ -9,7 +9,7 @@ export function useWishlist() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('mfe_wishlist');
+      const saved = localStorage.getItem('ccc_wishlist') || localStorage.getItem('mfe_wishlist');
       if (saved) setItems(JSON.parse(saved));
     } catch {}
     setIsLoaded(true);
@@ -18,7 +18,7 @@ export function useWishlist() {
   const saveWishlist = (newItems: Product[]) => {
     setItems(newItems);
     try {
-      localStorage.setItem('mfe_wishlist', JSON.stringify(newItems));
+      localStorage.setItem('ccc_wishlist', JSON.stringify(newItems));
     } catch {}
   };
 

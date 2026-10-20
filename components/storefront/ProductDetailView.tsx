@@ -783,8 +783,8 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailVie
           
           {/* Brand & Category Kicker */}
           <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.16em] text-[#6b6b6b]">
-            <span className="text-[#b87414] truncate max-w-[200px]">{product.brand?.name || 'MFE Signature'}</span>
-            <span className="shrink-0 font-mono text-[10px]">SKU: {product.sku || 'MFE-2026'}</span>
+            <span className="text-[#b87414] truncate max-w-[200px]">{product.brand?.name || 'CC Carvan Signature'}</span>
+            <span className="shrink-0 font-mono text-[10px]">SKU: {product.sku || 'CCC-2026'}</span>
           </div>
 
           {/* Title - Editorial H1 */}
@@ -1468,7 +1468,7 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailVie
             <div className="flex items-center justify-between pb-3 border-b border-[#eae7e2]">
               <div className="flex items-center gap-2">
                 <Ruler className="w-5 h-5 text-[#d99026]" />
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#141414]">MFE Atelier Sizing Guide</h3>
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#141414]">CC Carvan Atelier Sizing Guide</h3>
               </div>
               <button
                 type="button"

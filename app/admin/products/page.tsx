@@ -62,7 +62,7 @@ export default async function AdminProductsPage() {
                         <ExternalLink className="w-3 h-3 text-slate-400" />
                       </Link>
                       <div className="text-[10px] text-slate-500 font-normal mt-0.5">
-                        Brand: {p.brand?.name || 'MFE'}
+                        Brand: {p.brand?.name || 'CC Carvan'}
                       </div>
                     </td>
                     <td className="py-3 px-4 font-mono font-medium text-slate-600">

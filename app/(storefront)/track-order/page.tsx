@@ -155,7 +155,7 @@ function TrackOrderContent() {
             <input
               type="text"
               required
-              placeholder="e.g. MFE-2609-0001"
+              placeholder="e.g. CCC-20261020-0001"
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value)}
               className="w-full text-xs p-3.5 rounded-xl bg-white border border-[#eae7e2] text-[#141414] placeholder-[#8c827a] font-mono uppercase focus:outline-none focus:border-[#d99026]"
@@ -401,7 +401,7 @@ function TrackOrderContent() {
                   <div key={it.id} className="py-2.5 flex justify-between items-center text-xs">
                     <div>
                       <span className="font-bold text-[#141414] block">{it.product_name || it.productName}</span>
-                      <span className="text-[11px] text-[#8c827a]">SKU: {it.sku || 'MFE-BESPOKE'} • Qty: {it.quantity}</span>
+                      <span className="text-[11px] text-[#8c827a]">SKU: {it.sku || 'CCC-BESPOKE'} • Qty: {it.quantity}</span>
                     </div>
                     <span className="font-mono font-bold text-[#141414]">
                       {formatPrice(it.subtotal || ((it.unit_price || it.unitPrice) * it.quantity))}
@@ -418,7 +418,7 @@ function TrackOrderContent() {
       {/* Support Concierge Notice */}
       <div className="text-center text-xs text-[#8c827a] pt-4 space-y-1">
         <p>Questions regarding your shipment? Our concierge is available daily from 10 AM to 8 PM PKT.</p>
-        <p>WhatsApp Helpline: <a href="https://wa.me/923267727318" target="_blank" rel="noopener noreferrer" className="font-bold text-[#b87414] hover:underline">+92 326 7727318</a> • concierge@mfebrand.com</p>
+        <p>WhatsApp Helpline: <a href="https://wa.me/923267727318" target="_blank" rel="noopener noreferrer" className="font-bold text-[#b87414] hover:underline">+92 326 7727318</a> • concierge@cccarvan.com</p>
       </div>
 
     </div>

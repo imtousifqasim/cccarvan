@@ -211,6 +211,8 @@ export interface Order {
   tracking_id?: string | null;
   tracking_url?: string | null;
   notes?: string | null;
+  affiliate_id?: string | null;
+  affiliate_link_id?: string | null;
   created_at: string;
   updated_at: string;
   items?: OrderItem[];
@@ -308,3 +310,115 @@ export interface AuditLog {
   metadata?: Record<string, unknown>;
   created_at: string;
 }
+
+// ------------------------------------------------------------------------------
+// AFFILIATE MARKETING SYSTEM
+// ------------------------------------------------------------------------------
+
+export type AffiliateStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
+
+export interface Affiliate {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone?: string | null;
+  password_hash?: string;
+  promo_details?: string | null;
+  website_or_social?: string | null;
+  status: AffiliateStatus;
+  referral_code?: string | null;
+  commission_rate?: number | null; // null = use global default
+  rejection_reason?: string | null;
+  approved_at?: string | null;
+  approved_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AffiliateLink {
+  id: string;
+  affiliate_id: string;
+  product_id?: string | null;
+  category_id?: string | null;
+  slug: string;
+  click_count: number;
+  created_at: string;
+  // Joined relation fields for convenience
+  product?: Product | null;
+  category?: Category | null;
+}
+
+export type CommissionStatus = 'pending' | 'approved' | 'reversed';
+
+export interface Commission {
+  id: string;
+  affiliate_id: string;
+  affiliate_link_id?: string | null;
+  order_id: string;
+  order_item_id?: string | null;
+  product_id: string;
+  quantity: number;
+  sale_amount: number;
+  commission_rate: number;
+  commission_amount: number;
+  status: CommissionStatus;
+  available_at?: string | null;
+  created_at: string;
+  // Joined relation fields
+  product?: Product | null;
+  order?: Order | null;
+  affiliate?: Affiliate | null;
+}
+
+export type PayoutMethodType = 'easypaisa' | 'jazzcash' | 'bank_transfer' | 'other';
+
+export interface PayoutMethod {
+  id: string;
+  affiliate_id: string;
+  method: PayoutMethodType;
+  account_title: string;
+  account_number: string;
+  bank_name?: string | null;
+  is_default: boolean;
+  created_at: string;
+}
+
+export type WithdrawalStatus = 'pending' | 'approved' | 'rejected' | 'paid';
+
+export interface Withdrawal {
+  id: string;
+  affiliate_id: string;
+  amount: number;
+  method: string;
+  account_title: string;
+  account_number: string;
+  bank_name?: string | null;
+  status: WithdrawalStatus;
+  admin_note?: string | null;
+  transaction_reference?: string | null;
+  requested_at: string;
+  processed_at?: string | null;
+  processed_by?: string | null;
+  affiliate?: Affiliate | null;
+}
+
+export interface AffiliateSettings {
+  id: number;
+  default_commission_rate: number;
+  cookie_days: number;
+  hold_days: number;
+  min_withdrawal: number;
+  updated_at?: string;
+}
+
+export interface AffiliateFinancialSummary {
+  totalEarned: number;
+  availableBalance: number;
+  pendingBalance: number;
+  withdrawnAmount: number;
+  totalClicks: number;
+  totalOrders: number;
+  conversionRate: number;
+}
+

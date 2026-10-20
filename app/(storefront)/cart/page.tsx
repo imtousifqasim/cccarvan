@@ -84,7 +84,7 @@ export default function CartPage() {
         </div>
 
         <span className="text-[10.5px] font-sans font-bold uppercase tracking-[0.3em] text-[#b87414] block mb-1">
-          MFE Atelier Privé
+          CC Carvan Atelier Privé
         </span>
         <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#141414] tracking-tight">
           Your Shopping Bag is Empty
@@ -98,7 +98,7 @@ export default function CartPage() {
         <div className="mt-6 p-4 rounded-2xl bg-[#faf8f5] border border-amber-500/30 max-w-md mx-auto flex items-center justify-center gap-2.5 shadow-xs">
           <Tag className="w-4 h-4 text-[#b87414] shrink-0" />
           <p className="text-xs text-[#141414] font-medium">
-            First order privilege: Use code <strong className="font-mono text-[#b87414] font-black">MFE10</strong> at checkout for 10% instant discount.
+            First order privilege: Use code <strong className="font-mono text-[#b87414] font-black">CC10</strong> at checkout for 10% instant discount.
           </p>
         </div>
 
@@ -255,7 +255,7 @@ export default function CartPage() {
                     {/* Info */}
                     <div className="flex-1 text-center sm:text-left space-y-1 min-w-0">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#b87414] block">
-                        {item.product.brand?.name || 'MFE Signature'} • {item.product.category?.name || 'Haute Couture'}
+                        {item.product.brand?.name || 'CC Carvan Signature'} • {item.product.category?.name || 'Haute Couture'}
                       </span>
                       <h3 className="font-sans font-bold text-sm sm:text-base text-[#141414] hover:text-[#b87414] transition line-clamp-2">
                         <Link href={`/products/${item.product.slug}`}>{item.product.name}</Link>
@@ -343,7 +343,7 @@ export default function CartPage() {
               <form onSubmit={handleApplyCoupon} className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="e.g. MFE10"
+                  placeholder="e.g. CC10"
                   value={inputCoupon}
                   onChange={(e) => setInputCoupon(e.target.value.toUpperCase())}
                   className="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-[#eae7e2] text-xs font-mono uppercase font-bold text-[#141414] outline-none focus:border-[#b87414]"

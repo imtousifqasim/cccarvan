@@ -130,7 +130,7 @@ export default function AdminForgotPasswordPage() {
             Administrative Recovery
           </h1>
           <p className="text-[10px] font-sans font-bold tracking-[0.3em] uppercase text-amber-700 mt-1">
-            MFE Brand • Security Vault
+            CC Carvan • Security Vault
           </p>
           <p className="text-xs text-slate-500 mt-2">
             Self-service credential recovery for authorized administrators.
@@ -192,7 +192,7 @@ export default function AdminForgotPasswordPage() {
                 disabled={loading}
                 value={usernameOrEmail}
                 onChange={(e) => setUsernameOrEmail(e.target.value)}
-                placeholder="e.g. mfe_admin or admin@mfebrand.com"
+                placeholder="e.g. ccc_admin or admin@cccarvan.com"
                 className="w-full px-4 py-3 text-sm bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-2xs disabled:opacity-50"
               />
             </div>

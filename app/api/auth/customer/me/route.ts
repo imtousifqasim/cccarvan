@@ -4,7 +4,7 @@ import { getActiveWriteAdmin } from '@/lib/supabase/admin';
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get(CUSTOMER_COOKIE_NAME)?.value;
+    const token = req.cookies.get(CUSTOMER_COOKIE_NAME)?.value || req.cookies.get('mfe_customer_session')?.value;
     if (!token) {
       return NextResponse.json({ customer: null });
     }

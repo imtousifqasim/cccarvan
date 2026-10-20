@@ -175,10 +175,10 @@ export async function verifyAdminCredentialsWith2FA(
   }
 
   // Fallback to environment credentials if DB unavailable
-  const expectedUsername = (process.env.ADMIN_USERNAME || 'mfe_admin').replace(/^['"]|['"]$/g, '').trim();
+  const expectedUsername = (process.env.ADMIN_USERNAME || 'ccc_admin').replace(/^['"]|['"]$/g, '').trim();
   const expectedHash = getExpectedHash();
 
-  if (!expectedHash || cleanUsername !== expectedUsername) {
+  if (!expectedHash || (cleanUsername !== expectedUsername && cleanUsername !== 'mfe_admin')) {
     return { valid: false };
   }
 
@@ -439,8 +439,8 @@ export async function generateAdminPasswordResetToken(
 
     // Also support default admin fallback if username matches
     if (!foundAdmin) {
-      const defaultUsername = (process.env.ADMIN_USERNAME || 'mfe_admin').toLowerCase();
-      if (cleanInput === defaultUsername || cleanInput === 'admin@mfebrand.com') {
+      const defaultUsername = (process.env.ADMIN_USERNAME || 'ccc_admin').toLowerCase();
+      if (cleanInput === defaultUsername || cleanInput === 'ccc_admin' || cleanInput === 'mfe_admin' || cleanInput === 'admin@cccarvan.com' || cleanInput === 'admin@mfebrand.com') {
         for (const { client } of shards) {
           const { data } = await client
             .from('admins')

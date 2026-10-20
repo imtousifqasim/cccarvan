@@ -58,7 +58,7 @@ export function AnnouncementBar({
   }, [activeCoupons]);
 
   const currentCoupon = activeCoupons.length > 0 ? activeCoupons[couponIndex] : null;
-  const currentCode = currentCoupon?.code || couponCode || 'MFE10';
+  const currentCode = currentCoupon?.code || couponCode || 'CC10';
   const currentDiscountLabel = currentCoupon 
     ? (currentCoupon.discount_type === 'percentage' ? `${currentCoupon.discount_value}% OFF` : `PKR ${currentCoupon.discount_value} OFF`)
     : 'VIP 10% OFF';
@@ -236,7 +236,7 @@ export function AnnouncementBar({
                   </span>
                 </button>
               ) : (
-                <span className="text-[10px] text-neutral-400">MFE Haute Couture 2026</span>
+                <span className="text-[10px] text-neutral-400">CC Carvan Haute Couture 2026</span>
               )}
 
               <a

@@ -235,7 +235,7 @@ export default function AdminCouponsPage() {
             <label className="block text-xs font-bold text-slate-700 mb-1.5">Patron Description</label>
             <input
               type="text"
-              placeholder="e.g. 10% Welcome Discount for MFE Brand Shoppers"
+              placeholder="e.g. 10% Welcome Discount for CC Carvan Shoppers"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               className="w-full text-xs p-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 shadow-2xs"

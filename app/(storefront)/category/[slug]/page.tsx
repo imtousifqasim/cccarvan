@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   if (!category) {
     return {
-      title: 'Category Not Found | MFE BRAND',
+      title: 'Category Not Found | CC Carvan',
       description: 'The requested luxury collection could not be located.',
     };
   }
@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const categoryName = category.name;
   const categoryDesc =
     category.description ||
-    `Explore MFE BRAND's exclusive ${categoryName} collection. Discover master-tailored Pakistani unstitched suits, festive formals, and artisan couture with white-glove nationwide express delivery.`;
-  const canonicalUrl = `https://mfe-brand.com/category/${category.slug}`;
+    `Explore CC Carvan's exclusive ${categoryName} collection. Discover master-tailored Pakistani unstitched suits, festive formals, and artisan couture with white-glove nationwide express delivery.`;
+  const canonicalUrl = `https://cccarvan.com/category/${category.slug}`;
   const ogImage = resolveHighResImageUrl(category.image_url) || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop';
 
   return {
@@ -45,23 +45,23 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${categoryName} Collection | MFE BRAND`,
+      title: `${categoryName} Collection | CC Carvan`,
       description: categoryDesc,
       url: canonicalUrl,
-      siteName: 'MFE BRAND',
+      siteName: 'CC Carvan',
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${categoryName} - MFE BRAND`,
+          alt: `${categoryName} - CC Carvan`,
         },
       ],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${categoryName} Collection | MFE BRAND`,
+      title: `${categoryName} Collection | CC Carvan`,
       description: categoryDesc,
       images: [ogImage],
     },
@@ -93,7 +93,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     notFound();
   }
 
-  const categoryUrl = `https://mfe-brand.com/category/${slug}`;
+  const categoryUrl = `https://cccarvan.com/category/${slug}`;
 
   // Structured Data: BreadcrumbList + CollectionPage JSON-LD
   const jsonLd = {
@@ -106,13 +106,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             '@type': 'ListItem',
             'position': 1,
             'name': 'Home',
-            'item': 'https://mfe-brand.com',
+            'item': 'https://cccarvan.com',
           },
           {
             '@type': 'ListItem',
             'position': 2,
             'name': 'Collections',
-            'item': 'https://mfe-brand.com/products',
+            'item': 'https://cccarvan.com/products',
           },
           {
             '@type': 'ListItem',
@@ -126,17 +126,17 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         '@type': 'CollectionPage',
         '@id': categoryUrl,
         'url': categoryUrl,
-        'name': `${currentCategory.name} Collection | MFE BRAND`,
+        'name': `${currentCategory.name} Collection | CC Carvan`,
         'description':
           currentCategory.description ||
-          `Handcrafted luxury ${currentCategory.name} by MFE BRAND atelier.`,
+          `Handcrafted luxury ${currentCategory.name} by CC Carvan atelier.`,
         'numberOfItems': total,
         'mainEntity': {
           '@type': 'ItemList',
           'itemListElement': products.map((p, idx) => ({
             '@type': 'ListItem',
             'position': idx + 1,
-            'url': `https://mfe-brand.com/products/${p.slug}`,
+            'url': `https://cccarvan.com/products/${p.slug}`,
             'name': p.name,
           })),
         },

@@ -5,17 +5,17 @@ export const metadata: Metadata = {
   description:
     'Review your selected Pakistani couture garments, luxury wool shawls, and leather goods before checkout with express nationwide delivery.',
   alternates: {
-    canonical: 'https://mfe-brand.com/cart',
+    canonical: 'https://cccarvan.com/cart',
   },
   robots: {
     index: false,
     follow: true,
   },
   openGraph: {
-    title: 'Shopping Bag & Cart Review | MFE BRAND',
+    title: 'Shopping Bag & Cart Review | CC Carvan',
     description: 'Review your selected couture creations before white-glove delivery.',
-    url: 'https://mfe-brand.com/cart',
-    siteName: 'MFE BRAND',
+    url: 'https://cccarvan.com/cart',
+    siteName: 'CC Carvan',
     type: 'website',
   },
 };

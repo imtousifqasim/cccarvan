@@ -134,7 +134,7 @@ export default async function HomePage() {
                 Where Centuries of Artisan Heritage Meet Contemporary Pakistani Grandeur
               </h2>
               <p className="text-sm sm:text-base text-neutral-200 font-sans leading-relaxed font-normal">
-                Every MFE creation begins in our private Lahore atelier, where master craftsmen hand-weave pure raw silk, organza, and zardozi threads. We honor traditional Mughalesque embellishment while tailoring for the modern global Pakistani.
+                Every CC Carvan creation begins in our private Lahore atelier, where master craftsmen hand-weave pure raw silk, organza, and zardozi threads. We honor traditional Mughalesque embellishment while tailoring for the modern global Pakistani.
               </p>
               <div className="pt-3">
                 <Link
@@ -165,7 +165,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* 7. Sub-Brands Collective (MFE Design Collective with fixed circular cropping) */}
+        {/* 7. Sub-Brands Collective (CC Carvan Design Collective with fixed circular cropping) */}
         <BrandsShowcase brands={brands} />
 
         {/* 8. Verified Patron Testimonials (Interactive Carousel with auto-scroll & pause-on-hover) */}

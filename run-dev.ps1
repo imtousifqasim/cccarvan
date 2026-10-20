@@ -1,6 +1,6 @@
-# MFE BRAND - Atelier Development Server (Local + Mobile IP)
+# CC CARVAN - Atelier Development Server (Local + Mobile IP)
 Write-Host "====================================================================" -ForegroundColor Gold
-Write-Host "                  MFE BRAND - HAUTE COUTURE" -ForegroundColor White
+Write-Host "                  CC CARVAN - HAUTE COUTURE" -ForegroundColor White
 Write-Host "               Development Server (Local + Mobile)" -ForegroundColor Yellow
 Write-Host "====================================================================" -ForegroundColor Gold
 

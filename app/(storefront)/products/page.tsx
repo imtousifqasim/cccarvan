@@ -9,23 +9,23 @@ import { SlidersHorizontal, ArrowUpDown, X, Sparkles, Compass } from 'lucide-rea
 export const metadata: Metadata = {
   title: 'All Collections & Pret Creations',
   description:
-    'Explore the complete MFE BRAND couture catalog. Master-tailored luxury Pakistani suits, winter wool shawls, handcrafted leather wallets, and fine fragrances.',
+    'Explore the complete CC Carvan couture catalog. Master-tailored luxury Pakistani suits, winter wool shawls, handcrafted leather wallets, and fine fragrances.',
   alternates: {
-    canonical: 'https://mfe-brand.com/products',
+    canonical: 'https://cccarvan.com/products',
   },
   openGraph: {
-    title: 'All Collections & Pret Creations | MFE BRAND',
+    title: 'All Collections & Pret Creations | CC Carvan',
     description:
-      'Explore the complete MFE BRAND couture catalog. Master-tailored luxury Pakistani suits, winter wool shawls, handcrafted leather wallets, and fine fragrances.',
-    url: 'https://mfe-brand.com/products',
-    siteName: 'MFE BRAND',
+      'Explore the complete CC Carvan couture catalog. Master-tailored luxury Pakistani suits, winter wool shawls, handcrafted leather wallets, and fine fragrances.',
+    url: 'https://cccarvan.com/products',
+    siteName: 'CC Carvan',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'All Collections & Pret Creations | MFE BRAND',
+    title: 'All Collections & Pret Creations | CC Carvan',
     description:
-      'Explore the complete MFE BRAND couture catalog. Master-tailored luxury Pakistani suits, winter wool shawls, and leather essentials.',
+      'Explore the complete CC Carvan couture catalog. Master-tailored luxury Pakistani suits, winter wool shawls, and leather essentials.',
   },
 };
 

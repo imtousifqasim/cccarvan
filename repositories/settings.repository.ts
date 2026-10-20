@@ -307,7 +307,7 @@ export class SettingsRepository {
     return false;
   }
 
-  static async logAudit(action: string, entityType: string, entityId?: string, metadata?: Record<string, unknown>, adminEmail = 'admin@mfebrand.com') {
+  static async logAudit(action: string, entityType: string, entityId?: string, metadata?: Record<string, unknown>, adminEmail = 'admin@cccarvan.com') {
     this.mockAuditLogs.unshift({
       id: `aud-${Date.now()}`,
       admin_email: adminEmail,

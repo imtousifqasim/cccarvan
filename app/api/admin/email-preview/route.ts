@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   const mockOrder: Order = {
     id: 'ord_mock_preview_01',
-    order_number: 'MFE-2609-8421',
+    order_number: 'CCC-2610-8421',
     customer_name: 'Begum Ayesha Mansoor',
     customer_email: 'ayesha.mansoor@example.com',
     customer_phone: '+92 300 8492011',
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     discount_amount: 5000,
     grand_total: 53500,
     tracking_id: 'TCS-9284710294',
-    tracking_url: 'https://mfebrand.com/track-order?order=MFE-2609-8421',
+    tracking_url: 'https://cccarvan.com/track-order?order=CCC-2610-8421',
     courier_id: 'tcs',
     shipping_address: {
       address_type: 'shipping',
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
         order_id: 'ord_mock_preview_01',
         product_id: 'prod_1',
         product_name: 'Zardozi Handcrafted Velvet Pishwas Ensemble',
-        sku: 'MFE-HC-VELVET-01',
+        sku: 'CCC-HC-VELVET-01',
         unit_price: 38500,
         quantity: 1,
         subtotal: 38500,
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
         order_id: 'ord_mock_preview_01',
         product_id: 'prod_2',
         product_name: 'Raw Silk Tilla-Work Shawl Dupatta',
-        sku: 'MFE-HC-SHAWL-04',
+        sku: 'CCC-HC-SHAWL-04',
         unit_price: 20000,
         quantity: 1,
         subtotal: 20000,

@@ -1,10 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
-title MFE BRAND - Atelier Dev Server (Local + Mobile IP)
+title CC CARVAN - Atelier Dev Server (Local + Mobile IP)
 cls
 
 echo ====================================================================
-echo                   MFE BRAND - HAUTE COUTURE
+echo                   CC CARVAN - HAUTE COUTURE
 echo                Development Server (Local + Mobile)
 echo ====================================================================
 echo.

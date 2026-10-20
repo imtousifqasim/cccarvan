@@ -49,7 +49,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <Link href={`/products/${product.slug}`} className="relative block w-full h-full">
           <ExternalImage
             src={primaryImage}
-            alt={`${product.name} - ${product.category?.name || 'MFE'} Luxury Pakistani Collection`}
+            alt={`${product.name} - ${product.category?.name || 'CC Carvan'} Luxury Pakistani Collection`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
             quality={95}
@@ -133,7 +133,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div>
           {/* Brand & Category Kicker */}
           <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.16em] text-[#6b6b6b] mb-1 font-sans">
-            <span className="truncate max-w-[100px]">{product.brand?.name || 'MFE Signature'}</span>
+            <span className="truncate max-w-[100px]">{product.brand?.name || 'CC Carvan Signature'}</span>
             {product.category?.slug ? (
               <Link
                 href={`/category/${product.category.slug}`}

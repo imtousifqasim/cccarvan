@@ -9,7 +9,7 @@ export function useCompare() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('mfe_compare');
+      const saved = localStorage.getItem('ccc_compare') || localStorage.getItem('mfe_compare');
       if (saved) setItems(JSON.parse(saved));
     } catch {}
     setIsLoaded(true);
@@ -18,7 +18,7 @@ export function useCompare() {
   const saveCompare = (newItems: Product[]) => {
     setItems(newItems);
     try {
-      localStorage.setItem('mfe_compare', JSON.stringify(newItems));
+      localStorage.setItem('ccc_compare', JSON.stringify(newItems));
     } catch {}
   };
 
