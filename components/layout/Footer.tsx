@@ -30,7 +30,7 @@ export function Footer() {
       }
     } catch {
       setSubscribed(true);
-      setSubMessage('Thank you for joining MFE Private Salon.');
+      setSubMessage('Thank you for joining CC Ccarvan Privilege Club.');
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export function Footer() {
           <div className="max-w-xl text-center lg:text-left space-y-3">
             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-[#d99026] flex items-center justify-center lg:justify-start gap-2">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>MFE Private Salon Membership</span>
+              <span>CC Ccarvan Privilege Membership</span>
             </span>
             <h3 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
               Receive VIP Access to Private Pre-Orders
@@ -94,12 +94,12 @@ export function Footer() {
             <Link href="/" className="inline-block group">
               <img
                 src="/logo.png"
-                alt="MFE BRAND"
+                alt="CC Ccarvan"
                 className="h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
             <p className="text-xs text-neutral-400 leading-relaxed font-sans">
-              MFE Brand defines contemporary Pakistani high fashion, combining heirloom artisanal zardozi embroidery with modern pret silhouettes for timeless luxury.
+              CC Ccarvan defines contemporary Pakistani luxury fashion, combining heirloom artisanal craft with modern pret silhouettes for timeless luxury.
             </p>
             <div className="pt-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400 block mb-3">
@@ -185,7 +185,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-[#d99026] shrink-0" />
-                <span>concierge@mfebrand.com</span>
+                <span>concierge@cccarvan.com</span>
               </li>
               <li className="pt-2 text-[11px] text-neutral-400">
                 Opening Hours: Mon - Sat: 11:00 AM - 9:00 PM PKT
@@ -252,7 +252,7 @@ export function Footer() {
         {/* Bottom Bar: Copyright & Payment Badges */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-sans">
           <p>
-            © {new Date().getFullYear()} MFE BRAND Haute Couture. All Rights Reserved. Crafted by{' '}
+            © {new Date().getFullYear()} CC Ccarvan. All Rights Reserved. Crafted by{' '}
             <a
               href="https://tousifqasim.dev/"
               target="_blank"

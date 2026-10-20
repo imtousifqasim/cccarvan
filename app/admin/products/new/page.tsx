@@ -75,10 +75,10 @@ export default function NewProductPage() {
     const generatedSlug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     setSlug(generatedSlug);
     if (!sku) {
-      setSku(`MFE-${Math.floor(100 + Math.random() * 900)}`);
+      setSku(`CCC-${Math.floor(100 + Math.random() * 900)}`);
     }
     if (!seoTitle) {
-      setSeoTitle(`${val} | MFE BRAND`);
+      setSeoTitle(`${val} | CC Ccarvan`);
     }
   };
 
@@ -215,9 +215,9 @@ export default function NewProductPage() {
                 onChange={(e) => setBrand(e.target.value)}
                 className="w-full text-xs p-3 rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-2xs"
               >
-                <option value="brand-1">MFE Signature</option>
-                <option value="brand-2">MFE Heritage</option>
-                <option value="brand-3">MFE Pret</option>
+                <option value="brand-1">CC Signature</option>
+                <option value="brand-2">CC Heritage</option>
+                <option value="brand-3">CC Pret</option>
               </select>
             </div>
             <div>

@@ -286,7 +286,7 @@ export function Header() {
             <Link href="/" className="flex items-center group py-1 shrink-0">
               <img
                 src="/logo.png"
-                alt="MFE BRAND"
+                alt="CC Ccarvan"
                 className="h-14 sm:h-16 md:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xs"
               />
             </Link>

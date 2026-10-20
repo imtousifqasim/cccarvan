@@ -20,14 +20,14 @@ import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
 export default function AdminHomepageCMSPage() {
   const [slides, setSlides] = useState<HeroSlide[]>(SEED_HERO_SLIDES);
   const [announcement, setAnnouncement] = useState(SEED_ANNOUNCEMENT.message);
-  const [couponCode, setCouponCode] = useState(SEED_ANNOUNCEMENT.coupon_code || 'MFE10');
+  const [couponCode, setCouponCode] = useState(SEED_ANNOUNCEMENT.coupon_code || 'CC10');
   const [whatsappNumber, setWhatsappNumber] = useState(SEED_ANNOUNCEMENT.whatsapp_number || '+92 326 7727318');
   const [isActive, setIsActive] = useState(true);
   const [tickerMessages, setTickerMessages] = useState<string[]>([
     'Flat Rs. 100 Express Nationwide Delivery on all orders across Pakistan',
     'Haute Couture 2026: Pure Handcrafted Lawn, Silk & Chiffon Heirlooms',
     '100% Genuine Designer Fabrics & 7-Day Seamless Return Privilege',
-    'First Order Privilege: Unlock 10% Off with Code MFE10',
+    'First Order Privilege: Unlock 10% Off with Code CC10',
     'VIP Atelier Assistance via Official WhatsApp Concierge',
   ]);
   const [newTickerInput, setNewTickerInput] = useState('');

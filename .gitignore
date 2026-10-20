@@ -46,5 +46,6 @@ scratch-*.mjs
 # local db and seed scripts
 /scripts/
 
-.vercel
-.env*
+# Private credentials & machine transfer files (NEVER commit to GitHub)
+*.private.*
+SECRETS_TRANSFER_PACKAGE*

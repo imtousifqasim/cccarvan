@@ -5,8 +5,8 @@ export class CouponRepository {
   private static mockCoupons: Coupon[] = [
     {
       id: 'cp-1',
-      code: 'MFE10',
-      description: '10% Welcome Discount for MFE Brand Shoppers',
+      code: 'CC10',
+      description: '10% Welcome Discount for CC Ccarvan Shoppers',
       discount_type: 'percentage',
       discount_value: 10,
       minimum_spend: 3000,

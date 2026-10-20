@@ -23,7 +23,7 @@ interface AnnouncementBarProps {
 
 export function AnnouncementBar({
   message = 'Flat Rs. 100 Express Nationwide Delivery on all orders across Pakistan',
-  couponCode = 'MFE10',
+  couponCode = 'CC10',
   whatsappNumber = '+92 326 7727318',
   tickerMessages,
 }: AnnouncementBarProps) {

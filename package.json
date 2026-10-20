@@ -1,5 +1,5 @@
 {
-  "name": "faizan",
+  "name": "cccarvan",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -17,6 +17,7 @@
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "lucide-react": "^1.44.0",
+    "mysql2": "^3.24.6",
     "next": "16.3.4",
     "nodemailer": "^10.0.9",
     "react": "19.2.8",

@@ -110,7 +110,7 @@ function AdminLoginForm() {
       {/* Brand Header */}
       <div className="text-center mb-8">
         <Link href="/" className="inline-block mb-3">
-          <img src="/logo.png" alt="MFE BRAND" className="h-20 w-auto mx-auto object-contain" />
+          <img src="/logo.png" alt="CC Ccarvan" className="h-20 w-auto mx-auto object-contain" />
         </Link>
         <p className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-amber-700">
           Administration Portal

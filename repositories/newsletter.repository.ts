@@ -25,10 +25,10 @@ export class NewsletterRepository {
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
-    user: 'notifications@mfebrand.com',
+    user: 'notifications@cccarvan.com',
     pass: '',
-    from_name: 'MFE Brand Haute Couture',
-    from_email: 'concierge@mfebrand.com',
+    from_name: 'CC Ccarvan Haute Couture',
+    from_email: 'concierge@cccarvan.com',
     is_connected: false,
   };
 
@@ -59,7 +59,7 @@ export class NewsletterRepository {
     return [
       {
         id: 'sub-1',
-        email: 'patron.vip@mfebrand.com',
+        email: 'patron.vip@cccarvan.com',
         status: 'active',
         subscribed_at: new Date(Date.now() - 86400000 * 3).toISOString(),
       },
@@ -98,7 +98,7 @@ export class NewsletterRepository {
 
       return {
         success: true,
-        message: 'Welcome to MFE Private Salon. VIP preview access registered.',
+        message: 'Welcome to CC Ccarvan VIP Club. VIP preview access registered.',
         subscriber: insertedSub || {
           id: `sub-${Date.now()}`,
           email: clean,
@@ -107,7 +107,7 @@ export class NewsletterRepository {
         }
       };
     } catch {
-      return { success: true, message: 'Welcome to MFE Private Salon VIP access!' };
+      return { success: true, message: 'Welcome to CC Ccarvan VIP Club VIP access!' };
     }
   }
 
@@ -144,8 +144,8 @@ export class NewsletterRepository {
       const envPort = process.env.SMTP_PORT || process.env.EMAIL_PORT;
       const envUser = process.env.SMTP_USER || process.env.SMTP_USERNAME || process.env.EMAIL_USER;
       const envPass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD;
-      const envFromName = process.env.SMTP_FROM_NAME || 'MFE Brand Haute Couture';
-      const envFromEmail = process.env.SMTP_FROM_EMAIL || process.env.EMAIL_FROM || 'concierge@mfebrand.com';
+      const envFromName = process.env.SMTP_FROM_NAME || 'CC Ccarvan Haute Couture';
+      const envFromEmail = process.env.SMTP_FROM_EMAIL || process.env.EMAIL_FROM || 'concierge@cccarvan.com';
 
       if (data) {
         return {
@@ -267,7 +267,7 @@ export class NewsletterRepository {
       };
     }
 
-    const storeUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mfebrand.com';
+    const storeUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cccarvan.com';
     const storePhone = process.env.NEXT_PUBLIC_STORE_PHONE || '+92 326 7727318';
 
     // Build Luxury Branded HTML Email Template
@@ -287,7 +287,7 @@ export class NewsletterRepository {
           <!-- Luxury Header -->
           <tr>
             <td align="center" style="padding: 36px 20px 24px; border-bottom: 1px solid #26262e; background: linear-gradient(180deg, #1c1c22 0%, #141418 100%);">
-              <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 26px; letter-spacing: 0.28em; text-transform: uppercase; color: #d99026; font-weight: 700;">MFE BRAND</h1>
+              <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 26px; letter-spacing: 0.28em; text-transform: uppercase; color: #d99026; font-weight: 700;">CC CCARVAN</h1>
               <p style="margin: 8px 0 0; font-size: 10px; letter-spacing: 0.36em; text-transform: uppercase; color: #a1a1aa;">Haute Couture & Private Atelier</p>
             </td>
           </tr>
@@ -311,9 +311,9 @@ export class NewsletterRepository {
           <!-- Luxury Footer -->
           <tr>
             <td style="padding: 24px 32px 32px; background-color: #0f0f13; border-top: 1px solid #22222a; text-align: center; color: #71717a; font-size: 11px; line-height: 1.7;">
-              <p style="margin: 0 0 6px; color: #a1a1aa; font-weight: 600;">MFE BRAND HAUTE COUTURE • VIP CONCIERGE</p>
+              <p style="margin: 0 0 6px; color: #a1a1aa; font-weight: 600;">CC CCARVAN HAUTE COUTURE • VIP CONCIERGE</p>
               <p style="margin: 0 0 12px;">Helpline / WhatsApp: ${storePhone} • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan</p>
-              <p style="margin: 0 0 8px;">You are receiving this private communication as an esteemed patron of MFE Brand.</p>
+              <p style="margin: 0 0 8px;">You are receiving this private communication as an esteemed patron of CC Ccarvan.</p>
               <p style="margin: 0;">
                 <a href="${storeUrl}" style="color: #d99026; text-decoration: none; margin-right: 15px;">Atelier Storefront</a>
                 <span style="color: #444;">•</span>
@@ -348,7 +348,7 @@ export class NewsletterRepository {
         // Send to each subscriber or bcc list
         const recipientEmails = activeSubscribers.map(s => s.email);
         await transporter.sendMail({
-          from: `"${config.from_name || 'MFE Brand'}" <${config.from_email || config.user}>`,
+          from: `"${config.from_name || 'CC Ccarvan'}" <${config.from_email || config.user}>`,
           to: recipientEmails.slice(0, 1),
           bcc: recipientEmails,
           subject,

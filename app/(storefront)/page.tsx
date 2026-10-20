@@ -15,34 +15,34 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'MFE BRAND | Haute Couture & Luxury Pret Atelier',
+    absolute: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
   },
   description:
-    'Official online maison for MFE BRAND. Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, pure wool shawls, and signature fragrances with nationwide express delivery.',
+    'Official online store for CC Ccarvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, pure wool shawls, and signature fragrances with nationwide express delivery.',
   alternates: {
-    canonical: 'https://mfe-brand.com',
+    canonical: 'https://cccarvan.com',
   },
   openGraph: {
-    title: 'MFE BRAND | Haute Couture & Luxury Pret Atelier',
+    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
     description:
-      'Where centuries of artisan heritage meet contemporary Pakistani grandeur. Handcrafted raw silk, organza, and zardozi thread ensembles.',
-    url: 'https://mfe-brand.com',
-    siteName: 'MFE BRAND',
+      'Where centuries of artisan heritage meet contemporary Pakistani grandeur. Handcrafted raw silk, organza, and zardozi thread ensembles at cccarvan.com.',
+    url: 'https://cccarvan.com',
+    siteName: 'CC Ccarvan',
     images: [
       {
         url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop',
         width: 1600,
         height: 900,
-        alt: 'MFE BRAND Luxury Pret & Haute Couture',
+        alt: 'CC Ccarvan Luxury Pret & Haute Couture',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MFE BRAND | Haute Couture & Luxury Pret Atelier',
+    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
     description:
-      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur.',
+      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur at cccarvan.com.',
     images: [
       'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop',
     ],
@@ -66,12 +66,12 @@ export default async function HomePage() {
     '@graph': [
       {
         '@type': ['Organization', 'ClothingStore'],
-        '@id': 'https://mfe-brand.com/#organization',
-        'name': 'MFE BRAND',
-        'url': 'https://mfe-brand.com',
-        'logo': 'https://mfe-brand.com/favicon.ico',
+        '@id': 'https://cccarvan.com/#organization',
+        'name': 'CC Ccarvan',
+        'url': 'https://cccarvan.com',
+        'logo': 'https://cccarvan.com/favicon.ico',
         'description':
-          'Premier Pakistani haute couture maison specializing in hand-embroidered unstitched suits, festive formals, pure wool shawls, and fine leather accessories.',
+          'Premier Pakistani haute couture store specializing in hand-embroidered unstitched suits, festive formals, pure wool shawls, and fine leather accessories.',
         'telephone': '+923267727318',
         'priceRange': 'PKR 1,500 - PKR 25,000',
         'address': {
@@ -84,15 +84,15 @@ export default async function HomePage() {
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://mfe-brand.com/#website',
-        'url': 'https://mfe-brand.com',
-        'name': 'MFE BRAND',
+        '@id': 'https://cccarvan.com/#website',
+        'url': 'https://cccarvan.com',
+        'name': 'CC Ccarvan',
         'publisher': {
-          '@id': 'https://mfe-brand.com/#organization',
+          '@id': 'https://cccarvan.com/#organization',
         },
         'potentialAction': {
           '@type': 'SearchAction',
-          'target': 'https://mfe-brand.com/products?search={search_term_string}',
+          'target': 'https://cccarvan.com/products?search={search_term_string}',
           'query-input': 'required name=search_term_string',
         },
       },

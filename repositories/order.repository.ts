@@ -69,7 +69,7 @@ export class OrderRepository {
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     const randomSeq = String(Math.floor(1000 + Math.random() * 9000));
-    return `MFE-${yyyy}${mm}${dd}-${randomSeq}`;
+    return `CCC-${yyyy}${mm}${dd}-${randomSeq}`;
   }
 
   static async createOrder(orderData: {

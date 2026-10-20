@@ -1,18 +1,20 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mfe-brand.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cccarvan.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'MFE BRAND | Haute Couture & Luxury Pret Atelier',
-    template: '%s | MFE BRAND',
+    default: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
+    template: '%s | CC Ccarvan',
   },
   description:
-    'Official online maison for MFE BRAND. Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, and heirloom pashmina shawls with nationwide white-glove express delivery.',
+    'Official online store for CC Ccarvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, and heirloom pashmina shawls with nationwide express delivery.',
   keywords: [
-    'MFE Brand',
+    'CC Ccarvan',
+    'cccarvan.com',
+    'CC Carvan',
     'Pakistani luxury fashion',
     'haute couture lawn',
     'pret wear',
@@ -23,9 +25,9 @@ export const metadata: Metadata = {
     'designer menswear Lahore',
     'leather wallets Pakistan',
   ],
-  authors: [{ name: 'MFE BRAND Atelier', url: siteUrl }],
-  creator: 'MFE BRAND',
-  publisher: 'MFE BRAND',
+  authors: [{ name: 'CC Ccarvan Atelier', url: siteUrl }],
+  creator: 'CC Ccarvan',
+  publisher: 'CC Ccarvan',
   formatDetection: {
     telephone: false,
     address: false,
@@ -35,19 +37,19 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'MFE BRAND | Haute Couture & Luxury Pret Atelier',
+    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
     description:
-      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur. Discover handcrafted festive formals and luxury pret.',
+      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur. Discover handcrafted festive formals and luxury pret at cccarvan.com.',
     url: siteUrl,
-    siteName: 'MFE BRAND',
+    siteName: 'CC Ccarvan',
     locale: 'en_PK',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MFE BRAND | Haute Couture & Luxury Pret Atelier',
+    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
     description:
-      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur.',
+      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur at cccarvan.com.',
   },
   robots: {
     index: true,
