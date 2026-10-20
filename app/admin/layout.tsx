@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import { AdminLayoutClient } from '@/components/admin/AdminLayoutClient';
 
 export const metadata: Metadata = {
-  title: 'CC Ccarvan Admin Suite',
-  description: 'CC Ccarvan Internal Management Console.',
+  title: 'CC Carvan Admin Suite',
+  description: 'CC Carvan Internal Management Console.',
   robots: {
     index: false,
     follow: false,

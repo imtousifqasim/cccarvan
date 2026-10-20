@@ -6,15 +6,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cccarvan.com';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
-    template: '%s | CC Ccarvan',
+    default: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
+    template: '%s | CC Carvan',
   },
   description:
-    'Official online store for CC Ccarvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, and heirloom pashmina shawls with nationwide express delivery.',
+    'Official online store for CC Carvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, and heirloom pashmina shawls with nationwide express delivery.',
   keywords: [
-    'CC Ccarvan',
-    'cccarvan.com',
     'CC Carvan',
+    'cccarvan.com',
     'Pakistani luxury fashion',
     'haute couture lawn',
     'pret wear',
@@ -25,9 +24,9 @@ export const metadata: Metadata = {
     'designer menswear Lahore',
     'leather wallets Pakistan',
   ],
-  authors: [{ name: 'CC Ccarvan Atelier', url: siteUrl }],
-  creator: 'CC Ccarvan',
-  publisher: 'CC Ccarvan',
+  authors: [{ name: 'CC Carvan Atelier', url: siteUrl }],
+  creator: 'CC Carvan',
+  publisher: 'CC Carvan',
   formatDetection: {
     telephone: false,
     address: false,
@@ -37,17 +36,17 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
+    title: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     description:
       'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur. Discover handcrafted festive formals and luxury pret at cccarvan.com.',
     url: siteUrl,
-    siteName: 'CC Ccarvan',
+    siteName: 'CC Carvan',
     locale: 'en_PK',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
+    title: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     description:
       'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur at cccarvan.com.',
   },

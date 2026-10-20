@@ -78,7 +78,7 @@ export default function NewProductPage() {
       setSku(`CCC-${Math.floor(100 + Math.random() * 900)}`);
     }
     if (!seoTitle) {
-      setSeoTitle(`${val} | CC Ccarvan`);
+      setSeoTitle(`${val} | CC Carvan`);
     }
   };
 

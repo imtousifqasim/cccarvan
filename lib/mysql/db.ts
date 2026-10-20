@@ -4,7 +4,7 @@ let pool: mysql.Pool | null = null;
 
 export function getDbPool(): mysql.Pool {
   if (!pool) {
-    const host = process.env.MYSQL_HOST || '2.57.91.91';
+    const host = process.env.MYSQL_HOST || 'srv1676.hstgr.io';
     const port = Number(process.env.MYSQL_PORT) || 3306;
     const user = process.env.MYSQL_USER || 'u994156402_cccarvan';
     const password = process.env.MYSQL_PASSWORD || 'o^eyWbnQI6R1';

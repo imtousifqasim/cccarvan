@@ -1,4 +1,5 @@
 import { createAdminClient, getAllAdminClients, queryAcrossAllShards } from '@/lib/supabase/admin';
+import { queryMysql, executeMysql } from '@/lib/mysql/db';
 import { HeroSlide, Advantage, Announcement, Courier, PaymentMethodConfig, NotificationSetting, AuditLog } from '@/types/database';
 import { SEED_HERO_SLIDES, SEED_ADVANTAGES, SEED_ANNOUNCEMENT, SEED_COURIERS, SEED_PAYMENT_METHODS } from '@/lib/data/seed-data';
 
@@ -22,10 +23,17 @@ export class SettingsRepository {
     { id: 'notif-5', event_key: 'order_cancelled', event_name: 'Order Cancellation Alert', is_email_enabled: true, description: 'Sent if order is cancelled.' },
   ];
   private static mockAuditLogs: AuditLog[] = [
-    { id: 'aud-1', admin_email: 'admin@mfebrand.com', action: 'STORE_INITIALIZED', entity_type: 'system', created_at: new Date().toISOString() }
+    { id: 'aud-1', admin_email: 'admin@cccarvan.com', action: 'STORE_INITIALIZED', entity_type: 'system', created_at: new Date().toISOString() }
   ];
 
   static async getHeroSlides(): Promise<HeroSlide[]> {
+    try {
+      const rows = await queryMysql<HeroSlide>('SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY sort_order ASC');
+      if (rows && rows.length > 0) return rows;
+    } catch (e) {
+      console.warn('MySQL getHeroSlides fallback:', e);
+    }
+
     try {
       const supabase = createAdminClient();
       const { data, error } = await supabase.from('hero_slides').select('*').eq('is_active', true).order('sort_order', { ascending: true });
@@ -52,6 +60,13 @@ export class SettingsRepository {
 
   static async getAdvantages(): Promise<Advantage[]> {
     try {
+      const rows = await queryMysql<Advantage>('SELECT * FROM advantages WHERE is_active = 1 ORDER BY sort_order ASC');
+      if (rows && rows.length > 0) return rows;
+    } catch (e) {
+      console.warn('MySQL getAdvantages fallback:', e);
+    }
+
+    try {
       const supabase = createAdminClient();
       const { data, error } = await supabase.from('advantages').select('*').eq('is_active', true).order('sort_order', { ascending: true });
       if (!error && data && data.length > 0) return data as Advantage[];
@@ -60,6 +75,13 @@ export class SettingsRepository {
   }
 
   static async getAnnouncement(): Promise<Announcement> {
+    try {
+      const rows = await queryMysql<Announcement>('SELECT * FROM announcements WHERE is_active = 1 LIMIT 1');
+      if (rows && rows.length > 0) return rows[0];
+    } catch (e) {
+      console.warn('MySQL getAnnouncement fallback:', e);
+    }
+
     try {
       const supabase = createAdminClient();
       const { data, error } = await supabase.from('announcements').select('*').eq('is_active', true).limit(1).single();
@@ -84,6 +106,19 @@ export class SettingsRepository {
   }
 
   static async getShippingSettings(): Promise<ShippingSettings> {
+    try {
+      const rows = await queryMysql<{ key: string; value: any }>('SELECT * FROM site_settings WHERE `key` = ?', ['general']);
+      if (rows && rows.length > 0) {
+        const val = typeof rows[0].value === 'string' ? JSON.parse(rows[0].value) : rows[0].value;
+        const deliveryCharge = typeof val.default_shipping_fee === 'number' ? val.default_shipping_fee : 100;
+        const freeDeliveryThreshold = val.free_shipping_threshold ? Number(val.free_shipping_threshold) : null;
+        this.mockShippingSettings = { deliveryCharge, freeDeliveryThreshold };
+        return this.mockShippingSettings;
+      }
+    } catch (e) {
+      console.warn('MySQL getShippingSettings fallback:', e);
+    }
+
     try {
       const supabase = createAdminClient();
       const { data, error } = await supabase
@@ -110,6 +145,21 @@ export class SettingsRepository {
     const deliveryCharge = Number(settings.deliveryCharge) || 100;
     const freeDeliveryThreshold = settings.freeDeliveryThreshold ? Number(settings.freeDeliveryThreshold) : null;
     this.mockShippingSettings = { deliveryCharge, freeDeliveryThreshold };
+
+    try {
+      const updatedVal = {
+        store_name: 'CC Carvan',
+        store_email: 'support@cccarvan.com',
+        default_shipping_fee: deliveryCharge,
+        free_shipping_threshold: freeDeliveryThreshold,
+      };
+      await executeMysql(
+        'INSERT INTO site_settings (`key`, `value`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `value` = ?',
+        ['general', JSON.stringify(updatedVal), JSON.stringify(updatedVal)]
+      );
+    } catch (err) {
+      console.warn('MySQL updateShippingSettings error:', err);
+    }
 
     try {
       const shards = getAllAdminClients();
@@ -143,6 +193,20 @@ export class SettingsRepository {
   }
 
   static async getPaymentMethods(): Promise<PaymentMethodConfig[]> {
+    try {
+      const rows = await queryMysql<PaymentMethodConfig>('SELECT * FROM payment_methods WHERE is_active = 1 ORDER BY sort_order ASC');
+      if (rows && rows.length > 0) {
+        this.mockPaymentMethods = rows.map(r => ({
+          ...r,
+          is_active: Boolean(r.is_active),
+          requires_reference: Boolean(r.requires_reference),
+        }));
+        return this.mockPaymentMethods;
+      }
+    } catch (e) {
+      console.warn('MySQL getPaymentMethods fallback:', e);
+    }
+
     try {
       const data = await queryAcrossAllShards<PaymentMethodConfig>(async (supabase) => {
         const { data, error } = await supabase

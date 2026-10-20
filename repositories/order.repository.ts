@@ -6,6 +6,7 @@ import {
   getActiveWriteAdmin, 
   getActiveWriteShardId 
 } from '@/lib/supabase/admin';
+import { queryMysql, executeMysql } from '@/lib/mysql/db';
 import { Order, OrderItem, OrderAddress, OrderStatus } from '@/types/database';
 import { SEED_COURIERS } from '@/lib/data/seed-data';
 
@@ -145,6 +146,34 @@ export class OrderRepository {
       ]
     };
 
+    // Persist directly to Hostinger MySQL Primary DB
+    try {
+      const orderId = `ord-${Date.now()}`;
+      await executeMysql(
+        `INSERT INTO orders (id, order_number, customer_id, customer_email, customer_phone, customer_name, subtotal, discount_amount, shipping_amount, grand_total, coupon_code, status, payment_method, payment_status, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [orderId, newOrder.order_number, validCustomerId, newOrder.customer_email, newOrder.customer_phone, newOrder.customer_name, newOrder.subtotal, newOrder.discount_amount, newOrder.shipping_amount, newOrder.grand_total, newOrder.coupon_code, newOrder.status, newOrder.payment_method, newOrder.payment_status, newOrder.notes]
+      );
+
+      for (const item of newOrder.items || []) {
+        await executeMysql(
+          `INSERT INTO order_items (id, order_id, product_id, product_name, sku, unit_price, quantity, subtotal, image_url)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [item.id, orderId, item.product_id, item.product_name, item.sku, item.unit_price, item.quantity, item.subtotal, item.image_url]
+        );
+      }
+
+      if (orderData.shippingAddress) {
+        await executeMysql(
+          `INSERT INTO order_addresses (id, order_id, address_type, first_name, last_name, phone, email, address_line1, address_line2, city, province, postal_code, country)
+           VALUES (?, ?, 'shipping', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [`addr-${Date.now()}-1`, orderId, orderData.shippingAddress.first_name || '', orderData.shippingAddress.last_name || '', orderData.shippingAddress.phone || '', orderData.shippingAddress.email || '', orderData.shippingAddress.address_line1 || '', orderData.shippingAddress.address_line2 || '', orderData.shippingAddress.city || '', orderData.shippingAddress.province || '', orderData.shippingAddress.postal_code || '', orderData.shippingAddress.country || 'Pakistan']
+        );
+      }
+    } catch (mysqlErr) {
+      console.warn('MySQL createOrder fallback:', mysqlErr);
+    }
+
     try {
       const writeClient = getActiveWriteAdmin();
       const { data: dbOrder, error } = await writeClient
@@ -241,6 +270,60 @@ export class OrderRepository {
   }
 
   static async getOrders(filters: { customerId?: string; email?: string; status?: OrderStatus } = {}): Promise<Order[]> {
+    // 1. Primary Query: Hostinger MySQL
+    try {
+      let sql = 'SELECT * FROM orders';
+      const params: any[] = [];
+      const conds: string[] = [];
+
+      if (filters.customerId && filters.email) {
+        conds.push('(customer_id = ? OR customer_email = ?)');
+        params.push(filters.customerId, filters.email.toLowerCase().trim());
+      } else if (filters.customerId) {
+        conds.push('customer_id = ?');
+        params.push(filters.customerId);
+      } else if (filters.email) {
+        conds.push('customer_email = ?');
+        params.push(filters.email.toLowerCase().trim());
+      }
+      if (filters.status) {
+        conds.push('status = ?');
+        params.push(filters.status);
+      }
+
+      if (conds.length > 0) sql += ' WHERE ' + conds.join(' AND ');
+      sql += ' ORDER BY created_at DESC';
+
+      const rows = await queryMysql<any>(sql, params);
+      if (rows && rows.length > 0) {
+        const orderIds = rows.map(r => r.id);
+        const items = await queryMysql<any>('SELECT * FROM order_items WHERE order_id IN (?)', [orderIds]);
+        const addresses = await queryMysql<any>('SELECT * FROM order_addresses WHERE order_id IN (?)', [orderIds]);
+
+        return rows.map(ord => {
+          const ordItems = items.filter((it: any) => it.order_id === ord.id);
+          const ordAddresses = addresses.filter((a: any) => a.order_id === ord.id);
+          const shippingAddress = ordAddresses.find((a: any) => a.address_type === 'shipping') || null;
+          const billingAddress = ordAddresses.find((a: any) => a.address_type === 'billing') || shippingAddress;
+          const courier = SEED_COURIERS.find(c => c.id === ord.courier_id || c.code === ord.courier_id) || null;
+
+          return {
+            ...ord,
+            subtotal: Number(ord.subtotal),
+            discount_amount: Number(ord.discount_amount),
+            shipping_amount: Number(ord.shipping_amount),
+            grand_total: Number(ord.grand_total),
+            items: ordItems,
+            shipping_address: shippingAddress,
+            billing_address: billingAddress,
+            courier,
+          };
+        }) as Order[];
+      }
+    } catch (mysqlErr) {
+      console.warn('MySQL getOrders fallback:', mysqlErr);
+    }
+
     try {
       const shardOrders = await queryAcrossAllShards<Order>(async (supabase) => {
         let query = supabase
@@ -298,6 +381,34 @@ export class OrderRepository {
   }
 
   static async getOrderById(idOrNumber: string): Promise<Order | null> {
+    // 1. Primary Query: Hostinger MySQL
+    try {
+      const clean = idOrNumber.trim();
+      const rows = await queryMysql<any>('SELECT * FROM orders WHERE id = ? OR order_number = ? LIMIT 1', [clean, clean]);
+      if (rows && rows.length > 0) {
+        const ord = rows[0];
+        const items = await queryMysql<any>('SELECT * FROM order_items WHERE order_id = ?', [ord.id]);
+        const addresses = await queryMysql<any>('SELECT * FROM order_addresses WHERE order_id = ?', [ord.id]);
+        const shippingAddress = addresses.find((a: any) => a.address_type === 'shipping') || null;
+        const billingAddress = addresses.find((a: any) => a.address_type === 'billing') || shippingAddress;
+        const courier = SEED_COURIERS.find(c => c.id === ord.courier_id || c.code === ord.courier_id) || null;
+
+        return {
+          ...ord,
+          subtotal: Number(ord.subtotal),
+          discount_amount: Number(ord.discount_amount),
+          shipping_amount: Number(ord.shipping_amount),
+          grand_total: Number(ord.grand_total),
+          items,
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
+          courier,
+        } as Order;
+      }
+    } catch (mysqlErr) {
+      console.warn('MySQL getOrderById fallback:', mysqlErr);
+    }
+
     try {
       const clean = idOrNumber.trim();
       const { data: foundOrder } = await findAcrossAllShards<Order>(async (supabase) => {

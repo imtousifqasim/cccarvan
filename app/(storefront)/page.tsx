@@ -15,32 +15,32 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
+    absolute: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
   },
   description:
-    'Official online store for CC Ccarvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, pure wool shawls, and signature fragrances with nationwide express delivery.',
+    'Official online store for CC Carvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, pure wool shawls, and signature fragrances with nationwide express delivery.',
   alternates: {
     canonical: 'https://cccarvan.com',
   },
   openGraph: {
-    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
+    title: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     description:
       'Where centuries of artisan heritage meet contemporary Pakistani grandeur. Handcrafted raw silk, organza, and zardozi thread ensembles at cccarvan.com.',
     url: 'https://cccarvan.com',
-    siteName: 'CC Ccarvan',
+    siteName: 'CC Carvan',
     images: [
       {
         url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop',
         width: 1600,
         height: 900,
-        alt: 'CC Ccarvan Luxury Pret & Haute Couture',
+        alt: 'CC Carvan Luxury Pret & Haute Couture',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CC Ccarvan | Haute Couture & Luxury Fashion Atelier',
+    title: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     description:
       'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur at cccarvan.com.',
     images: [
@@ -67,7 +67,7 @@ export default async function HomePage() {
       {
         '@type': ['Organization', 'ClothingStore'],
         '@id': 'https://cccarvan.com/#organization',
-        'name': 'CC Ccarvan',
+        'name': 'CC Carvan',
         'url': 'https://cccarvan.com',
         'logo': 'https://cccarvan.com/favicon.ico',
         'description':
@@ -86,7 +86,7 @@ export default async function HomePage() {
         '@type': 'WebSite',
         '@id': 'https://cccarvan.com/#website',
         'url': 'https://cccarvan.com',
-        'name': 'CC Ccarvan',
+        'name': 'CC Carvan',
         'publisher': {
           '@id': 'https://cccarvan.com/#organization',
         },

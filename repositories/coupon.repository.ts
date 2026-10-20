@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
+import { queryMysql, executeMysql } from '@/lib/mysql/db';
 import { Coupon } from '@/types/database';
 
 export class CouponRepository {
@@ -6,7 +7,7 @@ export class CouponRepository {
     {
       id: 'cp-1',
       code: 'CC10',
-      description: '10% Welcome Discount for CC Ccarvan Shoppers',
+      description: '10% Welcome Discount for CC Carvan Shoppers',
       discount_type: 'percentage',
       discount_value: 10,
       minimum_spend: 3000,
@@ -28,6 +29,13 @@ export class CouponRepository {
   static async getCouponByCode(code: string): Promise<Coupon | null> {
     const cleanCode = code.trim().toUpperCase();
     try {
+      const rows = await queryMysql<Coupon>('SELECT * FROM coupons WHERE UPPER(code) = ? AND is_active = 1 LIMIT 1', [cleanCode]);
+      if (rows && rows.length > 0) return rows[0];
+    } catch (e) {
+      console.warn('MySQL getCouponByCode fallback:', e);
+    }
+
+    try {
       const supabase = createAdminClient();
       const { data, error } = await supabase
         .from('coupons')
@@ -46,6 +54,13 @@ export class CouponRepository {
   }
 
   static async listCoupons(): Promise<Coupon[]> {
+    try {
+      const rows = await queryMysql<Coupon>('SELECT * FROM coupons ORDER BY created_at DESC');
+      if (rows && rows.length > 0) return rows;
+    } catch (e) {
+      console.warn('MySQL listCoupons fallback:', e);
+    }
+
     try {
       const supabase = createAdminClient();
       const { data, error } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });

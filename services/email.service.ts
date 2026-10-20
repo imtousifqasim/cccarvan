@@ -43,9 +43,9 @@ export class EmailService {
       }
 
       await transporter.sendMail({
-        from: `"${config.from_name || 'CC Ccarvan Haute Couture'}" <${config.from_email || config.user}>`,
+        from: `"${config.from_name || 'CC Carvan Haute Couture'}" <${config.from_email || config.user}>`,
         to: order.customer_email,
-        subject: `Order Confirmed: #${order.order_number} • CC Ccarvan Haute Couture`,
+        subject: `Order Confirmed: #${order.order_number} • CC Carvan Haute Couture`,
         html,
       });
 
@@ -72,9 +72,9 @@ export class EmailService {
       }
 
       await transporter.sendMail({
-        from: `"${config.from_name || 'CC Ccarvan Haute Couture'}" <${config.from_email || config.user}>`,
+        from: `"${config.from_name || 'CC Carvan Haute Couture'}" <${config.from_email || config.user}>`,
         to: customer.email,
-        subject: `Welcome to CC Ccarvan VIP Lounge • Your Atelier Account Credentials`,
+        subject: `Welcome to CC Carvan VIP Lounge • Your Atelier Account Credentials`,
         html,
       });
 
@@ -98,7 +98,7 @@ export class EmailService {
       }
 
       await transporter.sendMail({
-        from: `"${config.from_name || 'CC Ccarvan Haute Couture'}" <${config.from_email || config.user}>`,
+        from: `"${config.from_name || 'CC Carvan Haute Couture'}" <${config.from_email || config.user}>`,
         to: order.customer_email,
         subject: `Your Atelier Consignment has Shipped • Tracking #${order.tracking_id || order.order_number}`,
         html,
@@ -145,7 +145,7 @@ export class EmailService {
                 <!-- Header -->
                 <tr>
                   <td style="background-color: #141414; padding: 36px 30px; text-align: center; border-bottom: 3px solid #d99026;">
-                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CCARVAN</div>
+                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CARVAN</div>
                     <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.35em; color: #d99026; text-transform: uppercase; margin-top: 6px;">Haute Couture Atelier • Pakistan</div>
                   </td>
                 </tr>
@@ -232,7 +232,7 @@ export class EmailService {
                 <!-- Footer -->
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Ccarvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
                     Concierge Helpline: +92 326 7727318 • concierge@cccarvan.com
                   </td>
                 </tr>
@@ -280,7 +280,7 @@ export class EmailService {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Welcome to CC Ccarvan VIP Lounge</title>
+        <title>Welcome to CC Carvan VIP Lounge</title>
       </head>
       <body style="margin: 0; padding: 0; background-color: #faf8f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #faf8f5; padding: 40px 15px;">
@@ -289,7 +289,7 @@ export class EmailService {
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 620px; background-color: #ffffff; border: 1px solid #e8dfd2; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
                 <tr>
                   <td style="background-color: #141414; padding: 36px 30px; text-align: center; border-bottom: 3px solid #d99026;">
-                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CCARVAN</div>
+                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CARVAN</div>
                     <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.35em; color: #d99026; text-transform: uppercase; margin-top: 6px;">Haute Couture Atelier • Pakistan</div>
                   </td>
                 </tr>
@@ -333,7 +333,7 @@ export class EmailService {
 
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Ccarvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
                     Security Notice: For your protection, never share your password with anyone.
                   </td>
                 </tr>
@@ -365,7 +365,7 @@ export class EmailService {
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 620px; background-color: #ffffff; border: 1px solid #e8dfd2; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
                 <tr>
                   <td style="background-color: #141414; padding: 36px 30px; text-align: center; border-bottom: 3px solid #d99026;">
-                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CCARVAN</div>
+                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CARVAN</div>
                     <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.35em; color: #d99026; text-transform: uppercase; margin-top: 6px;">Haute Couture Atelier • Pakistan</div>
                   </td>
                 </tr>
@@ -417,7 +417,7 @@ export class EmailService {
 
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Ccarvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
                     Standard delivery takes 2 to 3 business days across all major Pakistani cities.
                   </td>
                 </tr>
@@ -453,7 +453,7 @@ As a registered member of our Private Salon, your priority atelier reservations 
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 620px; background-color: #ffffff; border: 1px solid #e8dfd2; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
                 <tr>
                   <td style="background-color: #141414; padding: 36px 30px; text-align: center; border-bottom: 3px solid #d99026;">
-                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CCARVAN</div>
+                    <div style="font-family: Georgia, serif; font-size: 26px; font-weight: bold; letter-spacing: 0.25em; color: #ffffff; text-transform: uppercase;">CC CARVAN</div>
                     <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.35em; color: #d99026; text-transform: uppercase; margin-top: 6px;">Haute Couture Atelier • Pakistan</div>
                   </td>
                 </tr>
@@ -487,8 +487,8 @@ As a registered member of our Private Salon, your priority atelier reservations 
 
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Ccarvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
-                    You are receiving this bespoke bulletin as a distinguished member of CC Ccarvan VIP Club.
+                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    You are receiving this bespoke bulletin as a distinguished member of CC Carvan VIP Club.
                   </td>
                 </tr>
               </table>

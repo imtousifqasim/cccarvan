@@ -30,7 +30,7 @@ export function Footer() {
       }
     } catch {
       setSubscribed(true);
-      setSubMessage('Thank you for joining CC Ccarvan Privilege Club.');
+      setSubMessage('Thank you for joining CC Carvan Privilege Club.');
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export function Footer() {
           <div className="max-w-xl text-center lg:text-left space-y-3">
             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-[#d99026] flex items-center justify-center lg:justify-start gap-2">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>CC Ccarvan Privilege Membership</span>
+              <span>CC Carvan Privilege Membership</span>
             </span>
             <h3 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
               Receive VIP Access to Private Pre-Orders
@@ -94,12 +94,12 @@ export function Footer() {
             <Link href="/" className="inline-block group">
               <img
                 src="/logo.png"
-                alt="CC Ccarvan"
+                alt="CC Carvan"
                 className="h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
             <p className="text-xs text-neutral-400 leading-relaxed font-sans">
-              CC Ccarvan defines contemporary Pakistani luxury fashion, combining heirloom artisanal craft with modern pret silhouettes for timeless luxury.
+              CC Carvan defines contemporary Pakistani luxury fashion, combining heirloom artisanal craft with modern pret silhouettes for timeless luxury.
             </p>
             <div className="pt-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400 block mb-3">
@@ -252,7 +252,7 @@ export function Footer() {
         {/* Bottom Bar: Copyright & Payment Badges */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-sans">
           <p>
-            © {new Date().getFullYear()} CC Ccarvan. All Rights Reserved. Crafted by{' '}
+            © {new Date().getFullYear()} CC Carvan. All Rights Reserved. Crafted by{' '}
             <a
               href="https://tousifqasim.dev/"
               target="_blank"

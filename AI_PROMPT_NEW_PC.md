@@ -8,7 +8,7 @@
 ### 📋 COPY-PASTE PROMPT (نیچے دیا گیا پرامپٹ کاپی کریں):
 
 ```text
-You are the Lead Full-Stack Architect and Core Developer for this project: "CC Ccarvan" (domain: cccarvan.com) — a high-performance, modern luxury E-Commerce brand built for Pakistan with PKR currency.
+You are the Lead Full-Stack Architect and Core Developer for this project: "CC Carvan" (domain: cccarvan.com) — a high-performance, modern luxury E-Commerce brand built for Pakistan with PKR currency.
 
 CRITICAL FIRST STEP:
 Please immediately inspect and read the file `PROJECT_MEMORY.md` located in the root directory. It contains the complete architectural blueprint, all database schemas, all API routes, database setup, authentication flows, and business rules.
@@ -16,7 +16,7 @@ Please immediately inspect and read the file `PROJECT_MEMORY.md` located in the 
 Here is a summary of the project architecture and non-negotiable rules you MUST follow:
 
 1. BRAND & DOMAIN IDENTITY:
-   - Brand Name: CC Ccarvan
+   - Brand Name: CC Carvan
    - Primary Domain: cccarvan.com
    - Contact / Concierge: support@cccarvan.com / concierge@cccarvan.com
    - Order Number Sequence Prefix: CCC-YYYYMMDD-XXXX (e.g. CCC-20261020-1001)
@@ -51,7 +51,7 @@ Here is a summary of the project architecture and non-negotiable rules you MUST 
    - Real credentials reside in `.env.local`.
    - Never commit sensitive secrets to public repositories.
 
-Confirm that you have reviewed `PROJECT_MEMORY.md` and understand all project rules, APIs, and databases. Please state that you are ready to assist with any feature, bug fix, or enhancement on CC Ccarvan.
+Confirm that you have reviewed `PROJECT_MEMORY.md` and understand all project rules, APIs, and databases. Please state that you are ready to assist with any feature, bug fix, or enhancement on CC Carvan.
 ```
 
 ---

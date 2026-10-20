@@ -1,4 +1,5 @@
 import { createAdminClient, queryAcrossAllShards, findAcrossAllShards, getActiveWriteAdmin, getAllAdminClients } from '@/lib/supabase/admin';
+import { queryMysql, executeMysql } from '@/lib/mysql/db';
 import { Product, Category, Brand } from '@/types/database';
 import { SEED_PRODUCTS, SEED_CATEGORIES, SEED_BRANDS } from '@/lib/data/seed-data';
 import { resolveHighResImageUrl } from '@/lib/image-resolver';
@@ -89,6 +90,95 @@ export class ProductRepository {
         const brands = await this.getBrands();
         targetBrand = brands.find(b => b.slug.toLowerCase() === cleanBrand || b.id === cleanBrand);
       } catch {}
+    }
+
+    // 1. Primary Query: Hostinger MySQL
+    try {
+      let sql = 'SELECT * FROM products WHERE is_published = 1';
+      const params: any[] = [];
+
+      if (targetCategory) {
+        sql += ' AND (category_id = ? OR category_id = ?)';
+        params.push(targetCategory.id, targetCategory.slug);
+      } else if (resolvedCategorySlug) {
+        sql += ' AND category_id = ?';
+        params.push(resolvedCategorySlug);
+      }
+
+      if (targetBrand) {
+        sql += ' AND (brand_id = ? OR brand_id = ?)';
+        params.push(targetBrand.id, targetBrand.slug);
+      }
+
+      if (filters.isBestDeal) sql += ' AND is_best_deal = 1';
+      if (filters.isNewArrival) sql += ' AND is_new_arrival = 1';
+      if (filters.isFeatured) sql += ' AND is_featured = 1';
+      if (filters.isPopular) sql += ' AND is_popular = 1';
+
+      if (filters.search) {
+        sql += ' AND (name LIKE ? OR sku LIKE ?)';
+        params.push(`%${filters.search}%`, `%${filters.search}%`);
+      }
+
+      if (filters.minPrice !== undefined) {
+        sql += ' AND regular_price >= ?';
+        params.push(filters.minPrice);
+      }
+      if (filters.maxPrice !== undefined) {
+        sql += ' AND regular_price <= ?';
+        params.push(filters.maxPrice);
+      }
+
+      if (filters.sortBy === 'price_asc') sql += ' ORDER BY regular_price ASC';
+      else if (filters.sortBy === 'price_desc') sql += ' ORDER BY regular_price DESC';
+      else sql += ' ORDER BY created_at DESC';
+
+      const rows = await queryMysql<any>(sql, params);
+      if (rows && rows.length > 0) {
+        const productIds = rows.map(r => r.id);
+        const images = await queryMysql<any>('SELECT * FROM product_images WHERE product_id IN (?) ORDER BY sort_order ASC', [productIds]);
+        const categories = await this.getCategories();
+        const brands = await this.getBrands();
+
+        const fullProducts: Product[] = rows.map(p => {
+          const prodImages = images
+            .filter((img: any) => img.product_id === p.id)
+            .map((img: any) => ({
+              ...img,
+              is_primary: Boolean(img.is_primary),
+            }));
+          const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
+          const brand = brands.find(b => b.id === p.brand_id || b.slug === p.brand_id);
+
+          return normalizeProductImages({
+            ...p,
+            regular_price: Number(p.regular_price),
+            sale_price: p.sale_price !== null ? Number(p.sale_price) : null,
+            cost_price: Number(p.cost_price || 0),
+            is_featured: Boolean(p.is_featured),
+            is_best_deal: Boolean(p.is_best_deal),
+            is_new_arrival: Boolean(p.is_new_arrival),
+            is_popular: Boolean(p.is_popular),
+            is_published: Boolean(p.is_published),
+            has_sizes: Boolean(p.has_sizes),
+            available_sizes: typeof p.available_sizes === 'string' ? JSON.parse(p.available_sizes) : p.available_sizes,
+            size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
+            size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
+            images: prodImages,
+            category,
+            brand,
+          });
+        });
+
+        const offset = filters.offset || 0;
+        const limit = filters.limit || 50;
+        return {
+          products: fullProducts.slice(offset, offset + limit),
+          total: fullProducts.length,
+        };
+      }
+    } catch (mysqlErr) {
+      console.warn('MySQL getProducts error, falling back:', mysqlErr);
     }
 
     try {
@@ -235,6 +325,40 @@ export class ProductRepository {
   static async getProductBySlug(slug: string): Promise<Product | null> {
     try {
       const cleanSlug = slug.trim();
+      const rows = await queryMysql<any>('SELECT * FROM products WHERE slug = ? OR id = ? LIMIT 1', [cleanSlug, cleanSlug]);
+      if (rows && rows.length > 0) {
+        const p = rows[0];
+        const images = await queryMysql<any>('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC', [p.id]);
+        const categories = await this.getCategories();
+        const brands = await this.getBrands();
+        const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
+        const brand = brands.find(b => b.id === p.brand_id || b.slug === p.brand_id);
+
+        return normalizeProductImages({
+          ...p,
+          regular_price: Number(p.regular_price),
+          sale_price: p.sale_price !== null ? Number(p.sale_price) : null,
+          cost_price: Number(p.cost_price || 0),
+          is_featured: Boolean(p.is_featured),
+          is_best_deal: Boolean(p.is_best_deal),
+          is_new_arrival: Boolean(p.is_new_arrival),
+          is_popular: Boolean(p.is_popular),
+          is_published: Boolean(p.is_published),
+          has_sizes: Boolean(p.has_sizes),
+          available_sizes: typeof p.available_sizes === 'string' ? JSON.parse(p.available_sizes) : p.available_sizes,
+          size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
+          size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
+          images: images.map((img: any) => ({ ...img, is_primary: Boolean(img.is_primary) })),
+          category,
+          brand,
+        });
+      }
+    } catch (mysqlErr) {
+      console.warn('MySQL getProductBySlug fallback:', mysqlErr);
+    }
+
+    try {
+      const cleanSlug = slug.trim();
       const { data: foundProduct } = await findAcrossAllShards<Product>(async (supabase) => {
         const { data, error } = await supabase
           .from('products')
@@ -261,6 +385,40 @@ export class ProductRepository {
   }
 
   static async getProductById(id: string): Promise<Product | null> {
+    try {
+      const cleanId = id.trim();
+      const rows = await queryMysql<any>('SELECT * FROM products WHERE id = ? OR slug = ? OR sku = ? LIMIT 1', [cleanId, cleanId, cleanId]);
+      if (rows && rows.length > 0) {
+        const p = rows[0];
+        const images = await queryMysql<any>('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC', [p.id]);
+        const categories = await this.getCategories();
+        const brands = await this.getBrands();
+        const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
+        const brand = brands.find(b => b.id === p.brand_id || b.slug === p.brand_id);
+
+        return normalizeProductImages({
+          ...p,
+          regular_price: Number(p.regular_price),
+          sale_price: p.sale_price !== null ? Number(p.sale_price) : null,
+          cost_price: Number(p.cost_price || 0),
+          is_featured: Boolean(p.is_featured),
+          is_best_deal: Boolean(p.is_best_deal),
+          is_new_arrival: Boolean(p.is_new_arrival),
+          is_popular: Boolean(p.is_popular),
+          is_published: Boolean(p.is_published),
+          has_sizes: Boolean(p.has_sizes),
+          available_sizes: typeof p.available_sizes === 'string' ? JSON.parse(p.available_sizes) : p.available_sizes,
+          size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
+          size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
+          images: images.map((img: any) => ({ ...img, is_primary: Boolean(img.is_primary) })),
+          category,
+          brand,
+        });
+      }
+    } catch (mysqlErr) {
+      console.warn('MySQL getProductById fallback:', mysqlErr);
+    }
+
     try {
       const cleanId = id.trim();
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
@@ -449,6 +607,13 @@ export class ProductRepository {
 
   static async getCategories(): Promise<Category[]> {
     try {
+      const rows = await queryMysql<Category>('SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC');
+      if (rows && rows.length > 0) return rows;
+    } catch (e) {
+      console.warn('MySQL getCategories fallback:', e);
+    }
+
+    try {
       const supabase = createAdminClient();
       const { data, error } = await supabase
         .from('categories')
@@ -465,6 +630,13 @@ export class ProductRepository {
   }
 
   static async getBrands(): Promise<Brand[]> {
+    try {
+      const rows = await queryMysql<Brand>('SELECT * FROM brands WHERE is_active = 1 ORDER BY sort_order ASC');
+      if (rows && rows.length > 0) return rows;
+    } catch (e) {
+      console.warn('MySQL getBrands fallback:', e);
+    }
+
     try {
       const supabase = createAdminClient();
       const { data, error } = await supabase
