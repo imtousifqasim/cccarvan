@@ -49,3 +49,6 @@ scratch-*.mjs
 # Private credentials & machine transfer files (NEVER commit to GitHub)
 *.private.*
 SECRETS_TRANSFER_PACKAGE*
+
+.vercel
+.env*
