@@ -1,26 +1,14 @@
 import { NextResponse } from 'next/server';
-import { queryAcrossAllShards } from '@/lib/supabase/admin';
-import { Coupon } from '@/types/database';
+import { CouponRepository } from '@/repositories/coupon.repository';
 
 export async function GET() {
   try {
-    const activeCoupons = await queryAcrossAllShards<Coupon>(async (supabase) => {
-      const { data, error } = await supabase
-        .from('coupons')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
-      if (error || !data) return [];
-      return data as Coupon[];
-    }, (items) => {
-      const map = new Map<string, Coupon>();
-      items.forEach(c => map.set(c.code.toUpperCase(), c));
-      return Array.from(map.values());
-    });
+    const allCoupons = await CouponRepository.listCoupons();
+    const activeCoupons = allCoupons.filter(c => c.is_active);
 
     return NextResponse.json({
       success: true,
-      coupons: activeCoupons || [],
+      coupons: activeCoupons,
     });
   } catch (error: any) {
     return NextResponse.json(

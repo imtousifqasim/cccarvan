@@ -3,20 +3,25 @@ import { queryAcrossAllShards, getAllAdminClients } from '@/lib/supabase/admin';
 
 export async function GET() {
   try {
-    const reviews = await queryAcrossAllShards<any>(async (supabase) => {
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error || !data) return [];
-      return data;
-    }, (items) => {
-      const map = new Map<string, any>();
-      items.forEach(r => map.set(r.id, r));
-      return Array.from(map.values()).sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    });
+    let reviews: any[] = [];
+    try {
+      reviews = await queryAcrossAllShards<any>(async (supabase) => {
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error || !data) return [];
+        return data;
+      }, (items) => {
+        const map = new Map<string, any>();
+        items.forEach(r => map.set(r.id, r));
+        return Array.from(map.values()).sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      });
+    } catch {
+      reviews = [];
+    }
 
     return NextResponse.json({
       success: true,

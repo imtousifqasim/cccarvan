@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { queryAcrossAllShards, getAllAdminClients } from '@/lib/supabase/admin';
+import { CouponRepository } from '@/repositories/coupon.repository';
+import { getAllAdminClients } from '@/lib/supabase/admin';
 import { Coupon } from '@/types/database';
 
 export async function GET() {
   try {
-    const coupons = await queryAcrossAllShards<Coupon>(async (supabase) => {
-      const { data, error } = await supabase
-        .from('coupons')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error || !data) return [];
-      return data as Coupon[];
-    }, (items) => {
-      const map = new Map<string, Coupon>();
-      items.forEach(c => map.set(c.code.toUpperCase(), c));
-      return Array.from(map.values());
-    });
+    const coupons = await CouponRepository.listCoupons();
 
     return NextResponse.json({
       success: true,

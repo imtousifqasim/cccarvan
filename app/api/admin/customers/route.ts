@@ -1,39 +1,57 @@
 import { NextResponse } from 'next/server';
 import { queryAcrossAllShards } from '@/lib/supabase/admin';
+import { queryMysql } from '@/lib/mysql/db';
+import { OrderRepository } from '@/repositories/order.repository';
 
 export async function GET() {
   try {
-    // 1. Fetch registered customers from both shards
-    const registeredCustomers = await queryAcrossAllShards<any>(async (supabase) => {
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error || !data) return [];
-      return data;
-    }, (items) => {
-      const map = new Map<string, any>();
-      items.forEach(c => map.set(c.email?.toLowerCase(), c));
-      return Array.from(map.values());
-    });
+    // 1. Fetch registered customers from Hostinger MySQL primary
+    let registeredCustomers: any[] = [];
+    try {
+      const rows = await queryMysql<any>('SELECT * FROM customers ORDER BY created_at DESC');
+      if (rows && rows.length > 0) registeredCustomers = rows;
+    } catch {}
 
-    // 2. Fetch all orders with items across all shards
-    const allOrders = await queryAcrossAllShards<any>(async (supabase) => {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          items:order_items(*),
-          shippingAddress:order_addresses(*)
-        `)
-        .order('created_at', { ascending: false });
-      if (error || !data) return [];
-      return data;
-    }, (items) => {
-      const map = new Map<string, any>();
-      items.forEach(o => map.set(o.order_number, o));
-      return Array.from(map.values());
-    });
+    if (registeredCustomers.length === 0) {
+      registeredCustomers = await queryAcrossAllShards<any>(async (supabase) => {
+        const { data, error } = await supabase
+          .from('customers')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error || !data) return [];
+        return data;
+      }, (items) => {
+        const map = new Map<string, any>();
+        items.forEach(c => map.set(c.email?.toLowerCase(), c));
+        return Array.from(map.values());
+      });
+    }
+
+    // 2. Fetch all orders with items
+    let allOrders: any[] = [];
+    try {
+      const ords = await OrderRepository.getOrders();
+      if (ords && ords.length > 0) allOrders = ords;
+    } catch {}
+
+    if (allOrders.length === 0) {
+      allOrders = await queryAcrossAllShards<any>(async (supabase) => {
+        const { data, error } = await supabase
+          .from('orders')
+          .select(`
+            *,
+            items:order_items(*),
+            shippingAddress:order_addresses(*)
+          `)
+          .order('created_at', { ascending: false });
+        if (error || !data) return [];
+        return data;
+      }, (items) => {
+        const map = new Map<string, any>();
+        items.forEach(o => map.set(o.order_number, o));
+        return Array.from(map.values());
+      });
+    }
 
     // 3. Map orders to registered customers
     const customerMap = new Map<string, any>();
