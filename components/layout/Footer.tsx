@@ -236,56 +236,84 @@ export function Footer() {
 
         </div>
 
-        {/* Modern Developer Credit & Hire CTA Showcase */}
-        <div className="my-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-white/[0.04] via-white/[0.02] to-[#d99026]/[0.06] border border-white/[0.1] hover:border-[#d99026]/40 transition-all duration-500 relative overflow-hidden group shadow-2xl backdrop-blur-md">
-          {/* Subtle ambient decorative gradient */}
-          <div className="absolute -top-24 -right-24 w-60 h-60 bg-[#d99026]/10 rounded-full blur-3xl pointer-events-none group-hover:bg-[#d99026]/20 transition-all duration-700" />
-          <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-[#d99026]/5 rounded-full blur-3xl pointer-events-none" />
+        {/* Modern Developer Credit & Architectural Showcase */}
+        <div className="my-14 rounded-3xl bg-gradient-to-br from-[#121319] via-[#0d0e12] to-[#17140f] border border-white/[0.12] hover:border-amber-400/40 p-6 sm:p-9 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl relative overflow-hidden group transition-all duration-500">
+          {/* Subtle ambient auroral lighting */}
+          <div className="absolute -top-32 -right-32 w-80 h-80 bg-gradient-to-br from-[#d99026]/20 to-purple-600/10 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+          <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-[#d99026]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none opacity-40" />
 
-          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
-              <a 
-                href="https://tousifqasim.dev/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d99026] via-[#b87414] to-[#7a4805] text-black font-extrabold text-xl flex items-center justify-center shadow-lg shadow-[#d99026]/20 hover:scale-105 active:scale-95 transition-transform shrink-0 tracking-wider font-display"
-                title="Tousif Qasim - Full Stack & Modern Web Engineer"
-              >
-                TQ
-              </a>
-              <div className="space-y-1.5">
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
+              {/* Monogram Avatar with luxury gradient ring & live beacon */}
+              <div className="relative shrink-0">
+                <a
+                  href="https://tousifqasim.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 via-[#d99026] to-[#804d08] text-slate-950 font-black text-2xl flex items-center justify-center shadow-[0_0_25px_rgba(217,144,38,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ring-2 ring-white/20 hover:ring-amber-400/60 font-display"
+                  title="Tousif Qasim — Principal Full-Stack Architect & Digital Craftsman"
+                >
+                  TQ
+                </a>
+                <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#0d0e12]" />
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-                  <span className="text-white font-semibold text-sm sm:text-base tracking-wide font-sans">
-                    Engineered & Designed with precision by{' '}
-                    <a
-                      href="https://tousifqasim.dev/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#d99026] hover:text-[#f3a83b] underline underline-offset-4 decoration-[#d99026]/40 hover:decoration-[#d99026] font-bold transition-colors inline-flex items-center gap-1"
-                    >
-                      Tousif Qasim
-                      <ArrowUpRight className="w-3.5 h-3.5 inline" />
-                    </a>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    Available for Custom Projects
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-white/[0.05] border border-white/10 text-neutral-300">
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                    <span>Lead Architect &amp; Designer</span>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Available for High-Impact Projects
                   </span>
                 </div>
+
+                <h3 className="text-white font-bold text-base sm:text-lg tracking-tight font-sans">
+                  Engineered &amp; Designed with precision by{' '}
+                  <a
+                    href="https://tousifqasim.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-[#d99026] hover:from-amber-200 hover:to-amber-300 font-extrabold transition-all inline-flex items-center gap-1 hover:underline underline-offset-4 decoration-amber-400/40"
+                  >
+                    Tousif Qasim
+                    <ArrowUpRight className="w-4 h-4 text-amber-400 inline transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
+                </h3>
+
                 <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl leading-relaxed font-sans">
-                  Impressed by this modern e-commerce experience? Elevate your brand with a bespoke, lightning-fast web application or luxury store tailored for scale.
+                  Specializing in modern full-stack web applications, ultra-fast headless luxury e-commerce, and multi-tenant architectures engineered for extreme scalability and conversion.
                 </p>
+
+                {/* Tech Pills */}
+                <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+                  {['Next.js 16 (Turbopack)', 'React 19', 'TypeScript', 'Multi-Shard DB', 'Tailwind CSS'].map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-medium bg-white/[0.03] text-neutral-400 border border-white/[0.06]"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
+            {/* Direct Portfolio / Contact CTA */}
             <a
               href="https://tousifqasim.dev/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#d99026] to-[#b87414] hover:from-[#e59b30] hover:to-[#c87e16] text-black font-bold text-xs uppercase tracking-[0.16em] transition-all duration-300 shadow-lg shadow-[#d99026]/25 hover:shadow-[#d99026]/40 hover:scale-[1.03] active:scale-[0.98] whitespace-nowrap shrink-0 group/cta"
+              className="relative inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-[#d99026] to-[#b87414] hover:from-amber-300 hover:to-[#c87e16] text-slate-950 font-extrabold text-xs uppercase tracking-[0.18em] transition-all duration-300 shadow-[0_0_30px_rgba(217,144,38,0.3)] hover:shadow-[0_0_45px_rgba(217,144,38,0.5)] hover:scale-[1.03] active:scale-[0.98] whitespace-nowrap shrink-0 group/cta"
             >
-              <span>Build Your Website</span>
-              <ArrowUpRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5" />
+              <span>Visit Portfolio / Hire</span>
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-1 group-hover/cta:-translate-y-1" />
             </a>
           </div>
         </div>
@@ -293,15 +321,15 @@ export function Footer() {
         {/* Bottom Bar: Copyright & Payment Badges */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-sans">
           <p>
-            © {new Date().getFullYear()} CC Carvan. All Rights Reserved. Crafted by{' '}
+            © {new Date().getFullYear()} CC Carvan. All Rights Reserved. Designed &amp; Engineered with precision by{' '}
             <a
               href="https://tousifqasim.dev/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#d99026] hover:text-[#f3a83b] hover:underline font-medium inline-flex items-center gap-0.5 transition-colors"
+              className="text-amber-400 hover:text-amber-300 font-semibold inline-flex items-center gap-1 hover:underline underline-offset-4 decoration-amber-400/40 transition-colors"
             >
               Tousif Qasim
-              <ArrowUpRight className="w-3 h-3 inline" />
+              <ArrowUpRight className="w-3.5 h-3.5 inline text-amber-400" />
             </a>
           </p>
           <div className="flex items-center gap-4 text-[11px] text-neutral-300">
