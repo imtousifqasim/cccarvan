@@ -66,16 +66,20 @@ function initSupabase(url: string, key: string): SupabaseClient {
 let shard1AdminClient: SupabaseClient | null = null;
 let shard2AdminClient: SupabaseClient | null = null;
 
-export function getShard1Admin(): SupabaseClient {
+export function getShard1Admin(): SupabaseClient | null {
   if (!shard1AdminClient) {
-    shard1AdminClient = initSupabase(SHARD_1_URL, SHARD_1_SERVICE || SHARD_1_ANON);
+    const key = SHARD_1_SERVICE || SHARD_1_ANON || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!key) return null;
+    shard1AdminClient = initSupabase(SHARD_1_URL, key);
   }
   return shard1AdminClient;
 }
 
-export function getShard2Admin(): SupabaseClient {
+export function getShard2Admin(): SupabaseClient | null {
   if (!shard2AdminClient) {
-    shard2AdminClient = initSupabase(SHARD_2_URL, SHARD_2_SERVICE || SHARD_2_ANON);
+    const key = SHARD_2_SERVICE || SHARD_2_ANON;
+    if (!key) return null;
+    shard2AdminClient = initSupabase(SHARD_2_URL, key);
   }
   return shard2AdminClient;
 }
@@ -88,7 +92,7 @@ export function getActiveWriteShardId(): 1 | 2 {
   if (manualActiveShardOverride) {
     return manualActiveShardOverride;
   }
-  if (simulatedShard1SizeMb >= SHARD_LIMIT_MB) {
+  if (simulatedShard1SizeMb >= SHARD_LIMIT_MB && (SHARD_2_SERVICE || SHARD_2_ANON)) {
     return 2;
   }
   return 1;
@@ -99,7 +103,13 @@ export function getActiveWriteShardId(): 1 | 2 {
  */
 export function getActiveWriteAdmin(): SupabaseClient {
   const activeShardId = getActiveWriteShardId();
-  return activeShardId === 1 ? getShard1Admin() : getShard2Admin();
+  if (activeShardId === 2) {
+    const s2 = getShard2Admin();
+    if (s2) return s2;
+  }
+  const s1 = getShard1Admin();
+  if (s1) return s1;
+  return initSupabase(SHARD_1_URL, SHARD_1_ANON || 'dummy');
 }
 
 /**
@@ -107,10 +117,22 @@ export function getActiveWriteAdmin(): SupabaseClient {
  */
 export function getAllAdminClients(): Array<{ id: 1 | 2; client: SupabaseClient; isWriteTarget: boolean }> {
   const activeId = getActiveWriteShardId();
-  return [
-    { id: 1, client: getShard1Admin(), isWriteTarget: activeId === 1 },
-    { id: 2, client: getShard2Admin(), isWriteTarget: activeId === 2 },
-  ];
+  const list: Array<{ id: 1 | 2; client: SupabaseClient; isWriteTarget: boolean }> = [];
+  try {
+    const s1 = getShard1Admin();
+    if (s1) list.push({ id: 1, client: s1, isWriteTarget: activeId === 1 });
+  } catch (e) {
+    console.warn('Shard 1 init warning:', e);
+  }
+
+  try {
+    const s2 = getShard2Admin();
+    if (s2) list.push({ id: 2, client: s2, isWriteTarget: activeId === 2 });
+  } catch (e) {
+    console.warn('Shard 2 init warning:', e);
+  }
+
+  return list;
 }
 
 /**
@@ -152,16 +174,22 @@ export async function findAcrossAllShards<T>(
 ): Promise<{ data: T | null; foundInShard: 1 | 2 | null }> {
   // Check primary first
   try {
-    const item1 = await fetcher(getShard1Admin(), 1);
-    if (item1) return { data: item1, foundInShard: 1 };
+    const s1 = getShard1Admin();
+    if (s1) {
+      const item1 = await fetcher(s1, 1);
+      if (item1) return { data: item1, foundInShard: 1 };
+    }
   } catch (err) {
     console.warn('[SHARDING] Shard 1 single lookup error:', err);
   }
 
   // Check secondary
   try {
-    const item2 = await fetcher(getShard2Admin(), 2);
-    if (item2) return { data: item2, foundInShard: 2 };
+    const s2 = getShard2Admin();
+    if (s2) {
+      const item2 = await fetcher(s2, 2);
+      if (item2) return { data: item2, foundInShard: 2 };
+    }
   } catch (err) {
     console.warn('[SHARDING] Shard 2 single lookup error:', err);
   }
@@ -179,11 +207,16 @@ export async function getDualShardHealth(): Promise<DualShardHealth> {
   let shard1Status: ShardMetadata['status'] = 'online';
   let shard1Rows = 42;
   try {
-    const { count, error } = await getShard1Admin().from('products').select('*', { count: 'exact', head: true });
-    if (error && error.code !== 'PGRST205') {
+    const s1 = getShard1Admin();
+    if (s1) {
+      const { count, error } = await s1.from('products').select('*', { count: 'exact', head: true });
+      if (error && error.code !== 'PGRST205') {
+        shard1Status = 'degraded';
+      } else if (count !== null && count !== undefined) {
+        shard1Rows = count;
+      }
+    } else {
       shard1Status = 'degraded';
-    } else if (count !== null && count !== undefined) {
-      shard1Rows = count;
     }
   } catch {
     shard1Status = 'online';
@@ -193,11 +226,16 @@ export async function getDualShardHealth(): Promise<DualShardHealth> {
   let shard2Status: ShardMetadata['status'] = activeId === 2 ? 'online' : 'standby';
   let shard2Rows = 0;
   try {
-    const { count, error } = await getShard2Admin().from('products').select('*', { count: 'exact', head: true });
-    if (error && error.code !== 'PGRST205') {
-      shard2Status = 'degraded';
-    } else if (count !== null && count !== undefined) {
-      shard2Rows = count;
+    const s2 = getShard2Admin();
+    if (s2) {
+      const { count, error } = await s2.from('products').select('*', { count: 'exact', head: true });
+      if (error && error.code !== 'PGRST205') {
+        shard2Status = 'degraded';
+      } else if (count !== null && count !== undefined) {
+        shard2Rows = count;
+      }
+    } else {
+      shard2Status = 'standby';
     }
   } catch {
     shard2Status = activeId === 2 ? 'online' : 'standby';
@@ -267,20 +305,26 @@ export async function findUserShard(emailOrId: string): Promise<1 | 2 | null> {
   
   // Check Shard 1
   try {
-    const q1 = isEmail 
-      ? getShard1Admin().from('profiles').select('id, email').eq('email', emailOrId.toLowerCase().trim()).single()
-      : getShard1Admin().from('profiles').select('id, email').eq('id', emailOrId).single();
-    const { data: u1 } = await q1;
-    if (u1) return 1;
+    const s1 = getShard1Admin();
+    if (s1) {
+      const q1 = isEmail 
+        ? s1.from('profiles').select('id, email').eq('email', emailOrId.toLowerCase().trim()).single()
+        : s1.from('profiles').select('id, email').eq('id', emailOrId).single();
+      const { data: u1 } = await q1;
+      if (u1) return 1;
+    }
   } catch {}
 
   // Check Shard 2
   try {
-    const q2 = isEmail 
-      ? getShard2Admin().from('profiles').select('id, email').eq('email', emailOrId.toLowerCase().trim()).single()
-      : getShard2Admin().from('profiles').select('id, email').eq('id', emailOrId).single();
-    const { data: u2 } = await q2;
-    if (u2) return 2;
+    const s2 = getShard2Admin();
+    if (s2) {
+      const q2 = isEmail 
+        ? s2.from('profiles').select('id, email').eq('email', emailOrId.toLowerCase().trim()).single()
+        : s2.from('profiles').select('id, email').eq('id', emailOrId).single();
+      const { data: u2 } = await q2;
+      if (u2) return 2;
+    }
   } catch {}
 
   return null;
@@ -293,7 +337,11 @@ export async function findUserShard(emailOrId: string): Promise<1 | 2 | null> {
  */
 export async function resetPasswordForUser(email: string): Promise<{ success: boolean; shard: 1 | 2; error?: string }> {
   const userShard = (await findUserShard(email)) || 1;
-  const client = userShard === 1 ? getShard1Admin() : getShard2Admin();
+  const client = (userShard === 1 ? getShard1Admin() : getShard2Admin()) || getShard1Admin();
+
+  if (!client) {
+    return { success: false, shard: userShard, error: 'Database service unavailable' };
+  }
 
   try {
     const { error } = await client.auth.resetPasswordForEmail(email.toLowerCase().trim());
