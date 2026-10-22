@@ -414,7 +414,7 @@ export function Header() {
     if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
     dropdownTimeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
-    }, 180);
+    }, 280);
   };
 
   const closeDropdownImmediately = () => {
@@ -726,11 +726,14 @@ export function Header() {
       </div>
 
       {/* ============================================================== */}
-      {/* TIER 2: DEDICATED LUXURY CATEGORY NAVIGATION BAR + MEGA MENUS  */}
+      {/* TIER 2: DEDICATED LUXURY CATEGORY NAVIGATION BAR               */}
       {/* ============================================================== */}
-      <div className="hidden lg:block border-t border-[#eae7e2] bg-white relative">
+      <div 
+        className="hidden lg:block border-t border-[#eae7e2] bg-white relative"
+        onMouseLeave={handleMouseLeaveItem}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-center gap-6 xl:gap-8 h-12 text-[12px] font-bold tracking-[0.12em] uppercase font-sans text-[#141414]">
+          <nav className="flex items-center justify-center gap-2 xl:gap-3 h-12 text-[12px] font-bold tracking-[0.1em] uppercase font-sans text-[#141414]">
             {NAVIGATION_ITEMS.map((item) => {
               const hasChildren = Boolean(item.children && item.children.length > 0);
               const isActive = pathname === item.href || (item.slug !== 'home' && pathname.includes(item.slug));
@@ -743,8 +746,10 @@ export function Header() {
                     key={item.slug}
                     href={item.href}
                     onMouseEnter={closeDropdownImmediately}
-                    className={`relative inline-flex items-center gap-1.5 py-3 transition-colors whitespace-nowrap group ${
-                      isActive ? 'text-[#b87414] font-extrabold' : 'hover:text-[#b87414]'
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap group ${
+                      isActive 
+                        ? 'bg-[#f6f4f0] text-[#b87414] font-extrabold shadow-2xs' 
+                        : 'hover:text-[#b87414] hover:bg-[#faf8f5]'
                     }`}
                   >
                     <span>{item.name}</span>
@@ -757,151 +762,165 @@ export function Header() {
                         {item.badge}
                       </span>
                     )}
-                    <span className={`absolute bottom-0 left-0 h-[2px] bg-[#b87414] transition-all duration-300 rounded-full ${
-                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`} />
                   </Link>
                 );
               }
 
-              // Parent Categories with Mega Dropdown
+              // Dropdown Alignment based on menu position across header
+              const dropdownAlignmentClass = 
+                item.slug === 'men' 
+                  ? 'left-0 origin-top-left w-[500px]'
+                  : item.slug === 'women'
+                  ? 'left-0 origin-top-left w-[560px]'
+                  : item.slug === 'fragrances'
+                  ? 'left-1/2 -translate-x-1/2 origin-top w-[440px]'
+                  : item.slug === 'beauty-makeup'
+                  ? 'right-0 xl:left-1/2 xl:-translate-x-1/2 origin-top-right xl:origin-top w-[480px]'
+                  : 'right-0 origin-top-right w-[480px]';
+
+              // Parent Categories with Modern Luxury Dropdown Menu
               return (
                 <div
                   key={item.slug}
-                  className="relative py-3"
+                  className="relative py-2"
                   onMouseEnter={() => handleMouseEnterItem(item.slug)}
                   onMouseLeave={handleMouseLeaveItem}
                 >
                   <Link
                     href={item.href}
-                    className={`inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap group ${
-                      isDropdownOpen || isActive ? 'text-[#b87414] font-extrabold' : 'hover:text-[#b87414]'
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-all duration-200 cursor-pointer whitespace-nowrap group ${
+                      isDropdownOpen || isActive 
+                        ? 'bg-[#f6f4f0] text-[#b87414] font-extrabold shadow-2xs' 
+                        : 'hover:text-[#b87414] hover:bg-[#faf8f5]'
                     }`}
                     aria-expanded={isDropdownOpen}
                     aria-haspopup="true"
                   >
                     <span>{item.name}</span>
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-250 ${
                       isDropdownOpen ? 'rotate-180 text-[#b87414]' : 'text-neutral-400 group-hover:text-[#b87414]'
                     }`} />
                   </Link>
 
-                  <span className={`absolute bottom-0 left-0 h-[2px] bg-[#b87414] transition-all duration-300 rounded-full ${
-                    isDropdownOpen || isActive ? 'w-full' : 'w-0'
-                  }`} />
-
                   {/* ======================================================= */}
-                  {/* LUXURY CENTERED MEGA MENU PANEL                         */}
+                  {/* SLEEK, BALANCED LUXURY DROPDOWN CARD                    */}
                   {/* ======================================================= */}
                   {isDropdownOpen && (
                     <div
-                      className="absolute top-full left-1/2 -translate-x-1/2 w-[840px] xl:w-[920px] max-w-[96vw] bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] border border-[#eae7e2] p-6 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className={`absolute top-full mt-1.5 ${dropdownAlignmentClass} max-w-[calc(100vw-2rem)] bg-white/98 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.05)] border border-[#eae7e2] p-4 sm:p-5 z-50 animate-in fade-in zoom-in-98 duration-200`}
                       onMouseEnter={() => handleMouseEnterItem(item.slug)}
                       onMouseLeave={handleMouseLeaveItem}
                     >
-                      <div className="flex gap-7">
-                        
-                        {/* Left / Middle: Subcategories Grid (2 Columns) */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#eae7e2]">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#141414]">
-                                {item.name} Collections
-                              </span>
-                              <span className="text-[10px] font-mono text-[#8c827a] px-2 py-0.5 rounded-full bg-[#f7f5f2] border border-[#eae7e2]">
-                                {item.children?.length} categories
-                              </span>
-                            </div>
-                            <Link
-                              href={item.href}
-                              onClick={closeDropdownImmediately}
-                              className="text-[11px] font-bold text-[#b87414] hover:text-[#965b0b] flex items-center gap-1 transition-colors normal-case tracking-normal"
-                            >
-                              <span>Explore All {item.name}</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </Link>
-                          </div>
+                      {/* Invisible Hover Bridge to ensure zero cursor disconnect */}
+                      <div className="absolute -top-3.5 left-0 right-0 h-4 bg-transparent pointer-events-auto" />
 
-                          <div className="grid grid-cols-2 gap-2.5">
-                            {item.children?.map((child) => (
+                      <div className="flex gap-4 sm:gap-5">
+                        
+                        {/* Left / Main Section: Subcategories List */}
+                        <div className="flex-1 min-w-0 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[#eae7e2]">
+                              <span className="text-[10.5px] font-black uppercase tracking-[0.16em] text-[#141414]">
+                                {item.name} Categories
+                              </span>
                               <Link
-                                key={child.slug}
-                                href={child.href}
+                                href={item.href}
                                 onClick={closeDropdownImmediately}
-                                className="group flex items-center gap-3.5 p-2.5 rounded-2xl bg-[#faf8f5]/60 hover:bg-[#f7f5f2] border border-[#eae7e2]/70 hover:border-[#b87414]/30 hover:shadow-xs transition-all duration-200"
+                                className="text-[11px] font-bold text-[#b87414] hover:text-[#965b0b] flex items-center gap-1 transition-colors normal-case tracking-normal"
                               >
-                                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-[#eae7e2]">
-                                  <ExternalImage
-                                    src={child.image}
-                                    alt={child.name}
-                                    fill
-                                    sizes="56px"
-                                    className="object-cover group-hover:scale-108 transition-transform duration-300"
-                                  />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1.5">
-                                    <h4 className="font-bold text-xs text-[#141414] group-hover:text-[#b87414] transition-colors truncate">
-                                      {child.name}
-                                    </h4>
-                                    <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-md bg-white text-[#b87414] font-black border border-[#eae7e2] shrink-0">
-                                      {child.tag}
-                                    </span>
+                                <span>Explore All</span>
+                                <ArrowRight className="w-3 h-3" />
+                              </Link>
+                            </div>
+
+                            <div className="space-y-1">
+                              {item.children?.map((child) => (
+                                <Link
+                                  key={child.slug}
+                                  href={child.href}
+                                  onClick={closeDropdownImmediately}
+                                  className="group flex items-center gap-3 p-2 rounded-xl hover:bg-[#faf8f5] border border-transparent hover:border-[#eae7e2] transition-all duration-200"
+                                >
+                                  <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-[#eae7e2]">
+                                    <ExternalImage
+                                      src={child.image}
+                                      alt={child.name}
+                                      fill
+                                      sizes="40px"
+                                      className="object-cover group-hover:scale-108 transition-transform duration-300"
+                                    />
                                   </div>
-                                  <p className="text-[10.5px] text-[#6b6b6b] truncate mt-1">
-                                    {child.subtitle}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-1">
+                                      <h4 className="font-bold text-xs text-[#141414] group-hover:text-[#b87414] transition-colors truncate">
+                                        {child.name}
+                                      </h4>
+                                      <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-md bg-[#f6f4f0] group-hover:bg-amber-100/60 text-[#8c827a] group-hover:text-[#b87414] font-bold shrink-0 transition-colors">
+                                        {child.tag}
+                                      </span>
+                                    </div>
+                                    <p className="text-[10px] text-[#8c827a] truncate mt-0.5">
+                                      {child.subtitle}
+                                    </p>
+                                  </div>
+                                  <ChevronRight className="w-3.5 h-3.5 text-neutral-300 group-hover:text-[#b87414] group-hover:translate-x-0.5 transition-all shrink-0" />
+                                </Link>
+                              ))}
+
+                              {/* Special fragrance scent notes callout to balance the card */}
+                              {item.slug === 'fragrances' && (
+                                <div className="mt-2 p-2.5 rounded-xl bg-gradient-to-r from-amber-500/5 via-amber-500/10 to-transparent border border-amber-500/20 text-[10px] text-[#8c827a] space-y-1">
+                                  <span className="font-bold text-[#b87414] uppercase tracking-wider block">
+                                    ✦ Scent Profiles
+                                  </span>
+                                  <p className="line-clamp-2">
+                                    Rich Oriental Musks, Citrus Bergamot Top Notes &amp; Long-Lasting Warm Woody Amber.
                                   </p>
                                 </div>
-                              </Link>
-                            ))}
+                              )}
+                            </div>
                           </div>
 
-                          {/* Reassurance strip inside mega menu */}
-                          <div className="mt-5 pt-3.5 border-t border-[#eae7e2] flex items-center justify-between text-[10.5px] text-[#6b6b6b] font-medium">
-                            <span className="flex items-center gap-1.5">
-                              <Truck className="w-3.5 h-3.5 text-[#b87414]" />
-                              <span>Flat Rs. 100 Express Nationwide Shipping</span>
+                          {/* Reassurance strip at bottom */}
+                          <div className="mt-3 pt-2.5 border-t border-[#eae7e2]/70 flex items-center justify-between text-[10px] text-[#8c827a] font-medium">
+                            <span className="flex items-center gap-1">
+                              <Truck className="w-3 h-3 text-[#b87414]" />
+                              <span>Flat Rs. 100 Express Delivery</span>
                             </span>
-                            <span className="flex items-center gap-1.5">
-                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>100% Authentic Quality Guaranteed</span>
+                            <span className="flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                              <span>Cash on Delivery</span>
                             </span>
                           </div>
                         </div>
 
                         {/* Right: Editorial Spotlight Feature Card */}
                         {item.spotlight && (
-                          <div className="w-[260px] shrink-0">
+                          <div className="w-[170px] sm:w-[190px] shrink-0">
                             <Link
                               href={item.spotlight.href}
                               onClick={closeDropdownImmediately}
-                              className="group/spotlight relative block w-full h-full min-h-[220px] rounded-2xl overflow-hidden border border-[#eae7e2] shadow-sm hover:shadow-md transition-all"
+                              className="group/spotlight relative flex flex-col justify-end w-full h-full min-h-[220px] rounded-xl overflow-hidden border border-[#eae7e2] shadow-2xs hover:shadow-md transition-all p-3 text-white"
                             >
                               <ExternalImage
                                 src={item.spotlight.image}
                                 alt={item.spotlight.title}
                                 fill
-                                sizes="260px"
+                                sizes="190px"
                                 className="object-cover group-hover/spotlight:scale-106 transition-transform duration-500"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
                               
-                              <div className="absolute top-3 left-3">
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-sm">
+                              <div className="relative z-10 space-y-1">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8.5px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-2xs">
                                   <Sparkles className="w-2.5 h-2.5" />
                                   {item.spotlight.tag}
                                 </span>
-                              </div>
-
-                              <div className="absolute bottom-3.5 left-3.5 right-3.5 space-y-1 text-white">
-                                <h5 className="font-bold text-xs tracking-tight line-clamp-1 group-hover/spotlight:text-amber-300 transition-colors">
+                                <h5 className="font-bold text-[11.5px] tracking-tight line-clamp-2 leading-tight group-hover/spotlight:text-amber-300 transition-colors">
                                   {item.spotlight.title}
                                 </h5>
-                                <p className="text-[10px] text-neutral-300 line-clamp-2 leading-tight">
-                                  {item.spotlight.description}
-                                </p>
-                                <div className="pt-1.5 flex items-center gap-1 text-[10.5px] font-bold text-amber-300 group-hover/spotlight:underline">
-                                  <span>Shop Collection</span>
+                                <div className="pt-1 flex items-center gap-1 text-[10px] font-bold text-amber-300 group-hover/spotlight:underline">
+                                  <span>Shop Now</span>
                                   <ArrowRight className="w-3 h-3 group-hover/spotlight:translate-x-1 transition-transform" />
                                 </div>
                               </div>
