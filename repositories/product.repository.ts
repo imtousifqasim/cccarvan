@@ -123,6 +123,104 @@ export class ProductRepository {
       } catch {}
     }
 
+    // 1. Try MySQL database first
+    try {
+      let sql = 'SELECT * FROM products WHERE is_published = 1';
+      const params: any[] = [];
+
+      if (isWinterCollection) {
+        sql += ` AND slug IN (${WINTER_COLLECTION_SLUGS.map(() => '?').join(', ')})`;
+        params.push(...WINTER_COLLECTION_SLUGS);
+      } else if (targetCategoryIds.length > 0) {
+        sql += ` AND category_id IN (${targetCategoryIds.map(() => '?').join(', ')})`;
+        params.push(...targetCategoryIds);
+      } else if (resolvedCategorySlug) {
+        sql += ' AND category_id = ?';
+        params.push(resolvedCategorySlug);
+      }
+
+      if (targetBrand) {
+        sql += ' AND brand_id = ?';
+        params.push(targetBrand.id);
+      }
+
+      if (filters.isBestDeal) sql += ' AND is_best_deal = 1';
+      if (filters.isNewArrival && !isNewArrivals) sql += ' AND is_new_arrival = 1';
+      if (filters.isFeatured) sql += ' AND is_featured = 1';
+      if (filters.isPopular) sql += ' AND is_popular = 1';
+
+      if (filters.search) {
+        sql += ' AND (name LIKE ? OR sku LIKE ?)';
+        params.push(`%${filters.search}%`, `%${filters.search}%`);
+      }
+
+      if (filters.minPrice !== undefined) {
+        sql += ' AND regular_price >= ?';
+        params.push(filters.minPrice);
+      }
+      if (filters.maxPrice !== undefined) {
+        sql += ' AND regular_price <= ?';
+        params.push(filters.maxPrice);
+      }
+
+      if (filters.sortBy === 'price_asc') sql += ' ORDER BY regular_price ASC';
+      else if (filters.sortBy === 'price_desc') sql += ' ORDER BY regular_price DESC';
+      else sql += ' ORDER BY created_at DESC';
+
+      const rows = await queryMysql<any>(sql, params);
+      if (rows && rows.length > 0) {
+        const categories = await this.getCategories();
+        const brands = await this.getBrands();
+
+        const productIds = rows.map(r => r.id);
+        const images = await queryMysql<any>(
+          `SELECT * FROM product_images WHERE product_id IN (${productIds.map(() => '?').join(', ')}) ORDER BY sort_order ASC`,
+          productIds
+        );
+        const variants = await queryMysql<any>(
+          `SELECT * FROM product_variants WHERE product_id IN (${productIds.map(() => '?').join(', ')})`,
+          productIds
+        );
+
+        const mappedProducts: Product[] = rows.map(p => {
+          const pImgs = images.filter(img => img.product_id === p.id).map(img => ({ ...img, is_primary: Boolean(img.is_primary) }));
+          const pVars = variants.filter(v => v.product_id === p.id);
+          const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
+          const brand = brands.find(b => b.id === p.brand_id || b.slug === p.brand_id);
+
+          return normalizeProductImages({
+            ...p,
+            regular_price: Number(p.regular_price),
+            sale_price: p.sale_price !== null ? Number(p.sale_price) : null,
+            cost_price: Number(p.cost_price || 0),
+            is_featured: Boolean(p.is_featured),
+            is_best_deal: Boolean(p.is_best_deal),
+            is_new_arrival: Boolean(p.is_new_arrival),
+            is_popular: Boolean(p.is_popular),
+            is_published: Boolean(p.is_published),
+            has_sizes: Boolean(p.has_sizes),
+            available_sizes: typeof p.available_sizes === 'string' ? JSON.parse(p.available_sizes) : p.available_sizes,
+            size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
+            size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
+            images: pImgs,
+            variants: pVars,
+            category,
+            brand,
+          });
+        });
+
+        const offset = filters.offset || 0;
+        const limit = filters.limit || 50;
+        return {
+          products: mappedProducts.slice(offset, offset + limit),
+          total: mappedProducts.length,
+        };
+      }
+    } catch {
+      // Continue to Supabase shard query
+    }
+
+    // 2. Try Supabase shards
     try {
       const shardProducts = await queryAcrossAllShards<Product>(async (supabase) => {
         let query = supabase
@@ -212,15 +310,19 @@ export class ProductRepository {
       // Fallback to in-memory/seed data
     }
 
-    // Fallback filter logic
+    // 3. Fallback to in-memory seed data
     let result = [...this.mockProducts];
 
-    if (targetCategory || resolvedCategorySlug || cleanCategorySlug) {
-      result = result.filter(p => 
-        (targetCategory && (p.category_id === targetCategory.id || p.category?.id === targetCategory.id)) ||
-        (resolvedCategorySlug && p.category?.slug?.toLowerCase() === resolvedCategorySlug) ||
-        (cleanCategorySlug && p.category?.slug?.toLowerCase() === cleanCategorySlug)
-      );
+    if (isWinterCollection) {
+      result = result.filter(p => WINTER_COLLECTION_SLUGS.includes(p.slug));
+    } else if (targetCategory || resolvedCategorySlug || cleanCategorySlug) {
+      const matchSlug = targetCategory?.slug?.toLowerCase() || resolvedCategorySlug || cleanCategorySlug;
+      result = result.filter(p => {
+        if (targetCategory && (p.category_id === targetCategory.id || p.category?.id === targetCategory.id)) return true;
+        if (matchSlug && (p.category?.slug?.toLowerCase() === matchSlug || p.category_id === `cat-${matchSlug}` || p.category_id === matchSlug)) return true;
+        if (childCategorySlugs.length > 0 && childCategorySlugs.some(cs => p.category?.slug?.toLowerCase() === cs || p.category_id === `cat-${cs}` || p.category_id === cs)) return true;
+        return false;
+      });
     }
     if (targetBrand || filters.brandSlug) {
       const bSlug = filters.brandSlug?.toLowerCase();
@@ -281,6 +383,7 @@ export class ProductRepository {
       if (rows && rows.length > 0) {
         const p = rows[0];
         const images = await queryMysql<any>('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC', [p.id]);
+        const variants = await queryMysql<any>('SELECT * FROM product_variants WHERE product_id = ?', [p.id]);
         const categories = await this.getCategories();
         const brands = await this.getBrands();
         const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
@@ -301,6 +404,11 @@ export class ProductRepository {
           size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
           size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
           images: images.map((img: any) => ({ ...img, is_primary: Boolean(img.is_primary) })),
+          variants: variants.map((v: any) => ({
+            ...v,
+            price: Number(v.price),
+            attributes: typeof v.attributes === 'string' ? JSON.parse(v.attributes) : v.attributes,
+          })),
           category,
           brand,
         });
@@ -343,6 +451,7 @@ export class ProductRepository {
       if (rows && rows.length > 0) {
         const p = rows[0];
         const images = await queryMysql<any>('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC', [p.id]);
+        const variants = await queryMysql<any>('SELECT * FROM product_variants WHERE product_id = ?', [p.id]);
         const categories = await this.getCategories();
         const brands = await this.getBrands();
         const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
@@ -363,6 +472,11 @@ export class ProductRepository {
           size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
           size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
           images: images.map((img: any) => ({ ...img, is_primary: Boolean(img.is_primary) })),
+          variants: variants.map((v: any) => ({
+            ...v,
+            price: Number(v.price),
+            attributes: typeof v.attributes === 'string' ? JSON.parse(v.attributes) : v.attributes,
+          })),
           category,
           brand,
         });
