@@ -152,19 +152,57 @@ export function Footer() {
           {/* Column 3: Categories */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-white mb-5 font-sans">
-              Couture Collections
+              Store Collections
             </h3>
-            <ul className="space-y-3 text-xs text-neutral-300 font-sans">
-              {SEED_CATEGORIES.map(cat => (
-                <li key={cat.id}>
-                  <Link href={`/category/${cat.slug}`} className="hover:text-white hover:underline transition">
-                    {cat.name}
-                  </Link>
-                </li>
-              ))}
+            <ul className="space-y-2.5 text-xs text-neutral-300 font-sans">
               <li>
-                <Link href="/products?isNewArrival=true" className="hover:text-[#d99026] transition">
-                  New Season 2026
+                <Link href="/category/men" className="hover:text-[#d99026] hover:underline transition font-semibold text-white">
+                  Men's Fashion & Suits
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/women" className="hover:text-[#d99026] hover:underline transition font-semibold text-white">
+                  Women's Suits & Abayas
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/men-winter-wear" className="hover:text-white hover:underline transition">
+                  Men's Winter Wear & Jackets
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/women-night-suits-pajamas" className="hover:text-white hover:underline transition">
+                  Women Night Suits & Pajamas
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/women-handbags" className="hover:text-white hover:underline transition">
+                  Leather Handbags & Purses
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/fragrances" className="hover:text-white hover:underline transition">
+                  Fragrances & Men's Perfumes
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/beauty-makeup" className="hover:text-white hover:underline transition">
+                  Beauty Deals & Skincare
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/watches-gadgets" className="hover:text-white hover:underline transition">
+                  Watches & Bluetooth Earbuds
+                </Link>
+              </li>
+              <li className="pt-1.5 border-t border-white/10">
+                <Link href="/category/winter-collection" className="text-[#d99026] font-bold hover:underline transition flex items-center gap-1">
+                  <span>Winter Collection 2026</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/new-arrivals" className="text-[#d99026] font-semibold hover:underline transition">
+                  New Season Arrivals
                 </Link>
               </li>
             </ul>

@@ -37,48 +37,79 @@ export interface ProductFilterOptions {
   sortBy?: 'newest' | 'price_asc' | 'price_desc' | 'popular' | 'rating';
   limit?: number;
   offset?: number;
+  collection?: string;
+  tag?: string;
 }
 
 export const CATEGORY_ALIASES: Record<string, string> = {
-  'pret': 'womens-unstitched-stitched-suits',
-  'ready-to-wear-pret': 'womens-unstitched-stitched-suits',
-  'festive': 'womens-unstitched-stitched-suits',
-  'festive-formals': 'womens-unstitched-stitched-suits',
-  'unstitched-luxury': 'womens-unstitched-stitched-suits',
-  'suits': 'womens-unstitched-stitched-suits',
-  'winter': 'winter-wear-shawls',
-  'shawls': 'winter-wear-shawls',
-  'menswear': 'mens-clothing',
-  'mens-wear': 'mens-clothing',
-  'wallets': 'mens-accessories-wallets',
-  'bags': 'womens-accessories-bags',
-  'fragrance': 'fragrance-perfumes',
-  'perfumes': 'fragrance-perfumes',
-  'wellness': 'health-fitness-wellness',
-  'bath': 'bath-personal-care',
-  'home': 'home-living',
-  'watches': 'luxury-watches',
-  'watch': 'luxury-watches',
-  'luxury-watches': 'luxury-watches',
+  'pret': 'women-unstitched-suits',
+  'ready-to-wear-pret': 'women-unstitched-suits',
+  'festive': 'women-unstitched-suits',
+  'festive-formals': 'women-unstitched-suits',
+  'unstitched-luxury': 'women-unstitched-suits',
+  'suits': 'women-unstitched-suits',
+  'womens-unstitched-stitched-suits': 'women-unstitched-suits',
+  'womens-nightwear-loungewear': 'women-night-suits-pajamas',
+  'nightwear': 'women-night-suits-pajamas',
+  'winter-wear-shawls': 'men-winter-wear',
+  'mens-clothing': 'men-winter-wear',
+  'menswear': 'men',
+  'mens-accessories-wallets': 'women-handbags',
+  'womens-accessories-bags': 'women-handbags',
+  'bags': 'women-handbags',
+  'fragrance-perfumes': 'mens-perfumes',
+  'fragrance': 'fragrances',
+  'perfumes': 'mens-perfumes',
+  'wellness': 'skincare',
+  'bath': 'skincare',
+  'bath-personal-care': 'skincare',
+  'health-fitness-wellness': 'skincare',
+  'home': 'women-night-suits-pajamas',
+  'home-living': 'women-night-suits-pajamas',
+  'watch': 'watches',
+  'luxury-watches': 'watches',
 };
+
+const WINTER_COLLECTION_SLUGS = [
+  'men-grey-cotton-sotton-unstitched-suit',
+  'men-fleece-printed-track-suit-grey',
+  'men-black-double-sided-stand-collar-jacket',
+  'men-fleece-pullover-hoodie-colorblock',
+  'women-cute-kulomi-fleece-pajamas-set'
+];
 
 export class ProductRepository {
   private static mockProducts: Product[] = SEED_PRODUCTS.map(normalizeProductImages);
 
   static async getProducts(filters: ProductFilterOptions = {}): Promise<{ products: Product[]; total: number }> {
     const cleanCategorySlug = filters.categorySlug?.toLowerCase().trim();
-    const resolvedCategorySlug = cleanCategorySlug ? (CATEGORY_ALIASES[cleanCategorySlug] || cleanCategorySlug) : undefined;
+    const isWinterCollection = cleanCategorySlug === 'winter-collection' || filters.collection === 'winter-collection' || filters.tag === 'winter-collection';
+    const isNewArrivals = cleanCategorySlug === 'new-arrivals' || filters.isNewArrival === true || filters.collection === 'new-arrivals';
+
+    const resolvedCategorySlug = cleanCategorySlug && !isWinterCollection && !isNewArrivals
+      ? (CATEGORY_ALIASES[cleanCategorySlug] || cleanCategorySlug)
+      : undefined;
     
-    // Resolve target category if slug is provided
+    // Resolve target category and its child categories if it's a parent
     let targetCategory: Category | undefined = undefined;
-    if (resolvedCategorySlug || cleanCategorySlug) {
+    let targetCategoryIds: string[] = [];
+    let childCategorySlugs: string[] = [];
+
+    if (resolvedCategorySlug) {
       try {
         const categories = await this.getCategories();
         targetCategory = categories.find(c => 
           c.slug.toLowerCase() === resolvedCategorySlug ||
-          c.slug.toLowerCase() === cleanCategorySlug ||
-          c.id === cleanCategorySlug
+          c.id === resolvedCategorySlug
         );
+        if (targetCategory) {
+          targetCategoryIds.push(targetCategory.id);
+          const children = categories.filter(c => c.parent_id === targetCategory!.id || c.parent_id === `cat-${targetCategory!.slug}`);
+          children.forEach(ch => {
+            targetCategoryIds.push(ch.id);
+            childCategorySlugs.push(ch.slug.toLowerCase());
+          });
+        }
       } catch {}
     }
 
@@ -92,95 +123,6 @@ export class ProductRepository {
       } catch {}
     }
 
-    // 1. Primary Query: Hostinger MySQL
-    try {
-      let sql = 'SELECT * FROM products WHERE is_published = 1';
-      const params: any[] = [];
-
-      if (targetCategory) {
-        sql += ' AND (category_id = ? OR category_id = ?)';
-        params.push(targetCategory.id, targetCategory.slug);
-      } else if (resolvedCategorySlug) {
-        sql += ' AND category_id = ?';
-        params.push(resolvedCategorySlug);
-      }
-
-      if (targetBrand) {
-        sql += ' AND (brand_id = ? OR brand_id = ?)';
-        params.push(targetBrand.id, targetBrand.slug);
-      }
-
-      if (filters.isBestDeal) sql += ' AND is_best_deal = 1';
-      if (filters.isNewArrival) sql += ' AND is_new_arrival = 1';
-      if (filters.isFeatured) sql += ' AND is_featured = 1';
-      if (filters.isPopular) sql += ' AND is_popular = 1';
-
-      if (filters.search) {
-        sql += ' AND (name LIKE ? OR sku LIKE ?)';
-        params.push(`%${filters.search}%`, `%${filters.search}%`);
-      }
-
-      if (filters.minPrice !== undefined) {
-        sql += ' AND regular_price >= ?';
-        params.push(filters.minPrice);
-      }
-      if (filters.maxPrice !== undefined) {
-        sql += ' AND regular_price <= ?';
-        params.push(filters.maxPrice);
-      }
-
-      if (filters.sortBy === 'price_asc') sql += ' ORDER BY regular_price ASC';
-      else if (filters.sortBy === 'price_desc') sql += ' ORDER BY regular_price DESC';
-      else sql += ' ORDER BY created_at DESC';
-
-      const rows = await queryMysql<any>(sql, params);
-      if (rows && rows.length > 0) {
-        const productIds = rows.map(r => r.id);
-        const images = await queryMysql<any>('SELECT * FROM product_images WHERE product_id IN (?) ORDER BY sort_order ASC', [productIds]);
-        const categories = await this.getCategories();
-        const brands = await this.getBrands();
-
-        const fullProducts: Product[] = rows.map(p => {
-          const prodImages = images
-            .filter((img: any) => img.product_id === p.id)
-            .map((img: any) => ({
-              ...img,
-              is_primary: Boolean(img.is_primary),
-            }));
-          const category = categories.find(c => c.id === p.category_id || c.slug === p.category_id);
-          const brand = brands.find(b => b.id === p.brand_id || b.slug === p.brand_id);
-
-          return normalizeProductImages({
-            ...p,
-            regular_price: Number(p.regular_price),
-            sale_price: p.sale_price !== null ? Number(p.sale_price) : null,
-            cost_price: Number(p.cost_price || 0),
-            is_featured: Boolean(p.is_featured),
-            is_best_deal: Boolean(p.is_best_deal),
-            is_new_arrival: Boolean(p.is_new_arrival),
-            is_popular: Boolean(p.is_popular),
-            is_published: Boolean(p.is_published),
-            has_sizes: Boolean(p.has_sizes),
-            available_sizes: typeof p.available_sizes === 'string' ? JSON.parse(p.available_sizes) : p.available_sizes,
-            size_chart: typeof p.size_chart === 'string' ? JSON.parse(p.size_chart) : p.size_chart,
-            size_stock: typeof p.size_stock === 'string' ? JSON.parse(p.size_stock) : p.size_stock,
-            images: prodImages,
-            category,
-            brand,
-          });
-        });
-
-        const offset = filters.offset || 0;
-        const limit = filters.limit || 50;
-        return {
-          products: fullProducts.slice(offset, offset + limit),
-          total: fullProducts.length,
-        };
-      }
-    } catch (mysqlErr) {
-      console.warn('MySQL getProducts error, falling back:', mysqlErr);
-    }
-
     try {
       const shardProducts = await queryAcrossAllShards<Product>(async (supabase) => {
         let query = supabase
@@ -189,12 +131,15 @@ export class ProductRepository {
             *,
             category:categories(*),
             brand:brands(*),
-            images:product_images(*)
+            images:product_images(*),
+            variants:product_variants(*)
           `, { count: 'exact' })
           .eq('is_published', true);
 
-        if (targetCategory) {
-          query = query.eq('category_id', targetCategory.id);
+        if (isWinterCollection) {
+          // Handled post-fetch for exact 5 pieces
+        } else if (targetCategoryIds.length > 0) {
+          query = query.in('category_id', targetCategoryIds);
         } else if (resolvedCategorySlug) {
           query = query.eq('category_id', resolvedCategorySlug);
         }
@@ -204,7 +149,7 @@ export class ProductRepository {
         }
 
         if (filters.isBestDeal) query = query.eq('is_best_deal', true);
-        if (filters.isNewArrival) query = query.eq('is_new_arrival', true);
+        if (filters.isNewArrival && !isNewArrivals) query = query.eq('is_new_arrival', true);
         if (filters.isFeatured) query = query.eq('is_featured', true);
         if (filters.isPopular) query = query.eq('is_popular', true);
 
@@ -228,12 +173,19 @@ export class ProductRepository {
         items.forEach(p => map.set(p.slug || p.id, normalizeProductImages(p)));
         let list = Array.from(map.values());
 
-        // Client-side category partition filter to guarantee zero leakage
-        if (targetCategory || resolvedCategorySlug || cleanCategorySlug) {
+        // Category filter
+        if (isWinterCollection) {
+          list = list.filter(p => WINTER_COLLECTION_SLUGS.includes(p.slug));
+        } else if (targetCategoryIds.length > 0) {
           list = list.filter(p => 
-            (targetCategory && (p.category_id === targetCategory.id || p.category?.id === targetCategory.id)) ||
-            (resolvedCategorySlug && p.category?.slug?.toLowerCase() === resolvedCategorySlug) ||
-            (cleanCategorySlug && p.category?.slug?.toLowerCase() === cleanCategorySlug)
+            targetCategoryIds.includes(p.category_id || '') ||
+            (p.category && targetCategoryIds.includes(p.category.id)) ||
+            (p.category?.slug && (p.category.slug === resolvedCategorySlug || childCategorySlugs.includes(p.category.slug.toLowerCase())))
+          );
+        } else if (resolvedCategorySlug) {
+          list = list.filter(p => 
+            p.category_id === resolvedCategorySlug ||
+            p.category?.slug?.toLowerCase() === resolvedCategorySlug
           );
         }
 
@@ -248,7 +200,7 @@ export class ProductRepository {
         return list;
       });
 
-      if (Array.isArray(shardProducts)) {
+      if (Array.isArray(shardProducts) && shardProducts.length > 0) {
         const offset = filters.offset || 0;
         const limit = filters.limit || 50;
         return {

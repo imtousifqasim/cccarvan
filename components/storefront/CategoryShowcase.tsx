@@ -10,6 +10,27 @@ interface CategoryShowcaseProps {
   categories: Category[];
 }
 
+const CATEGORY_DEFAULT_IMAGES: Record<string, string> = {
+  'men': '/products/men-grey-cotton-sotton-suit-1.webp',
+  'men-unstitched-suits': '/products/men-grey-cotton-sotton-suit-1.webp',
+  'men-winter-wear': '/products/men-fleece-printed-track-suit-grey-1.webp',
+  'men-footwear': '/products/men-rexine-sandals-mustard-1.webp',
+  'women': '/products/beige-katan-silk-3piece-suit-1.webp',
+  'women-unstitched-suits': '/products/beige-katan-silk-3piece-suit-1.webp',
+  'women-night-suits-pajamas': '/products/grey-printed-women-night-suit-1.webp',
+  'women-abayas': '/products/flared-georgette-abaya-puff-sleeves-1.webp',
+  'women-handbags': '/products/women-brown-leather-top-handle-handbag-1.webp',
+  'women-footwear': '/products/black-slip-on-sneakers-women-1.webp',
+  'fragrances': '/products/j-janan-musk-edp-perfume-men-1.webp',
+  'mens-perfumes': '/products/j-janan-musk-edp-perfume-men-1.webp',
+  'beauty-makeup': '/products/zk-3in1-glow-bundle-whitening-soap-1.webp',
+  'beauty-skincare': '/products/zk-3in1-glow-bundle-whitening-soap-1.webp',
+  'beauty-makeup-items': '/products/9in1-complete-makeup-deal-bundle-1.webp',
+  'watches-gadgets': '/products/women-slim-classy-dial-watch-1.webp',
+  'watches': '/products/women-slim-classy-dial-watch-1.webp',
+  'earbuds-airpods': '/products/airpods-m04-wireless-earbuds-1.webp',
+};
+
 export function CategoryShowcase({ categories }: CategoryShowcaseProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -196,7 +217,7 @@ export function CategoryShowcase({ categories }: CategoryShowcaseProps) {
                 {/* Image Container with high vibrancy and subtle zoom */}
                 <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full overflow-hidden bg-[#ebe7e1]">
                   <ExternalImage
-                    src={cat.image_url}
+                    src={cat.image_url || CATEGORY_DEFAULT_IMAGES[cat.slug] || '/products/men-grey-cotton-sotton-suit-1.webp'}
                     alt={cat.name}
                     fill
                     className="object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"

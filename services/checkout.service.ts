@@ -74,18 +74,30 @@ export class CheckoutService {
       const itemSubtotal = activePrice * item.quantity;
       subtotal += itemSubtotal;
 
-      const sizeLabel = item.size ? ` (Size: ${item.size})` : '';
+      const variantParts = [
+        item.size ? `Size: ${item.size}` : '',
+        item.color ? `Color: ${item.color}` : ''
+      ].filter(Boolean);
+      const variantSuffix = variantParts.length > 0 ? ` (${variantParts.join(' • ')})` : '';
+
+      const skuSuffix = [
+        item.size ? item.size.replace(/\s+/g, '') : '',
+        item.color ? item.color.toUpperCase().slice(0, 3) : ''
+      ].filter(Boolean).join('-');
 
       validatedItems.push({
         productId: product.id,
-        productName: `${product.name}${sizeLabel}`,
-        sku: item.size ? `${product.sku}-${item.size}` : product.sku,
+        productName: `${product.name}${variantSuffix}`,
+        sku: skuSuffix ? `${product.sku}-${skuSuffix}` : product.sku,
         unitPrice: activePrice,
         quantity: item.quantity,
         subtotal: itemSubtotal,
         imageUrl: product.images?.[0]?.image_url || null,
         selected_size: item.size || null,
-        attributes: item.size ? { size: item.size, ...(item.color ? { color: item.color } : {}) } : (item.color ? { color: item.color } : null),
+        attributes: {
+          ...(item.size ? { size: item.size } : {}),
+          ...(item.color ? { color: item.color } : {})
+        },
       });
     }
 

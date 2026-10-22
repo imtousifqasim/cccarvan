@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const priceFormatted = `PKR ${(product.sale_price ?? product.regular_price).toLocaleString()}`;
 
   return {
-    title: product.name,
-    description: `${rawDescription.slice(0, 150)}... ${priceFormatted}. Nationwide white-glove delivery across Pakistan.`,
+    title: product.seo_title || product.name,
+    description: product.seo_description || `${rawDescription.slice(0, 150)}... ${priceFormatted}. Nationwide white-glove delivery across Pakistan.`,
     alternates: {
       canonical: canonicalUrl,
     },

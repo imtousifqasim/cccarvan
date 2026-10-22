@@ -7,6 +7,8 @@ import { ProductCard } from '@/components/storefront/ProductCard';
 import { Compass, ArrowUpDown, ChevronRight, Sparkles } from 'lucide-react';
 import { resolveHighResImageUrl } from '@/lib/image-resolver';
 
+import { Category } from '@/types/database';
+
 interface CategoryPageProps {
   params: Promise<{
     slug: string;
@@ -18,11 +20,39 @@ interface CategoryPageProps {
 
 export const dynamic = 'force-dynamic';
 
+const DYNAMIC_COLLECTIONS: Record<string, Category> = {
+  'winter-collection': {
+    id: 'dyn-winter-collection',
+    name: 'Winter Collection',
+    slug: 'winter-collection',
+    description: 'Embrace Pakistan’s winter chill in luxurious comfort with our curated Winter Collection. Featuring thermal fleece tracksuits, breathable cotton sotton suits, double-sided stand-collar sports jackets, and cozy coral fleece sleepwear, each piece offers effortless warmth, modern tailoring, and exceptional durability across all winter occasions.',
+    image_url: '/products/men-grey-cotton-sotton-suit-1.webp',
+    parent_id: null,
+    sort_order: 99,
+    is_active: true,
+    seo_title: 'Winter Collection 2026 Pakistan | Warm Apparel & Suits | CC Carvan',
+    seo_description: 'Explore CC Carvan’s exclusive Winter Collection in Pakistan. Featuring thermal fleece tracksuits, cotton sotton suits, bomber jackets, and cozy fleece pajamas.',
+  },
+  'new-arrivals': {
+    id: 'dyn-new-arrivals',
+    name: 'New Arrivals',
+    slug: 'new-arrivals',
+    description: 'Explore the newest seasonal drops at CC Carvan, featuring our latest unstitched luxury suits, contemporary casual winterwear, signature fragrances, elegant georgette abayas, and daily lifestyle essentials. Every piece reflects modern Pakistani aesthetics, heirloom craftsmanship, and nationwide delivery with reliable cash on delivery.',
+    image_url: '/products/beige-katan-silk-3piece-suit-1.webp',
+    parent_id: null,
+    sort_order: 100,
+    is_active: true,
+    seo_title: 'New Arrivals 2026 | Latest Pakistani Fashion & Lifestyle | CC Carvan',
+    seo_description: 'Discover CC Carvan’s latest new arrivals in Pakistan. Shop trending unstitched suits, festive silk, fragrances, abayas, and smart gadgets with nationwide COD.',
+  },
+};
+
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const canonicalSlug = CATEGORY_ALIASES[slug.toLowerCase()] || slug;
+  const cleanSlug = slug.toLowerCase().trim();
+  const canonicalSlug = CATEGORY_ALIASES[cleanSlug] || cleanSlug;
   const categories = await ProductRepository.getCategories();
-  const category = categories.find((c) => c.slug === canonicalSlug || c.slug === slug);
+  const category = DYNAMIC_COLLECTIONS[cleanSlug] || categories.find((c) => c.slug === canonicalSlug || c.slug === slug);
 
   if (!category) {
     return {
@@ -33,19 +63,20 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   const categoryName = category.name;
   const categoryDesc =
+    category.seo_description ||
     category.description ||
-    `Explore CC Carvan's exclusive ${categoryName} collection. Discover master-tailored Pakistani unstitched suits, festive formals, and artisan couture with white-glove nationwide express delivery.`;
+    `Explore CC Carvan's exclusive ${categoryName} collection in Pakistan with nationwide express cash on delivery.`;
   const canonicalUrl = `https://cccarvan.com/category/${category.slug}`;
   const ogImage = resolveHighResImageUrl(category.image_url) || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop';
 
   return {
-    title: `${categoryName} Collection`,
+    title: category.seo_title || `${categoryName} Collection | CC Carvan`,
     description: categoryDesc,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${categoryName} Collection | CC Carvan`,
+      title: category.seo_title || `${categoryName} Collection | CC Carvan`,
       description: categoryDesc,
       url: canonicalUrl,
       siteName: 'CC Carvan',
@@ -61,7 +92,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${categoryName} Collection | CC Carvan`,
+      title: category.seo_title || `${categoryName} Collection | CC Carvan`,
       description: categoryDesc,
       images: [ogImage],
     },
@@ -87,7 +118,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     }),
   ]);
 
-  const currentCategory = categories.find((c) => c.slug === slug);
+  const currentCategory = DYNAMIC_COLLECTIONS[cleanSlug] || categories.find((c) => c.slug === slug);
 
   if (!currentCategory) {
     notFound();

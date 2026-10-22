@@ -14,105 +14,196 @@ import {
   X, 
   ChevronDown, 
   ArrowRight,
-  Layers,
-  Compass,
   LogOut,
   Loader2,
-  Tag
+  Tag,
+  ChevronRight
 } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useCustomer } from '@/components/providers/CustomerProvider';
 import { ExternalImage } from '@/components/media/ExternalImage';
 
-const MEGA_CATEGORIES = [
+interface NavCategory {
+  name: string;
+  slug: string;
+  href: string;
+  children?: {
+    name: string;
+    slug: string;
+    href: string;
+    subtitle: string;
+    image: string;
+    tag: string;
+  }[];
+}
+
+const NAVIGATION_ITEMS: NavCategory[] = [
   {
-    name: "Women's Suits",
-    slug: 'womens-unstitched-stitched-suits',
-    subtitle: 'Organza Sequins & Stitched Lawn Pret',
-    image: 'https://i.postimg.cc/8Tj1P085/Whats-App-Image-2026-09-19-at-10-02-48-PM.jpg',
-    tag: 'Suits',
+    name: 'Home',
+    slug: 'home',
+    href: '/',
   },
   {
-    name: "Women's Nightwear",
-    slug: 'womens-nightwear-loungewear',
-    subtitle: 'Soft Combed Jersey Loungewear Sets',
-    image: 'https://i.postimg.cc/zz5wrWL3/Whats-App-Image-2026-09-19-at-11-33-05-PM.jpg',
-    tag: 'Loungewear',
+    name: 'Men',
+    slug: 'men',
+    href: '/category/men',
+    children: [
+      {
+        name: 'Unstitched Suits',
+        slug: 'men-unstitched-suits',
+        href: '/category/men-unstitched-suits',
+        subtitle: 'Cotton Sotton & Wash & Wear 4m cuts',
+        image: '/products/men-grey-cotton-sotton-suit-1.webp',
+        tag: 'Suits',
+      },
+      {
+        name: 'Winter Wear',
+        slug: 'men-winter-wear',
+        href: '/category/men-winter-wear',
+        subtitle: 'Thermal fleece tracksuits, hoodies & jackets',
+        image: '/products/men-fleece-printed-track-suit-grey-1.webp',
+        tag: 'Warm',
+      },
+      {
+        name: 'Footwear',
+        slug: 'men-footwear',
+        href: '/category/men-footwear',
+        subtitle: 'Rexine semi-formal cushioned sandals',
+        image: '/products/men-rexine-sandals-mustard-1.webp',
+        tag: 'Shoes',
+      },
+    ],
   },
   {
-    name: "Men's Clothing",
-    slug: 'mens-clothing',
-    subtitle: 'Casual Full-Zip Winter Bomber Jackets',
-    image: 'https://i.postimg.cc/nZ9VJ5JK/Whats-App-Image-2026-09-19-at-11-13-37-PM.jpg',
-    tag: 'Outerwear',
+    name: 'Women',
+    slug: 'women',
+    href: '/category/women',
+    children: [
+      {
+        name: 'Unstitched Suits',
+        slug: 'women-unstitched-suits',
+        href: '/category/women-unstitched-suits',
+        subtitle: 'Beige katan silk 3-piece suites with net dupatta',
+        image: '/products/beige-katan-silk-3piece-suit-1.webp',
+        tag: 'Suits',
+      },
+      {
+        name: 'Night Suits & Pajamas',
+        slug: 'women-night-suits-pajamas',
+        href: '/category/women-night-suits-pajamas',
+        subtitle: 'Soft jersey loungewear & Kulomi fleece sets',
+        image: '/products/grey-printed-women-night-suit-1.webp',
+        tag: 'Lounge',
+      },
+      {
+        name: 'Abayas',
+        slug: 'women-abayas',
+        href: '/category/women-abayas',
+        subtitle: 'Flared georgette maxi abayas with stoller',
+        image: '/products/flared-georgette-abaya-puff-sleeves-1.webp',
+        tag: 'Modest',
+      },
+      {
+        name: 'Handbags',
+        slug: 'women-handbags',
+        href: '/category/women-handbags',
+        subtitle: 'Brown leather top handle & pom pom charm bags',
+        image: '/products/women-brown-leather-top-handle-handbag-1.webp',
+        tag: 'Bags',
+      },
+      {
+        name: 'Footwear',
+        slug: 'women-footwear',
+        href: '/category/women-footwear',
+        subtitle: 'Rexine slip-on sneakers & pumps',
+        image: '/products/black-slip-on-sneakers-women-1.webp',
+        tag: 'Shoes',
+      },
+    ],
   },
   {
-    name: "Men's Wallets",
-    slug: 'mens-accessories-wallets',
-    subtitle: 'Continental Long & Checkered Bifolds',
-    image: 'https://i.postimg.cc/Zm2ZVcdY/Whats-App-Image-2026-09-19-at-11-16-46-PM-(1).jpg',
-    tag: 'Wallets',
+    name: 'Fragrances',
+    slug: 'fragrances',
+    href: '/category/fragrances',
+    children: [
+      {
+        name: "Men's Perfumes",
+        slug: 'mens-perfumes',
+        href: '/category/mens-perfumes',
+        subtitle: 'J. Janan Musk EDP & Citrus Floral EDT 100ml',
+        image: '/products/j-janan-musk-edp-perfume-men-1.webp',
+        tag: 'Perfumes',
+      },
+    ],
   },
   {
-    name: "Women's Bags",
-    slug: 'womens-accessories-bags',
-    subtitle: 'Minimalist Vegan Leather Shoulder Bags',
-    image: 'https://i.postimg.cc/JmVvsdX5/Whats-App-Image-2026-09-19-at-11-32-39-PM.jpg',
-    tag: 'Bags',
+    name: 'Beauty & Makeup',
+    slug: 'beauty-makeup',
+    href: '/category/beauty-makeup',
+    children: [
+      {
+        name: 'Skincare',
+        slug: 'beauty-skincare',
+        href: '/category/beauty-skincare',
+        subtitle: 'ZK 3-in-1 glow soap, rose water & aloe gel bundle',
+        image: '/products/zk-3in1-glow-bundle-whitening-soap-1.webp',
+        tag: 'Glow',
+      },
+      {
+        name: 'Makeup',
+        slug: 'beauty-makeup-items',
+        href: '/category/beauty-makeup-items',
+        subtitle: '9-in-1 complete vanity makeup cosmetics deal',
+        image: '/products/9in1-complete-makeup-deal-bundle-1.webp',
+        tag: 'Deal',
+      },
+    ],
   },
   {
-    name: "Winter Wear / Shawls",
-    slug: 'winter-wear-shawls',
-    subtitle: 'Pure Warm Wool 3-Yard Shawls',
-    image: 'https://i.postimg.cc/hcgG1rkr/Whats-App-Image-2026-09-19-at-11-42-49-PM.jpg',
-    tag: 'Shawls',
+    name: 'Watches & Gadgets',
+    slug: 'watches-gadgets',
+    href: '/category/watches-gadgets',
+    children: [
+      {
+        name: 'Watches',
+        slug: 'watches',
+        href: '/category/watches',
+        subtitle: 'Slim classy dial bracelet watches with date function',
+        image: '/products/women-slim-classy-dial-watch-1.webp',
+        tag: 'Watches',
+      },
+      {
+        name: 'Earbuds & Airpods',
+        slug: 'earbuds-airpods',
+        href: '/category/earbuds-airpods',
+        subtitle: 'Airpods M04 Bluetooth earbuds in black and white',
+        image: '/products/airpods-m04-wireless-earbuds-1.webp',
+        tag: 'Audio',
+      },
+    ],
   },
   {
-    name: "Bath & Personal Care",
-    slug: 'bath-personal-care',
-    subtitle: 'Silicone Baby Brushes & Body Scrubbers',
-    image: 'https://i.postimg.cc/2z99j0DD/Whats-App-Image-2026-09-19-at-10-34-14-PM.jpg',
-    tag: 'Bath Care',
+    name: 'Winter Collection',
+    slug: 'winter-collection',
+    href: '/category/winter-collection',
   },
   {
-    name: "Home & Living",
-    slug: 'home-living',
-    subtitle: 'Quilted AC & Mattress Protectors',
-    image: 'https://i.postimg.cc/fz2Vr0mq/Whats-App-Image-2026-09-19-at-10-59-54-PM.jpg',
-    tag: 'Home',
-  },
-  {
-    name: "Health & Wellness",
-    slug: 'health-fitness-wellness',
-    subtitle: 'Adjustable Posture Support Braces',
-    image: 'https://i.postimg.cc/8Dx5fGHB/Whats-App-Image-2026-09-19-at-11-06-08-PM.jpg',
-    tag: 'Wellness',
-  },
-  {
-    name: "Fragrance & Perfumes",
-    slug: 'fragrance-perfumes',
-    subtitle: 'Citrus & Woody Long-Lasting Men EDPs',
-    image: 'https://i.postimg.cc/VfYs1Lzt/Whats-App-Image-2026-09-19-at-10-48-33-PM.jpg',
-    tag: 'Fragrance',
-  },
-  {
-    name: "Luxury Watches",
-    slug: 'luxury-watches',
-    subtitle: 'Rhinestone Quartz Chain Timepieces',
-    image: 'https://i.postimg.cc/TG87RLrM/Whats-App-Image-2026-09-22-at-10-33-57-PM.jpg',
-    tag: 'Watches',
+    name: 'New Arrivals',
+    slug: 'new-arrivals',
+    href: '/category/new-arrivals',
   },
 ];
 
 const TRENDING_SEARCHES = [
-  'Teal Majestique',
-  'Pink Organza Suit',
+  'Cotton Sotton',
+  'Katan Silk',
+  'Fleece Tracksuit',
+  'Janan Musk',
+  'Georgette Abaya',
+  'Airpods M04',
+  '9 in 1 Makeup',
   'Winter Jacket',
-  'Leather Wallet',
-  'Citrus Woody Perfume',
-  'Wool Shawl',
-  'Double Bed Mattress Cover',
 ];
 
 interface SearchProduct {
@@ -134,7 +225,7 @@ export function Header() {
   const pathname = usePathname();
   const { itemCount, openCartDrawer } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
-  const { customer, logout: logoutCustomer } = useCustomer();
+  const { customer } = useCustomer();
 
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -142,14 +233,21 @@ export function Header() {
   const [isSearching, setIsSearching] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
 
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [expandedMobileCategories, setExpandedMobileCategories] = useState<Record<string, boolean>>({
+    men: true,
+    women: false,
+    fragrances: false,
+    'beauty-makeup': false,
+    'watches-gadgets': false,
+  });
   const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const megaMenuTimeout = useRef<NodeJS.Timeout | null>(null);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -158,13 +256,13 @@ export function Header() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      if (megaMenuOpen) {
-        setMegaMenuOpen(false);
+      if (activeDropdown) {
+        setActiveDropdown(null);
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [megaMenuOpen]);
+  }, [activeDropdown]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -184,32 +282,22 @@ export function Header() {
 
   // Close menus on route change
   useEffect(() => {
-    setMegaMenuOpen(false);
+    setActiveDropdown(null);
     setMobileMenuOpen(false);
     setSearchFocused(false);
     setSearchQuery('');
   }, [pathname]);
 
-  // Handle escape key and cursor leaving the browser window
+  // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setMegaMenuOpen(false);
+        setActiveDropdown(null);
         setSearchFocused(false);
       }
     };
-    const handleWindowMouseLeave = (e: MouseEvent) => {
-      if (!e.relatedTarget && e.clientY <= 0) {
-        setMegaMenuOpen(false);
-      }
-    };
-
     window.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mouseleave', handleWindowMouseLeave);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mouseleave', handleWindowMouseLeave);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Handle outside clicks for search dropdown
@@ -273,21 +361,28 @@ export function Header() {
     }
   };
 
-  const handleMouseEnterMega = () => {
-    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
-    setMegaMenuOpen(true);
+  const handleMouseEnterItem = (slug: string) => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    setActiveDropdown(slug);
   };
 
-  const handleMouseLeaveMega = () => {
-    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
-    megaMenuTimeout.current = setTimeout(() => {
-      setMegaMenuOpen(false);
+  const handleMouseLeaveItem = () => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
     }, 150);
   };
 
-  const closeMegaImmediately = () => {
-    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
-    setMegaMenuOpen(false);
+  const closeDropdownImmediately = () => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    setActiveDropdown(null);
+  };
+
+  const toggleMobileCategory = (slug: string) => {
+    setExpandedMobileCategories((prev) => ({
+      ...prev,
+      [slug]: !prev[slug],
+    }));
   };
 
   return (
@@ -312,11 +407,11 @@ export function Header() {
             </button>
           </div>
 
-          {/* Logo & Reduced Focused Navigation Links */}
+          {/* Logo & Full Rebuilt Navigation Links */}
           <div className="flex items-center gap-5 xl:gap-8 min-w-0">
             <Link 
               href="/" 
-              onMouseEnter={closeMegaImmediately}
+              onMouseEnter={closeDropdownImmediately}
               className="flex items-center group py-1 shrink-0"
             >
               <img
@@ -326,105 +421,140 @@ export function Header() {
               />
             </Link>
 
-            {/* Reduced, clean navigation menus (NO OVERLAP) */}
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-[12px] font-semibold tracking-[0.12em] uppercase font-sans text-[#141414]">
-              {/* Mega-Menu Trigger */}
-              <div 
-                className="relative py-7"
-                onMouseEnter={handleMouseEnterMega}
-                onMouseOver={handleMouseEnterMega}
-                onMouseLeave={handleMouseLeaveMega}
-              >
-                <button 
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setMegaMenuOpen((prev) => !prev);
-                  }}
-                  onMouseEnter={handleMouseEnterMega}
-                  onMouseOver={handleMouseEnterMega}
-                  className={`inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    megaMenuOpen ? 'text-[#b87414]' : 'hover:text-[#b87414]'
-                  }`}
-                  aria-expanded={megaMenuOpen}
-                  aria-haspopup="true"
-                >
-                  <span>Collections</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${megaMenuOpen ? 'rotate-180 text-[#b87414]' : 'text-[#6b6b6b]'}`} />
-                </button>
+            {/* Desktop Navigation: Home | Men ▾ | Women ▾ | Fragrances | Beauty & Makeup ▾ | Watches & Gadgets ▾ | Winter Collection | New Arrivals */}
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 text-[12px] font-semibold tracking-[0.08em] uppercase font-sans text-[#141414]">
+              {NAVIGATION_ITEMS.map((item) => {
+                const hasChildren = Boolean(item.children && item.children.length > 0);
+                const isActive = pathname === item.href || (item.slug !== 'home' && pathname.includes(item.slug));
+                const isDropdownOpen = activeDropdown === item.slug;
 
-                <span className={`absolute bottom-5 left-0 h-[2px] bg-[#b87414] transition-all duration-300 rounded-full ${
-                  megaMenuOpen ? 'w-full' : 'w-0'
-                }`} />
-              </div>
+                if (!hasChildren) {
+                  return (
+                    <Link
+                      key={item.slug}
+                      href={item.href}
+                      onMouseEnter={closeDropdownImmediately}
+                      className={`relative py-7 transition-colors whitespace-nowrap hover:text-[#b87414] ${
+                        isActive ? 'text-[#b87414] font-bold' : ''
+                      }`}
+                    >
+                      <span>{item.name}</span>
+                      <span className={`absolute bottom-5 left-0 h-[2px] bg-[#b87414] transition-all duration-300 rounded-full ${
+                        isActive ? 'w-full' : 'w-0'
+                      }`} />
+                    </Link>
+                  );
+                }
 
-              <Link 
-                href="/category/womens-unstitched-stitched-suits" 
-                onMouseEnter={closeMegaImmediately}
-                className={`relative py-7 transition-colors hover:text-[#b87414] whitespace-nowrap ${
-                  pathname.includes('womens-unstitched-stitched-suits') ? 'text-[#b87414] font-bold' : ''
-                }`}
-              >
-                Women's Suits
-              </Link>
+                return (
+                  <div
+                    key={item.slug}
+                    className="relative py-7"
+                    onMouseEnter={() => handleMouseEnterItem(item.slug)}
+                    onMouseLeave={handleMouseLeaveItem}
+                  >
+                    <Link
+                      href={item.href}
+                      className={`inline-flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap hover:text-[#b87414] ${
+                        isDropdownOpen || isActive ? 'text-[#b87414] font-bold' : ''
+                      }`}
+                      aria-expanded={isDropdownOpen}
+                      aria-haspopup="true"
+                    >
+                      <span>{item.name}</span>
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                        isDropdownOpen ? 'rotate-180 text-[#b87414]' : 'text-[#6b6b6b]'
+                      }`} />
+                    </Link>
 
-              <Link 
-                href="/category/winter-wear-shawls" 
-                onMouseEnter={closeMegaImmediately}
-                className={`relative py-7 transition-colors hover:text-[#b87414] whitespace-nowrap ${
-                  pathname.includes('winter-wear-shawls') ? 'text-[#b87414] font-bold' : ''
-                }`}
-              >
-                Winter Shawls
-              </Link>
+                    <span className={`absolute bottom-5 left-0 h-[2px] bg-[#b87414] transition-all duration-300 rounded-full ${
+                      isDropdownOpen || isActive ? 'w-full' : 'w-0'
+                    }`} />
 
-              <Link 
-                href="/category/mens-clothing" 
-                onMouseEnter={closeMegaImmediately}
-                className={`relative py-7 transition-colors hover:text-[#b87414] whitespace-nowrap ${
-                  pathname.includes('mens-clothing') ? 'text-[#b87414] font-bold' : ''
-                }`}
-              >
-                Men's Wear
-              </Link>
+                    {/* Mega Dropdown Panel */}
+                    {isDropdownOpen && (
+                      <div
+                        className="absolute top-full left-0 min-w-[340px] max-w-[420px] bg-white rounded-2xl shadow-2xl border border-[#eae7e2] p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                        onMouseEnter={() => handleMouseEnterItem(item.slug)}
+                        onMouseLeave={handleMouseLeaveItem}
+                      >
+                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#eae7e2] px-2 text-[10px] uppercase font-bold tracking-wider text-[#8c827a]">
+                          <span>{item.name} Collections</span>
+                          <Link
+                            href={item.href}
+                            onClick={closeDropdownImmediately}
+                            className="text-[#b87414] hover:underline flex items-center gap-0.5 normal-case tracking-normal"
+                          >
+                            <span>View All</span>
+                            <ChevronRight className="w-3 h-3" />
+                          </Link>
+                        </div>
 
-              <Link 
-                href="/products?isBestDeal=true" 
-                onMouseEnter={closeMegaImmediately}
-                className={`relative py-7 inline-flex items-center gap-1 transition-colors whitespace-nowrap ${
-                  pathname === '/products?isBestDeal=true' ? 'text-[#b87414] font-bold' : 'hover:text-[#b87414]'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#b87414]" />
-                <span>Deals</span>
-              </Link>
+                        <div className="space-y-1">
+                          {item.children?.map((child) => (
+                            <Link
+                              key={child.slug}
+                              href={child.href}
+                              onClick={closeDropdownImmediately}
+                              className="group flex items-center gap-3 p-2 rounded-xl hover:bg-[#faf8f5] border border-transparent hover:border-[#eae7e2] transition-all"
+                            >
+                              <div className="relative w-11 h-11 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-[#eae7e2]">
+                                <ExternalImage
+                                  src={child.image}
+                                  alt={child.name}
+                                  fill
+                                  sizes="44px"
+                                  className="object-cover group-hover:scale-108 transition-transform duration-300"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-1">
+                                  <h4 className="font-semibold text-xs text-[#141414] group-hover:text-[#b87414] transition-colors truncate">
+                                    {child.name}
+                                  </h4>
+                                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-md bg-[#f7f5f2] text-[#b87414] font-bold border border-[#eae7e2] shrink-0">
+                                    {child.tag}
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-[#6b6b6b] truncate mt-0.5">
+                                  {child.subtitle}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
           </div>
 
-          {/* Prominent, Large Live Search Bar Directly in Header */}
+          {/* Prominent Search Bar Directly in Header */}
           <div 
             ref={searchContainerRef} 
-            onMouseEnter={closeMegaImmediately}
-            className="relative flex-1 max-w-md hidden md:block"
+            onMouseEnter={closeDropdownImmediately}
+            className="relative flex-1 max-w-xs xl:max-w-sm hidden md:block"
           >
             <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search velvet, lawn, pret, silk..."
+                placeholder="Search cotton suits, abayas, fragrances..."
                 value={searchQuery}
                 onFocus={() => setSearchFocused(true)}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setSearchFocused(true);
                 }}
-                className={`w-full h-11 pl-11 pr-9 text-xs rounded-full bg-[#f7f5f2] border transition-all duration-200 outline-none shadow-inner text-[#141414] placeholder-[#8c827a] ${
+                className={`w-full h-11 pl-10 pr-9 text-xs rounded-full bg-[#f7f5f2] border transition-all duration-200 outline-none text-[#141414] placeholder-[#8c827a] ${
                   searchFocused 
                     ? 'border-[#b87414] bg-white ring-2 ring-[#b87414]/15 shadow-sm' 
                     : 'border-[#eae7e2] hover:border-[#d4cfc7]'
                 }`}
               />
-              <Search className={`w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${
+              <Search className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors ${
                 searchFocused ? 'text-[#b87414]' : 'text-[#8c827a]'
               }`} />
               
@@ -435,7 +565,7 @@ export function Header() {
                     setSearchQuery('');
                     searchInputRef.current?.focus();
                   }}
-                  className="p-1 text-[#8c827a] hover:text-[#141414] absolute right-3.5 top-1/2 -translate-y-1/2"
+                  className="p-1 text-[#8c827a] hover:text-[#141414] absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -452,7 +582,7 @@ export function Header() {
                     <div className="p-8 text-center space-y-2">
                       <Loader2 className="w-5 h-5 text-[#b87414] animate-spin mx-auto" />
                       <p className="text-xs text-[#6b6b6b] font-medium">
-                        Searching couture archive...
+                        Searching collections...
                       </p>
                     </div>
                   )}
@@ -494,28 +624,12 @@ export function Header() {
                                   {product.category}
                                 </span>
                               )}
-                              {product.is_best_deal && (
-                                <span className="text-[9px] font-bold text-[#b87414] uppercase tracking-wider">
-                                  • Deal
-                                </span>
-                              )}
                             </div>
 
                             <div className="flex items-center gap-2 mt-1">
-                              {product.sale_price ? (
-                                <>
-                                  <span className="font-bold text-xs text-[#b87414]">
-                                    PKR {product.sale_price.toLocaleString()}
-                                  </span>
-                                  <span className="line-through text-[10px] text-neutral-400">
-                                    PKR {product.regular_price.toLocaleString()}
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="font-bold text-xs text-[#141414]">
-                                  PKR {product.regular_price.toLocaleString()}
-                                </span>
-                              )}
+                              <span className="font-bold text-xs text-[#141414]">
+                                Rs. {(product.sale_price || product.regular_price).toLocaleString()}
+                              </span>
                             </div>
                           </div>
 
@@ -532,10 +646,10 @@ export function Header() {
                         <Search className="w-5 h-5" />
                       </div>
                       <h4 className="font-semibold text-xs text-[#141414]">
-                        No pieces found for &ldquo;{searchQuery}&rdquo;
+                        No items found for &ldquo;{searchQuery}&rdquo;
                       </h4>
                       <p className="text-[11px] text-[#6b6b6b] max-w-xs mx-auto">
-                        Try searching for velvet, lawn, pret, or explore all couture collections.
+                        Try searching for cotton, abaya, perfume, or explore all collections.
                       </p>
                     </div>
                   )}
@@ -571,10 +685,10 @@ export function Header() {
                           <span>Quick Categories</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-xs">
-                          {MEGA_CATEGORIES.slice(0, 4).map((cat) => (
+                          {NAVIGATION_ITEMS.filter((i) => i.slug !== 'home').slice(0, 6).map((cat) => (
                             <Link
                               key={cat.slug}
-                              href={`/category/${cat.slug}`}
+                              href={cat.href}
                               onClick={() => setSearchFocused(false)}
                               className="p-2 rounded-xl bg-[#faf8f5] hover:bg-[#eae7e2] text-[#141414] font-medium flex items-center justify-between transition"
                             >
@@ -604,12 +718,11 @@ export function Header() {
             )}
           </div>
 
-          {/* Right Action Icons (Slide-over Cart Drawer Trigger) */}
+          {/* Right Action Icons */}
           <div 
-            onMouseEnter={closeMegaImmediately}
+            onMouseEnter={closeDropdownImmediately}
             className="flex items-center gap-1.5 sm:gap-3 shrink-0"
           >
-            
             {/* Mobile Search Button */}
             <button
               type="button"
@@ -634,7 +747,7 @@ export function Header() {
               )}
             </Link>
 
-            {/* Shopping Bag / Cart Drawer Button with Dynamic Badge Count */}
+            {/* Shopping Bag / Cart Drawer Button */}
             <button
               type="button"
               onClick={openCartDrawer}
@@ -664,109 +777,7 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mega Menu Backdrop (Closes menu instantly when mouse moves onto page) */}
-      {megaMenuOpen && (
-        <div
-          id="mega-menu-backdrop"
-          className="hidden lg:block fixed inset-0 top-20 sm:top-24 bg-black/20 backdrop-blur-[1px] z-30 transition-opacity animate-in fade-in duration-150"
-          onMouseEnter={closeMegaImmediately}
-          onMouseOver={closeMegaImmediately}
-          onClick={closeMegaImmediately}
-        />
-      )}
-
-      {/* Floating Mega Menu */}
-      {megaMenuOpen && (
-        <div
-          id="desktop-mega-menu"
-          className="hidden lg:block absolute top-full left-0 w-full bg-white/98 backdrop-blur-2xl border-b border-[#eae7e2] shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-top-2 z-40"
-          onMouseEnter={handleMouseEnterMega}
-          onMouseOver={handleMouseEnterMega}
-          onMouseLeave={handleMouseLeaveMega}
-        >
-          <div className="max-w-7xl mx-auto px-6 py-6">
-            <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-[#eae7e2]">
-              <div className="flex items-center gap-2.5">
-                <Compass className="w-4 h-4 text-[#b87414]" />
-                <span className="text-xs uppercase font-bold tracking-[0.25em] text-[#6b6b6b]">
-                  Curated Haute Couture Collections 2026
-                </span>
-              </div>
-              <Link 
-                href="/products" 
-                onClick={closeMegaImmediately}
-                className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-[#b87414] hover:text-[#d99026] transition"
-              >
-                <span>View Full Catalog</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-4 gap-3">
-              {MEGA_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  onClick={closeMegaImmediately}
-                  className="group flex items-center gap-3 p-2.5 rounded-xl bg-[#faf8f5] hover:bg-white border border-[#eae7e2] hover:border-[#b87414] hover:shadow-md transition-all duration-200"
-                >
-                  <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-200 shrink-0 border border-[#eae7e2]">
-                    <ExternalImage
-                      src={cat.image}
-                      alt={cat.name}
-                      fill
-                      sizes="48px"
-                      className="object-cover object-center group-hover:scale-108 transition-transform duration-500 ease-out"
-                    />
-                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1">
-                      <h4 className="font-serif text-xs font-bold text-[#141414] group-hover:text-[#b87414] transition-colors truncate">
-                        {cat.name}
-                      </h4>
-                      <ArrowRight className="w-3 h-3 text-[#b87414] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shrink-0" />
-                    </div>
-                    <p className="text-[10px] text-[#6b6b6b] line-clamp-1 mt-0.5 font-sans">
-                      {cat.subtitle}
-                    </p>
-                    <span className="inline-block mt-0.5 text-[8.5px] font-bold uppercase tracking-wider text-[#b87414]">
-                      {cat.tag}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-
-              {/* 12th card: Complete catalog card to complete the 4x3 grid */}
-              <Link
-                href="/products"
-                onClick={closeMegaImmediately}
-                className="group flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-br from-[#b87414]/10 via-[#b87414]/5 to-transparent hover:bg-[#b87414]/15 border border-[#b87414]/30 hover:border-[#b87414] hover:shadow-md transition-all duration-200"
-              >
-                <div className="w-12 h-12 rounded-lg bg-[#b87414] text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1">
-                    <h4 className="font-serif text-xs font-bold text-[#b87414]">
-                      All Collections
-                    </h4>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#b87414] group-hover:translate-x-1 transition-transform" />
-                  </div>
-                  <p className="text-[10px] text-[#6b6b6b] line-clamp-1 mt-0.5 font-sans">
-                    Explore all couture edits
-                  </p>
-                  <span className="inline-block mt-0.5 text-[8.5px] font-bold uppercase tracking-wider text-[#b87414]">
-                    Browse All Catalog →
-                  </span>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Luxury Mobile Slide-Over Drawer with Real-Time Search */}
+      {/* Luxury Mobile Slide-Over Drawer with Accordion Navigation */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden flex">
           {/* Backdrop */}
@@ -791,7 +802,7 @@ export function Header() {
                   <img
                     src="/logo.png"
                     alt="CC Carvan"
-                    className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs"
+                    className="h-14 w-auto object-contain drop-shadow-xs"
                   />
                 </Link>
 
@@ -810,7 +821,7 @@ export function Header() {
                 <form onSubmit={handleSearchSubmit} className="relative">
                   <input
                     type="text"
-                    placeholder="Search luxury suits, pret, lawn..."
+                    placeholder="Search suits, abayas, fragrances..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-9 py-2.5 text-xs bg-white border border-[#eae7e2] focus:border-[#b87414] focus:ring-1 focus:ring-[#b87414] rounded-xl text-[#141414] placeholder-[#8c827a] shadow-sm outline-none"
@@ -850,7 +861,7 @@ export function Header() {
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-semibold text-[#141414] truncate">{item.name}</p>
                               <span className="text-[11px] font-bold text-[#b87414]">
-                                PKR {(item.sale_price || item.regular_price).toLocaleString()}
+                                Rs. {(item.sale_price || item.regular_price).toLocaleString()}
                               </span>
                             </div>
                           </Link>
@@ -866,61 +877,125 @@ export function Header() {
                       </>
                     ) : (
                       <div className="p-3 text-center text-xs text-[#6b6b6b]">
-                        No matching couture pieces found.
+                        No matching pieces found.
                       </div>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* Navigation List */}
+              {/* Mobile Accordion Navigation List */}
               <nav className="space-y-4 font-sans">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#8c827a] mb-2 px-1">
-                    Couture Collections
+                    Store Categories
                   </div>
+                  
                   <div className="space-y-1.5">
+                    {/* Home Link */}
                     <Link
-                      href="/products"
+                      href="/"
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center justify-between p-3 rounded-2xl bg-white border border-[#eae7e2] text-[#141414] hover:border-[#b87414]/40 hover:shadow-sm text-xs font-bold transition-all"
                     >
-                      <span>All Collections</span>
+                      <span>Home</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#b87414]" />
                     </Link>
 
-                    {MEGA_CATEGORIES.map((cat) => (
-                      <Link
-                        key={cat.slug}
-                        href={`/category/${cat.slug}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-between p-2.5 rounded-2xl bg-white/70 hover:bg-white border border-[#eae7e2]/80 text-[#141414] hover:text-[#b87414] text-xs transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#b87414]/40" />
-                          <span className="font-semibold">{cat.name}</span>
+                    {/* Accordion parent categories */}
+                    {NAVIGATION_ITEMS.filter((i) => i.slug !== 'home').map((cat) => {
+                      const hasChildren = Boolean(cat.children && cat.children.length > 0);
+                      const isExpanded = expandedMobileCategories[cat.slug];
+
+                      if (!hasChildren) {
+                        return (
+                          <Link
+                            key={cat.slug}
+                            href={cat.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center justify-between p-3 rounded-2xl bg-white border border-[#eae7e2] text-[#141414] hover:text-[#b87414] text-xs font-bold transition-all"
+                          >
+                            <span>{cat.name}</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-[#b87414]" />
+                          </Link>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={cat.slug}
+                          className="rounded-2xl bg-white border border-[#eae7e2] overflow-hidden transition-all"
+                        >
+                          <div className="flex items-center justify-between p-3">
+                            <Link
+                              href={cat.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="text-xs font-bold text-[#141414] hover:text-[#b87414] flex-1"
+                            >
+                              {cat.name}
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleMobileCategory(cat.slug)}
+                              className="p-1 rounded-lg hover:bg-[#f7f5f2] text-[#6b6b6b] transition cursor-pointer"
+                              aria-label={`Toggle ${cat.name}`}
+                            >
+                              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                                isExpanded ? 'rotate-180 text-[#b87414]' : ''
+                              }`} />
+                            </button>
+                          </div>
+
+                          {/* Subcategory list */}
+                          {isExpanded && (
+                            <div className="px-3 pb-3 pt-1 space-y-1.5 border-t border-[#eae7e2]/70 bg-[#faf8f5]/60">
+                              <Link
+                                href={cat.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="block py-1.5 px-2 text-[11px] font-bold text-[#b87414] hover:underline"
+                              >
+                                View All {cat.name} →
+                              </Link>
+
+                              {cat.children?.map((sub) => (
+                                <Link
+                                  key={sub.slug}
+                                  href={sub.href}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-white border border-[#eae7e2]/70 text-xs text-[#141414] hover:text-[#b87414] transition"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#b87414]" />
+                                    <span className="font-medium">{sub.name}</span>
+                                  </div>
+                                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#f7f5f2] text-[#b87414] font-bold border border-[#eae7e2]">
+                                    {sub.tag}
+                                  </span>
+                                </Link>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                        <span className="text-[9px] uppercase px-2 py-0.5 rounded-full bg-[#faf8f5] text-[#b87414] border border-[#eae7e2] font-bold">
-                          {cat.tag}
-                        </span>
-                      </Link>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
+                {/* Quick Shortcuts */}
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#8c827a] mb-2 px-1">
-                    Privileges & Services
+                    Store Services
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Link
-                      href="/products?isBestDeal=true"
+                      href="/category/winter-collection"
                       onClick={() => setMobileMenuOpen(false)}
                       className="p-3 rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/25 text-[#141414] text-xs font-bold flex flex-col gap-1 hover:shadow-sm transition"
                     >
                       <Sparkles className="w-4 h-4 text-[#b87414]" />
-                      <span>Best Deals</span>
-                      <span className="text-[10px] text-[#b87414] font-medium">Limited Promos</span>
+                      <span>Winter Edit</span>
+                      <span className="text-[10px] text-[#b87414] font-medium">Seasonal Warmth</span>
                     </Link>
 
                     <button
@@ -929,7 +1004,7 @@ export function Header() {
                         setMobileMenuOpen(false);
                         openCartDrawer();
                       }}
-                      className="p-3 rounded-2xl bg-white border border-[#eae7e2] text-[#141414] text-xs font-bold flex flex-col gap-1 hover:shadow-sm transition text-left"
+                      className="p-3 rounded-2xl bg-white border border-[#eae7e2] text-[#141414] text-xs font-bold flex flex-col gap-1 hover:shadow-sm transition text-left cursor-pointer"
                     >
                       <ShoppingBag className="w-4 h-4 text-[#b87414]" />
                       <span>View Bag</span>
@@ -955,14 +1030,14 @@ export function Header() {
                     >
                       <Truck className="w-4 h-4 text-[#b87414]" />
                       <span>Track Order</span>
-                      <span className="text-[10px] text-neutral-500 font-medium">Live Status</span>
+                      <span className="text-[10px] text-neutral-500 font-medium">Live Dispatch</span>
                     </Link>
                   </div>
                 </div>
               </nav>
             </div>
 
-            {/* Bottom Concierge Card */}
+            {/* Bottom Account Card */}
             <div className="p-6 bg-white border-t border-[#eae7e2] space-y-3">
               <Link
                 href="/account"
@@ -970,10 +1045,10 @@ export function Header() {
                 className="w-full py-3 px-4 text-center font-bold text-xs uppercase tracking-wider rounded-2xl bg-[#141414] hover:bg-[#262626] text-white shadow-md flex items-center justify-center gap-2 transition"
               >
                 <User className="w-4 h-4 text-[#b87414]" />
-                <span>My Patron Account</span>
+                <span>My Customer Account</span>
               </Link>
               <p className="text-[9.5px] text-[#8c827a] text-center tracking-[0.2em] uppercase font-sans">
-                CC Carvan Atelier Lahore • Karachi • Islamabad
+                CC Carvan Pakistan • Nationwide Cash on Delivery
               </p>
             </div>
           </div>

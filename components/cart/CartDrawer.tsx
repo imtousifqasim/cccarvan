@@ -186,18 +186,18 @@ export function CartDrawer() {
               {/* Quick Collection Discovery Links */}
               <div className="w-full pt-2 grid grid-cols-2 gap-2 text-xs">
                 <Link
-                  href="/category/womens-unstitched-stitched-suits"
+                  href="/category/women-unstitched-suits"
                   onClick={closeCartDrawer}
                   className="p-2.5 rounded-xl bg-[#faf8f5] hover:bg-[#eae7e2] text-[#141414] font-bold text-center transition"
                 >
                   Women's Suits
                 </Link>
                 <Link
-                  href="/category/winter-wear-shawls"
+                  href="/category/winter-collection"
                   onClick={closeCartDrawer}
                   className="p-2.5 rounded-xl bg-[#faf8f5] hover:bg-[#eae7e2] text-[#141414] font-bold text-center transition"
                 >
-                  Winter Shawls
+                  Winter Collection
                 </Link>
               </div>
 

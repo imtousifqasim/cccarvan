@@ -38,283 +38,544 @@ interface SizeOption {
 interface RealProductOption {
   sizeLabel?: string;
   sizes?: { name: string; detail?: string }[];
-  colors?: { name: string; hex?: string }[];
+  colors?: { name: string; hex?: string; imageIndex?: number }[];
   colorName?: string;
+  badge?: string;
   hasSizeGuide?: boolean;
+  isClothing?: boolean;
+  boxItems?: string[];
 }
 
 function getProductRealOptions(product: Product): RealProductOption {
-  const name = (product.name || '').toLowerCase();
+  const slug = (product.slug || '').toLowerCase();
   const sku = (product.sku || '').toUpperCase();
-  const desc = (product.full_description || product.short_description || '').toLowerCase();
 
-  if (sku.includes('TEAL-MAJ') || name.includes('teal majestique')) {
+  // Product 1: Men Grey Cotton Sotton Suit
+  if (sku.includes('MEN-SOT-GRY') || slug.includes('men-grey-cotton-sotton')) {
     return {
-      sizeLabel: 'Available Stitched Sizes:',
-      sizes: [
-        { name: 'X-Small', detail: 'Chest 18" • L 48"' },
-        { name: 'Small', detail: 'Chest 19" • L 48"' },
-        { name: 'Medium', detail: 'Chest 20" • L 48"' },
-        { name: 'Large', detail: 'Chest 22" • L 48"' },
-        { name: 'X-Large', detail: 'Chest 24" • L 48"' },
-      ],
-      colorName: 'Teal Green',
-      hasSizeGuide: true,
-    };
-  }
-
-  if (sku.includes('JCK-MEN') || name.includes('zipper jacket') || name.includes('winter jacket')) {
-    return {
-      sizeLabel: 'Select Size:',
-      sizes: [
-        { name: 'S' },
-        { name: 'M' },
-        { name: 'L' },
-        { name: 'XL' },
-        { name: 'XXL' },
-        { name: 'XXXL' },
-      ],
-      colorName: 'Charcoal Black',
+      badge: 'Unstitched – 4 m (Shirt 2 m + Trouser 2 m)',
+      colorName: 'Grey',
+      isClothing: true,
       hasSizeGuide: false,
     };
   }
 
-  // 1. Dynamic product sizes if configured in database/admin
+  // Product 2: ZK Skincare Bundle
+  if (sku.includes('SKN-ZK3IN1') || slug.includes('zk-3in1-glow-bundle')) {
+    return {
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 3: Beige Katan Silk 3-Piece
+  if (sku.includes('KTN-BGE-3PC') || slug.includes('beige-katan-silk')) {
+    return {
+      badge: 'Unstitched – 2.5 yd each',
+      colorName: 'Beige',
+      isClothing: true,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 4: Airpods M04
+  if (sku.includes('AIR-M04') || slug.includes('airpods-m04')) {
+    return {
+      colors: [
+        { name: 'Black', hex: '#1C1C1C', imageIndex: 0 },
+        { name: 'White', hex: '#F8F9FA', imageIndex: 1 },
+      ],
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 5: Men Fleece Tracksuit
+  if (sku.includes('TRK-GRY') || slug.includes('men-fleece-printed-track-suit')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Small', detail: 'Chest 19" • L 25"' },
+        { name: 'Medium', detail: 'Chest 20" • L 26"' },
+        { name: 'Large', detail: 'Chest 21" • L 27"' },
+        { name: 'X-Large', detail: 'Chest 22" • L 28"' },
+      ],
+      colorName: 'Grey',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 6: J. Janan Musk 100ml
+  if (sku.includes('JAN-MSK-100') || slug.includes('j-janan-musk')) {
+    return {
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 7: Women Slip-On Sneakers
+  if (sku.includes('SNK-W-BLK') || slug.includes('black-slip-on-sneakers')) {
+    return {
+      sizeLabel: 'Select Shoe Size (UK/EU):',
+      sizes: [
+        { name: '6/36', detail: 'Foot 23.0 cm' },
+        { name: '7/37', detail: 'Foot 23.5 cm' },
+        { name: '8/38', detail: 'Foot 24.0 cm' },
+        { name: '9/39', detail: 'Foot 24.5 cm' },
+        { name: '10/40', detail: 'Foot 25.0 cm' },
+      ],
+      colorName: 'Black',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 8: Men Wash & Wear Suit
+  if (sku.includes('WNW-BRN') || slug.includes('men-unstitched-wash-and-wear')) {
+    return {
+      badge: 'Unstitched – 4 m',
+      colorName: 'Brown',
+      isClothing: true,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 9: Grey Night Suit
+  if (sku.includes('NGH-GRY-2PC') || slug.includes('grey-printed-women-night-suit')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Medium', detail: 'Chest 19" • L 26"' },
+        { name: 'Large', detail: 'Chest 21" • L 27"' },
+        { name: 'X-Large', detail: 'Chest 23" • L 27"' },
+      ],
+      colorName: 'Grey',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 10: Men Citrus Floral Musk EDT
+  if (sku.includes('EDT-CTM-100') || slug.includes('men-citrus-floral-musk')) {
+    return {
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 11: Purple Night Suit
+  if (sku.includes('NGH-PRP-2PC') || slug.includes('purple-printed-2piece-night-suit')) {
+    return {
+      sizeLabel: 'Size:',
+      sizes: [
+        { name: 'Free Size', detail: 'Chest 20/21" • L 28"' },
+      ],
+      colorName: 'Purple',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 12: Pink Night Suit
+  if (sku.includes('NGH-PNK-2PC') || slug.includes('women-stitched-jersey-printed-night-suit-pink')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Medium', detail: 'Chest 20" • L 28"' },
+        { name: 'Large', detail: 'Chest 22" • L 29"' },
+        { name: 'X-Large', detail: 'Chest 24" • L 30"' },
+      ],
+      colorName: 'Pink',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 13: Men Black Jacket
+  if (sku.includes('JCK-BLK-DBS') || slug.includes('men-black-double-sided-stand-collar-jacket')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Small', detail: 'Chest 38"' },
+        { name: 'Medium', detail: 'Chest 40"' },
+        { name: 'Large', detail: 'Chest 42"' },
+        { name: 'X-Large', detail: 'Chest 44"' },
+      ],
+      colorName: 'Black',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 14: Men Fleece Hoodie
+  if (sku.includes('HD-OLV') || sku.includes('HD-') || slug.includes('men-fleece-pullover-hoodie-colorblock')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Small' },
+        { name: 'Medium' },
+        { name: 'Large' },
+        { name: 'X-Large' },
+      ],
+      colors: [
+        { name: 'Olive', hex: '#556B2F', imageIndex: 0 },
+        { name: 'Tan', hex: '#D2B48C', imageIndex: 1 },
+        { name: 'Black', hex: '#1C1C1C', imageIndex: 2 },
+      ],
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 15: Brown Leather Handbag
+  if (sku.includes('BAG-BRN-810') || slug.includes('women-brown-leather-top-handle-handbag')) {
+    return {
+      badge: 'Dimensions: 8 x 10"',
+      colorName: 'Brown',
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 16: Women Kulomi Fleece Pajamas
+  if (sku.includes('PJM-KLM-W') || slug.includes('women-cute-kulomi-fleece-pajamas-set')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Small', detail: 'Chest 38"' },
+        { name: 'Medium', detail: 'Chest 40"' },
+        { name: 'Large', detail: 'Chest 42"' },
+      ],
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 17: Georgette Maxi Abaya
+  if (sku.includes('ABY-MAX-BGE') || slug.includes('georgette-plain-maxi-abaya')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Small', detail: 'L 52" • Chest 22"' },
+        { name: 'Medium', detail: 'L 54" • Chest 24"' },
+        { name: 'Large', detail: 'L 56" • Chest 25"' },
+        { name: 'X-Large', detail: 'L 56" • Chest 26"' },
+      ],
+      colorName: 'Beige',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 18: Men Mustard Sandals
+  if (sku.includes('SND-MST') || slug.includes('men-rexine-sandals-mustard')) {
+    return {
+      sizeLabel: 'Select Footwear Size (EU):',
+      sizes: [
+        { name: '39' },
+        { name: '40' },
+        { name: '41' },
+        { name: '42' },
+        { name: '43' },
+        { name: '44' },
+      ],
+      colorName: 'Mustard',
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 19: Slim Classy Watch
+  if (sku.includes('WCH-SLM') || slug.includes('women-slim-classy-dial-bracelet-watch')) {
+    return {
+      colors: [
+        { name: 'Golden', hex: '#D4AF37', imageIndex: 0 },
+        { name: 'Silver', hex: '#C0C0C0', imageIndex: 1 },
+      ],
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 20: Flared Georgette Abaya
+  if (sku.includes('ABY-FLR-GR') || slug.includes('flared-georgette-abaya-puff-sleeves')) {
+    return {
+      sizeLabel: 'Select Size:',
+      sizes: [
+        { name: 'Small', detail: 'L 52" • Chest 21"' },
+        { name: 'Medium', detail: 'L 54" • Chest 23"' },
+        { name: 'Large', detail: 'L 56" • Chest 25"' },
+        { name: 'X-Large', detail: 'L 56" • Chest 27"' },
+      ],
+      colors: [
+        { name: 'Brown', hex: '#5c4033', imageIndex: 0 },
+        { name: 'Black', hex: '#1C1C1C', imageIndex: 2 },
+        { name: 'Purple', hex: '#5b2c6f', imageIndex: 4 },
+        { name: 'Green', hex: '#1e5631', imageIndex: 5 },
+      ],
+      hasSizeGuide: true,
+      isClothing: true,
+    };
+  }
+
+  // Product 21: Black Handbag with Pom Pom
+  if (sku.includes('BAG-BLK-POM') || slug.includes('women-black-fashion-handbag-pom-pom-charm')) {
+    return {
+      colorName: 'Black',
+      isClothing: false,
+      hasSizeGuide: false,
+    };
+  }
+
+  // Product 22: 9-in-1 Makeup Deal
+  if (sku.includes('MKP-9IN1') || slug.includes('9-in-1-complete-makeup-deal-bundle')) {
+    return {
+      isClothing: false,
+      hasSizeGuide: false,
+      boxItems: [
+        '1 x Makeup Setting Fixer Spray',
+        '1 x TV Paint Stick (Full Base Coverage)',
+        '1 x Creamy Concealer Wand',
+        '1 x Lustrous Lip Gloss',
+        '1 x Pore-Smoothing Makeup Primer',
+        '1 x Velvet Matte Foundation',
+        '1 x Translucent Setting Loose Powder',
+        '1 x Rich Pigment Matte Lipstick',
+        '1 x Hydrating Liquid Foundation',
+      ],
+    };
+  }
+
+  // Generic fallback:
   if (product.has_sizes && Array.isArray(product.available_sizes) && product.available_sizes.length > 0) {
     return {
       sizeLabel: 'Select Size:',
       sizes: product.available_sizes.map((s: string) => ({ name: s })),
-      colorName: (sku.includes('NIGHT-WHT') || name.includes('white')) ? 'Crisp White' : undefined,
-      hasSizeGuide: Boolean(product.size_chart && (product.size_chart.trouser || product.size_chart.shirt || Object.keys(product.size_chart).length > 0)),
+      hasSizeGuide: Boolean(product.size_chart),
+      isClothing: true,
     };
   }
 
-  if (sku.includes('NIGHT-WHT') || (name.includes('night suit') && name.includes('white'))) {
-    return {
-      sizeLabel: 'Select Size:',
-      sizes: [
-        { name: 'S' },
-        { name: 'M' },
-        { name: 'L' },
-        { name: 'XL' },
-      ],
-      colorName: 'Crisp White',
-      hasSizeGuide: true,
-    };
-  }
-
-  if (sku.includes('AC-GRY') || name.includes('ac cover') || name.includes('air conditioner')) {
-    return {
-      sizeLabel: 'Select Unit Capacity / Size:',
-      sizes: [
-        { name: '1 Ton', detail: 'Split AC' },
-        { name: '1.5 Ton', detail: 'Split AC' },
-        { name: '2 Ton', detail: 'Split AC' },
-      ],
-      colorName: 'Grey Printed Quilt',
-      hasSizeGuide: false,
-    };
-  }
-
-  if (sku.includes('WLT-DMR') || name.includes('checkered') || name.includes('lv pattern')) {
-    return {
-      colors: [
-        { name: 'Brown', hex: '#6d4c41' },
-        { name: 'Black', hex: '#212121' },
-      ],
-    };
-  }
-
-  if (sku.includes('BTF-BLK') || name.includes('butterfly')) {
-    return {
-      sizes: [
-        { name: 'Standard Size', detail: 'Relaxed Fit' },
-      ],
-      colorName: 'Midnight Black',
-      hasSizeGuide: true,
-    };
-  }
-
-  if (sku.includes('POS-BLK') || name.includes('posture corrector')) {
-    return {
-      sizes: [
-        { name: 'Adjustable Free Size', detail: 'Chest 28"-44"' },
-      ],
-      colorName: 'Black',
-      hasSizeGuide: false,
-    };
-  }
-
-  if (sku.includes('MAT-GRY') || name.includes('mattress cover')) {
-    return {
-      sizes: [
-        { name: 'Double Bed (72" x 78")', detail: 'King/Double Size' },
-      ],
-      sizeLabel: 'Bed Size:',
-      colorName: 'Grey',
-      hasSizeGuide: false,
-    };
-  }
-
-  if (sku.includes('KI-ORG') || name.includes('organza')) {
-    return { colorName: 'Festive Rose Pink' };
-  }
-  if (sku.includes('GLV-PNK') || name.includes('cleaning gloves')) {
-    return { colorName: 'Soft Pink' };
-  }
-  if (sku.includes('BB-TRQ') || name.includes('baby bath brush')) {
-    return { colorName: 'Turquoise Aqua' };
-  }
-  if (sku.includes('SCRB-BLU') || name.includes('body scrubber')) {
-    return { colorName: 'Ocean Blue' };
-  }
-  if (sku.includes('SHW-WHT') || name.includes('wool shawl')) {
-    return { colorName: 'Ivory White with Contrast Trim' };
-  }
-  if (sku.includes('BAG-BGE') || name.includes('shoulder bag')) {
-    return { colorName: 'Warm Beige' };
-  }
-  if (sku.includes('WLT-LNG')) {
-    return { colorName: 'Walnut & Noir' };
-  }
-  if (sku.includes('WLT-SNP')) {
-    return { colorName: 'Tan Brown' };
-  }
-
-  if (sku.includes('SBHJ717') || sku.includes('WCH') || name.includes('rhinestone') || name.includes('watch')) {
-    return {
-      colors: [
-        { name: 'Golden', hex: '#D4AF37' },
-        { name: 'Silver', hex: '#C0C0C0' },
-        { name: 'Black', hex: '#1C1C1C' },
-        { name: 'Rose Gold', hex: '#B76E79' },
-      ],
-      colorName: 'Golden',
-      hasSizeGuide: false,
-    };
-  }
-
-  let extractedColor = undefined;
-  const colorMatch = desc.match(/color:\s*([a-zA-Z\s]+?)(•|\n|\$|<|$)/i);
-  if (colorMatch && colorMatch[1].trim().length < 25) {
-    extractedColor = colorMatch[1].trim();
-  }
-
-  return { colorName: extractedColor };
+  return { isClothing: false, hasSizeGuide: false };
 }
 
 function renderSizeChartTables(product: Product) {
   const chart = product.size_chart;
-  const isTeal = product.sku?.includes('TEAL-MAJ') || product.name?.toLowerCase().includes('teal majestique');
+  const sku = (product.sku || '').toUpperCase();
+  const slug = (product.slug || '').toLowerCase();
 
-  if (isTeal) {
+  // Footwear Size Chart (Products 7 & 18)
+  if (sku.includes('SNK-W-BLK') || sku.includes('SND-MST') || slug.includes('sandals') || slug.includes('sneakers')) {
+    const isWomen = sku.includes('SNK-W-BLK') || slug.includes('women');
+    const footwearRows = isWomen
+      ? [
+          { uk: '6', eu: '36', cm: '23.0', in: '9.06' },
+          { uk: '7', eu: '37', cm: '23.5', in: '9.25' },
+          { uk: '8', eu: '38', cm: '24.0', in: '9.45' },
+          { uk: '9', eu: '39', cm: '24.5', in: '9.65' },
+          { uk: '10', eu: '40', cm: '25.0', in: '9.84' },
+        ]
+      : [
+          { eu: '39', uk: '5.5', cm: '24.5', in: '9.65' },
+          { eu: '40', uk: '6.5', cm: '25.0', in: '9.84' },
+          { eu: '41', uk: '7.5', cm: '25.5', in: '10.04' },
+          { eu: '42', uk: '8.5', cm: '26.0', in: '10.24' },
+          { eu: '43', uk: '9.5', cm: '26.5', in: '10.43' },
+          { eu: '44', uk: '10.5', cm: '27.0', in: '10.63' },
+        ];
+
     return (
-      <div className="space-y-6">
-        <div>
-          <h4 className="font-bold text-xs text-[#141414] mb-2 uppercase tracking-wider flex items-center gap-1.5">
-            <Scissors className="w-3.5 h-3.5 text-[#b87414]" />
-            <span>Shirt Measurements (Inches)</span>
-          </h4>
-          <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
-            <table className="w-full text-xs text-left text-[#141414]">
-              <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b]">
-                <tr>
-                  <th className="py-2.5 px-3">Size</th>
-                  <th className="py-2.5 px-3">Chest</th>
-                  <th className="py-2.5 px-3">Shoulders</th>
-                  <th className="py-2.5 px-3">Sleeves</th>
-                  <th className="py-2.5 px-3">Length</th>
-                  <th className="py-2.5 px-3">Hip</th>
-                  <th className="py-2.5 px-3">Daman</th>
+      <div className="space-y-4">
+        <h4 className="font-bold text-xs text-[#141414] uppercase tracking-wider flex items-center gap-1.5">
+          <Scissors className="w-3.5 h-3.5 text-[#b87414]" />
+          <span>Footwear Insole & Size Sizing Guide</span>
+        </h4>
+        <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
+          <table className="w-full text-xs text-left text-[#141414]">
+            <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b]">
+              <tr>
+                <th className="py-2.5 px-3">EU Size</th>
+                <th className="py-2.5 px-3">UK Size</th>
+                <th className="py-2.5 px-3">Foot Length (CM)</th>
+                <th className="py-2.5 px-3">Length (Inches)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#eae7e2] bg-white">
+              {footwearRows.map((r, i) => (
+                <tr key={i} className="hover:bg-[#faf9f7]">
+                  <td className="py-2.5 px-3 font-bold text-[#b87414]">{r.eu}</td>
+                  <td className="py-2.5 px-3 font-medium">{r.uk}</td>
+                  <td className="py-2.5 px-3 font-mono">{r.cm} cm</td>
+                  <td className="py-2.5 px-3 font-mono">{r.in}&quot;</td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-[#eae7e2] bg-white">
-                <tr><td className="py-2 px-3 font-bold text-[#b87414]">XSmall</td><td className="py-2 px-3">18&quot;</td><td className="py-2 px-3">13.5&quot;</td><td className="py-2 px-3">21&quot;</td><td className="py-2 px-3">48&quot;</td><td className="py-2 px-3">21&quot;</td><td className="py-2 px-3">22&quot;</td></tr>
-                <tr><td className="py-2 px-3 font-bold text-[#b87414]">Small</td><td className="py-2 px-3">19&quot;</td><td className="py-2 px-3">14&quot;</td><td className="py-2 px-3">21&quot;</td><td className="py-2 px-3">48&quot;</td><td className="py-2 px-3">21&quot;</td><td className="py-2 px-3">22&quot;</td></tr>
-                <tr><td className="py-2 px-3 font-bold text-[#b87414]">Medium</td><td className="py-2 px-3">20&quot;</td><td className="py-2 px-3">14.5&quot;</td><td className="py-2 px-3">21.5&quot;</td><td className="py-2 px-3">48&quot;</td><td className="py-2 px-3">22&quot;</td><td className="py-2 px-3">23&quot;</td></tr>
-                <tr><td className="py-2 px-3 font-bold text-[#b87414]">Large</td><td className="py-2 px-3">22&quot;</td><td className="py-2 px-3">15.5&quot;</td><td className="py-2 px-3">22&quot;</td><td className="py-2 px-3">48&quot;</td><td className="py-2 px-3">23&quot;</td><td className="py-2 px-3">24&quot;</td></tr>
-                <tr><td className="py-2 px-3 font-bold text-[#b87414]">XLarge</td><td className="py-2 px-3">24&quot;</td><td className="py-2 px-3">16&quot;</td><td className="py-2 px-3">22.5&quot;</td><td className="py-2 px-3">48&quot;</td><td className="py-2 px-3">24&quot;</td><td className="py-2 px-3">26&quot;</td></tr>
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     );
   }
 
-  const trouserRows = chart?.trouser || [
-    { size: 'S', waist: '26-30', length: '39' },
-    { size: 'M', waist: '28-44', length: '39' },
-    { size: 'L', waist: '32-48', length: '39' },
-    { size: 'XL', waist: '36-52', length: '40' },
+  // Abayas Size Chart (Product 17 & 20)
+  if (sku.includes('ABY') || slug.includes('abaya')) {
+    const abayaRows = [
+      { size: 'Small', length: '52', chest: '21 - 22', sleeve: '22' },
+      { size: 'Medium', length: '54', chest: '23 - 24', sleeve: '22.5' },
+      { size: 'Large', length: '56', chest: '25', sleeve: '23' },
+      { size: 'X-Large', length: '56', chest: '26 - 27', sleeve: '23.5' },
+    ];
+    return (
+      <div className="space-y-4">
+        <h4 className="font-bold text-xs text-[#141414] uppercase tracking-wider flex items-center gap-1.5">
+          <Scissors className="w-3.5 h-3.5 text-[#b87414]" />
+          <span>Abaya Garment Measurements (Inches)</span>
+        </h4>
+        <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
+          <table className="w-full text-xs text-left text-[#141414]">
+            <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b]">
+              <tr>
+                <th className="py-2.5 px-3">Size</th>
+                <th className="py-2.5 px-3">Abaya Length</th>
+                <th className="py-2.5 px-3">Chest (Width)</th>
+                <th className="py-2.5 px-3">Sleeve Length</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#eae7e2] bg-white">
+              {abayaRows.map((r, i) => (
+                <tr key={i} className="hover:bg-[#faf9f7]">
+                  <td className="py-2.5 px-3 font-bold text-[#b87414]">{r.size}</td>
+                  <td className="py-2.5 px-3 font-mono">{r.length}&quot;</td>
+                  <td className="py-2.5 px-3 font-mono">{r.chest}&quot;</td>
+                  <td className="py-2.5 px-3 font-mono">{r.sleeve}&quot;</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  // Night Suits (Products 9, 11, 12, 16)
+  if (sku.includes('NGH') || sku.includes('PJM') || slug.includes('night-suit') || slug.includes('pajama')) {
+    const nightSuitRows = [
+      { size: 'Medium', chest: '19 - 20', topLen: '26 - 28', waist: '32 - 40', trLen: '37 - 38' },
+      { size: 'Large', chest: '21 - 22', topLen: '27 - 29', waist: '34 - 42', trLen: '38 - 39' },
+      { size: 'X-Large', chest: '23 - 24', topLen: '27 - 30', waist: '34 - 44', trLen: '38 - 39' },
+    ];
+    return (
+      <div className="space-y-4">
+        <h4 className="font-bold text-xs text-[#141414] uppercase tracking-wider flex items-center gap-1.5">
+          <Scissors className="w-3.5 h-3.5 text-[#b87414]" />
+          <span>Women&apos;s Night Suit Measurements (Inches)</span>
+        </h4>
+        <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
+          <table className="w-full text-xs text-left text-[#141414]">
+            <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b]">
+              <tr>
+                <th className="py-2.5 px-3">Size</th>
+                <th className="py-2.5 px-3">Top Chest</th>
+                <th className="py-2.5 px-3">Top Length</th>
+                <th className="py-2.5 px-3">Trouser Waist</th>
+                <th className="py-2.5 px-3">Trouser Length</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#eae7e2] bg-white">
+              {nightSuitRows.map((r, i) => (
+                <tr key={i} className="hover:bg-[#faf9f7]">
+                  <td className="py-2.5 px-3 font-bold text-[#b87414]">{r.size}</td>
+                  <td className="py-2.5 px-3 font-mono">{r.chest}&quot;</td>
+                  <td className="py-2.5 px-3 font-mono">{r.topLen}&quot;</td>
+                  <td className="py-2.5 px-3 font-mono">{r.waist}&quot;</td>
+                  <td className="py-2.5 px-3 font-mono">{r.trLen}&quot;</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  // Men Tracksuits & Jackets (Product 5, 13, 14)
+  const shirtRows = chart?.shirt || [
+    { size: 'S', chest: '19', length: '25', arm: '23' },
+    { size: 'M', chest: '20', length: '26', arm: '23.5' },
+    { size: 'L', chest: '21', length: '27', arm: '24' },
+    { size: 'XL', chest: '22', length: '28', arm: '24.5' },
   ];
 
-  const shirtRows = chart?.shirt || [
-    { size: 'S', chest: '19', sleeves: '20.5', length: '25.5' },
-    { size: 'M', chest: '20', sleeves: '20.5', length: '27' },
-    { size: 'L', chest: '21', sleeves: '21.5', length: '28' },
-    { size: 'XL', chest: '22', sleeves: '22', length: '30' },
+  const trouserRows = chart?.trouser || [
+    { size: 'S', waist: '30-34', length: '40', hip: '34' },
+    { size: 'M', waist: '32-36', length: '41', hip: '36' },
+    { size: 'L', waist: '34-38', length: '42', hip: '38' },
+    { size: 'XL', waist: '36-40', length: '43', hip: '40' },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Trouser Measurements */}
-      <div>
-        <h4 className="font-bold text-xs text-[#141414] mb-2 uppercase tracking-wider flex items-center gap-1.5">
-          <Scissors className="w-3.5 h-3.5 text-[#b87414]" />
-          <span>Trouser Measurements (Inches)</span>
-        </h4>
-        <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
-          <table className="w-full text-xs text-left text-[#141414]">
-            <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b] border-b border-[#eae7e2]">
-              <tr>
-                <th className="py-2.5 px-3 font-bold">Size</th>
-                <th className="py-2.5 px-3">Waist (Inches)</th>
-                <th className="py-2.5 px-3">Length (Inches)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#eae7e2] bg-white">
-              {trouserRows.map((r: any) => (
-                <tr key={r.size} className="hover:bg-[#faf9f7] transition-colors">
-                  <td className="py-2.5 px-3 font-black text-[#b87414]">{r.size}</td>
-                  <td className="py-2.5 px-3 font-mono">{r.waist}&quot;</td>
-                  <td className="py-2.5 px-3 font-mono">{r.length}&quot;</td>
+      {shirtRows.length > 0 && (
+        <div>
+          <h4 className="font-bold text-xs text-[#141414] mb-2 uppercase tracking-wider flex items-center gap-1.5">
+            <Ruler className="w-3.5 h-3.5 text-[#b87414]" />
+            <span>Shirt / Upper Measurements (Inches)</span>
+          </h4>
+          <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
+            <table className="w-full text-xs text-left text-[#141414]">
+              <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b] border-b border-[#eae7e2]">
+                <tr>
+                  <th className="py-2.5 px-3 font-bold">Size</th>
+                  <th className="py-2.5 px-3">Chest</th>
+                  <th className="py-2.5 px-3">Length</th>
+                  <th className="py-2.5 px-3">Arm / Sleeve</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#eae7e2] bg-white">
+                {shirtRows.map((r: any) => (
+                  <tr key={r.size} className="hover:bg-[#faf9f7] transition-colors">
+                    <td className="py-2.5 px-3 font-black text-[#b87414]">{r.size}</td>
+                    <td className="py-2.5 px-3 font-mono">{r.chest}&quot;</td>
+                    <td className="py-2.5 px-3 font-mono">{r.length}&quot;</td>
+                    <td className="py-2.5 px-3 font-mono">{r.arm || r.sleeves || '23'}&quot;</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* T-Shirt Measurements */}
-      <div>
-        <h4 className="font-bold text-xs text-[#141414] mb-2 uppercase tracking-wider flex items-center gap-1.5">
-          <Ruler className="w-3.5 h-3.5 text-[#b87414]" />
-          <span>T-Shirt Measurements (Inches)</span>
-        </h4>
-        <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
-          <table className="w-full text-xs text-left text-[#141414]">
-            <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b] border-b border-[#eae7e2]">
-              <tr>
-                <th className="py-2.5 px-3 font-bold">Size</th>
-                <th className="py-2.5 px-3">Chest (Inches)</th>
-                <th className="py-2.5 px-3">Sleeves (Inches)</th>
-                <th className="py-2.5 px-3">Length (Inches)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#eae7e2] bg-white">
-              {shirtRows.map((r: any) => (
-                <tr key={r.size} className="hover:bg-[#faf9f7] transition-colors">
-                  <td className="py-2.5 px-3 font-black text-[#b87414]">{r.size}</td>
-                  <td className="py-2.5 px-3 font-mono">{r.chest}&quot;</td>
-                  <td className="py-2.5 px-3 font-mono">{r.sleeves}&quot;</td>
-                  <td className="py-2.5 px-3 font-mono">{r.length}&quot;</td>
+      {trouserRows.length > 0 && (
+        <div>
+          <h4 className="font-bold text-xs text-[#141414] mb-2 uppercase tracking-wider flex items-center gap-1.5">
+            <Scissors className="w-3.5 h-3.5 text-[#b87414]" />
+            <span>Trouser Measurements (Inches)</span>
+          </h4>
+          <div className="overflow-x-auto rounded-xl border border-[#eae7e2]">
+            <table className="w-full text-xs text-left text-[#141414]">
+              <thead className="bg-[#f7f5f2] text-[10px] uppercase tracking-wider text-[#6b6b6b] border-b border-[#eae7e2]">
+                <tr>
+                  <th className="py-2.5 px-3 font-bold">Size</th>
+                  <th className="py-2.5 px-3">Waist</th>
+                  <th className="py-2.5 px-3">Length</th>
+                  <th className="py-2.5 px-3">Hip</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#eae7e2] bg-white">
+                {trouserRows.map((r: any) => (
+                  <tr key={r.size} className="hover:bg-[#faf9f7] transition-colors">
+                    <td className="py-2.5 px-3 font-black text-[#b87414]">{r.size}</td>
+                    <td className="py-2.5 px-3 font-mono">{r.waist}&quot;</td>
+                    <td className="py-2.5 px-3 font-mono">{r.length}&quot;</td>
+                    <td className="py-2.5 px-3 font-mono">{r.hip || '34'}&quot;</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -862,11 +1123,12 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailVie
             </p>
           )}
 
-          {/* Real Color / Shade Display or Variant Selection */}
+          {/* Real Color / Shade Display or Variant Selection with Instant Gallery Switching */}
           {realOptions.colors && realOptions.colors.length > 1 ? (
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[#141414]">
                 <span>Available Color: <span className="text-[#b87414] font-bold tracking-normal normal-case ml-1">{selectedColor}</span></span>
+                <span className="text-[10px] text-[#8c827a] font-medium normal-case">Select to view shade</span>
               </div>
               <div className="flex items-center gap-2">
                 {realOptions.colors.map((c) => {
@@ -875,16 +1137,21 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailVie
                     <button
                       key={c.name}
                       type="button"
-                      onClick={() => setSelectedColor(c.name)}
+                      onClick={() => {
+                        setSelectedColor(c.name);
+                        if (typeof c.imageIndex === 'number' && images[c.imageIndex]) {
+                          handleSelectImage(c.imageIndex);
+                        }
+                      }}
                       className={`px-3 py-1.5 rounded-full border text-xs font-bold transition-all flex items-center gap-2 cursor-pointer touch-manipulation ${
                         isSelected
-                          ? 'bg-[#141414] text-white border-[#141414] shadow-xs ring-2 ring-[#d99026]/30'
+                          ? 'bg-[#141414] text-white border-[#141414] shadow-xs ring-2 ring-[#d99026]/40 scale-105'
                           : 'bg-[#f7f5f2] text-[#141414] border-[#eae7e2] hover:border-neutral-400'
                       }`}
                     >
                       {c.hex && (
                         <span
-                          className="w-3 h-3 rounded-full border border-black/20"
+                          className="w-3.5 h-3.5 rounded-full border border-black/20"
                           style={{ backgroundColor: c.hex }}
                         />
                       )}
@@ -902,6 +1169,44 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailVie
               </span>
             </div>
           ) : null}
+
+          {/* Product Fabric / Dimensions Badge (Product 1, 3, 8, 15) */}
+          {realOptions.badge && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[#b87414] text-xs font-bold tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 text-[#b87414]" />
+              <span>{realOptions.badge}</span>
+            </div>
+          )}
+
+          {/* Product 22: What's in the box breakdown */}
+          {realOptions.boxItems && realOptions.boxItems.length > 0 && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#faf9f7] border border-[#eae7e2] space-y-3">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-[#141414] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#b87414]" />
+                <span>What&apos;s in the box (9 Essential Cosmetic Deal)</span>
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {realOptions.boxItems.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 p-2 rounded-xl bg-white border border-[#eae7e2]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="font-medium text-[#141414]">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Measurement & Lighting Notices (Data Note C) */}
+          <div className="p-3 sm:p-4 rounded-xl bg-[#faf9f7] border border-[#eae7e2] text-[11px] text-[#6b6b6b] space-y-1">
+            {realOptions.isClothing && (
+              <p>
+                • <strong>Measurement Notice:</strong> There might be an error of 1-3 cm due to manual measurement.
+              </p>
+            )}
+            <p>
+              • <strong>Color Variance:</strong> Slight color differences may occur as a result of varying lighting and monitor effects.
+            </p>
+          </div>
 
           {/* Real Sizes / Dimensions / Capacity Selector (ONLY if product has sizes!) */}
           {realOptions.sizes && realOptions.sizes.length > 0 && (
@@ -942,7 +1247,7 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailVie
               <div className="flex flex-wrap gap-2.5">
                 {realOptions.sizes.map((s) => {
                   const isSelected = selectedSize === s.name;
-                  const isOutOfStock = product.size_stock && typeof product.size_stock[s.name] === 'number' && product.size_stock[s.name] <= 0;
+                  const isOutOfStock = Boolean(product.size_stock && typeof product.size_stock[s.name] === 'number' && product.size_stock[s.name] <= 0);
                   return (
                     <button
                       key={s.name}

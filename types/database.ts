@@ -104,9 +104,9 @@ export interface Product {
   created_at?: string;
   updated_at?: string;
   has_sizes?: boolean;
-  available_sizes?: string[];
-  size_chart?: Record<string, any>;
-  size_stock?: Record<string, number>;
+  available_sizes?: string[] | null;
+  size_chart?: Record<string, any> | null;
+  size_stock?: Record<string, number> | null;
   // Joined relations
   category?: Category | null;
   brand?: Brand | null;
