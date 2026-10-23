@@ -8,7 +8,8 @@ import {
   CreditCard, User, Copy, Check, Share2, Search, Filter, 
   ExternalLink, ArrowUpRight, ShieldCheck, Clock, CheckCircle2, 
   XCircle, AlertCircle, Plus, LogOut, ChevronRight, Layers, Sparkles,
-  BarChart3, Wallet, ArrowDownRight, Eye, Info, RefreshCw
+  BarChart3, Wallet, ArrowDownRight, Eye, Info, RefreshCw,
+  QrCode, Smartphone, KeyRound, Lock
 } from 'lucide-react';
 import { 
   Affiliate, 
@@ -83,6 +84,19 @@ export default function AffiliateDashboard() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
 
+  // Two-Factor Authentication (Google Authenticator)
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [show2FASetup, setShow2FASetup] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [secretKey, setSecretKey] = useState<string | null>(null);
+  const [twoFactorInputCode, setTwoFactorInputCode] = useState('');
+  const [loading2FA, setLoading2FA] = useState(false);
+  const [twoFactorMsg, setTwoFactorMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [copiedSecret, setCopiedSecret] = useState(false);
+  const [showDisable2FAModal, setShowDisable2FAModal] = useState(false);
+  const [disablePassword, setDisablePassword] = useState('');
+  const [disabling2FA, setDisabling2FA] = useState(false);
+
   const [refreshingLinks, setRefreshingLinks] = useState(false);
 
   // Load Tracking Links
@@ -125,6 +139,9 @@ export default function AffiliateDashboard() {
         setProfilePhone(data.affiliate.phone || '');
         setSummary(data.financialSummary);
         setSettings(data.settings);
+        if (data.two_factor_enabled !== undefined) {
+          setTwoFactorEnabled(Boolean(data.two_factor_enabled));
+        }
       }
 
       const linksData = await linksRes.json();
@@ -313,6 +330,76 @@ export default function AffiliateDashboard() {
     }
   };
 
+  const handleStart2FASetup = async () => {
+    setLoading2FA(true);
+    setTwoFactorMsg(null);
+    try {
+      const res = await fetch('/api/affiliate/auth/2fa', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to initiate 2FA setup');
+      setQrCodeUrl(data.qrCodeUrl);
+      setSecretKey(data.secret);
+      setShow2FASetup(true);
+    } catch (err: any) {
+      setTwoFactorMsg({ type: 'error', text: err.message || 'Failed to generate 2FA key' });
+    } finally {
+      setLoading2FA(false);
+    }
+  };
+
+  const handleVerifyAndEnable2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!secretKey || !twoFactorInputCode) return;
+    setLoading2FA(true);
+    setTwoFactorMsg(null);
+    try {
+      const res = await fetch('/api/affiliate/auth/2fa', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          secret: secretKey,
+          code: twoFactorInputCode,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to verify code');
+      setTwoFactorEnabled(true);
+      setShow2FASetup(false);
+      setTwoFactorInputCode('');
+      setSecretKey(null);
+      setQrCodeUrl(null);
+      setTwoFactorMsg({ type: 'success', text: 'Google Authenticator 2FA is now active & protecting your affiliate account!' });
+    } catch (err: any) {
+      setTwoFactorMsg({ type: 'error', text: err.message || 'Verification failed' });
+    } finally {
+      setLoading2FA(false);
+    }
+  };
+
+  const handleDisable2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!disablePassword) return;
+    setDisabling2FA(true);
+    setTwoFactorMsg(null);
+    try {
+      const res = await fetch('/api/affiliate/auth/2fa', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: disablePassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to disable 2FA');
+      setTwoFactorEnabled(false);
+      setShowDisable2FAModal(false);
+      setDisablePassword('');
+      setTwoFactorMsg({ type: 'success', text: 'Two-Factor Authentication has been successfully disabled.' });
+    } catch (err: any) {
+      setTwoFactorMsg({ type: 'error', text: err.message || 'Failed to disable 2FA' });
+    } finally {
+      setDisabling2FA(false);
+    }
+  };
+
   const handleLogout = async () => {
     await fetch('/api/affiliate/logout', { method: 'POST' });
     router.push('/affiliate/login');
@@ -441,7 +528,7 @@ export default function AffiliateDashboard() {
             { id: 'links', label: 'My Links', icon: LinkIcon },
             { id: 'sales', label: 'Sales & Commissions', icon: DollarSign },
             { id: 'payouts', label: 'Payouts & Withdrawals', icon: Wallet },
-            { id: 'profile', label: 'Profile & Security', icon: User },
+            { id: 'profile', label: 'Profile & Authenticator Security', icon: ShieldCheck },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1139,86 +1226,336 @@ export default function AffiliateDashboard() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 6: PROFILE & SECURITY */}
+        {/* TAB 6: PROFILE & AUTHENTICATOR SECURITY */}
         {/* ========================================================================= */}
         {activeTab === 'profile' && (
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Global feedback message */}
+            {twoFactorMsg && (
+              <div
+                className={`p-4 rounded-2xl text-xs flex items-center justify-between gap-3 shadow-xs ${
+                  twoFactorMsg.type === 'error'
+                    ? 'bg-rose-50 border border-rose-200 text-rose-700'
+                    : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {twoFactorMsg.type === 'error' ? (
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                  ) : (
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                  )}
+                  <span>{twoFactorMsg.text}</span>
+                </div>
+                <button
+                  onClick={() => setTwoFactorMsg(null)}
+                  className="text-[11px] underline opacity-70 hover:opacity-100"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* CARD 1: GOOGLE AUTHENTICATOR (2FA) */}
             <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs">
-              <h2 className="text-xl font-serif text-slate-900 font-medium mb-1">Affiliate Profile</h2>
-              <p className="text-xs text-slate-500 mb-6">Manage your creator credentials and security settings.</p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-serif text-slate-900 font-semibold">Google Authenticator (2FA)</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Protect your creator earnings and withdrawal requests with time-based one-time passwords (TOTP).
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${
+                      twoFactorEnabled
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                    }`}
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        twoFactorEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                      }`}
+                    />
+                    {twoFactorEnabled ? 'Protected with 2FA' : '2FA Not Active'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status details / Actions */}
+              <div className="mt-6">
+                {twoFactorEnabled ? (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-emerald-900 text-xs flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="leading-relaxed">
+                        <strong className="font-semibold block mb-0.5">Your partner portal is secured.</strong>
+                        Every time you sign in, Google Authenticator will generate a rotating 6-digit verification code. Your withdrawal requests and banking destinations are safely protected.
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex items-center justify-between">
+                      <span className="text-xs text-slate-500">Need to transfer 2FA to a new device?</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowDisable2FAModal(true)}
+                        className="px-4 py-2.5 rounded-xl border border-rose-200 hover:bg-rose-50 text-rose-700 text-xs font-semibold tracking-wider transition-colors"
+                      >
+                        Disable Google Authenticator
+                      </button>
+                    </div>
+                  </div>
+                ) : !show2FASetup ? (
+                  <div className="space-y-4">
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      We strongly recommend enabling Google Authenticator or Microsoft Authenticator. When enabled, your partner earnings and withdrawal requests cannot be accessed without entering the rotating verification code from your mobile phone.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={handleStart2FASetup}
+                      disabled={loading2FA}
+                      className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs tracking-wider uppercase flex items-center gap-2 shadow-md shadow-amber-500/20 transition-all disabled:opacity-50"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      <span>{loading2FA ? 'Preparing QR Code...' : 'Set Up Google Authenticator'}</span>
+                    </button>
+                  </div>
+                ) : (
+                  /* Step-by-step setup screen */
+                  <div className="space-y-6 pt-2">
+                    <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-950 text-xs leading-relaxed">
+                      Follow these 2 simple steps to link Google Authenticator to your affiliate portal.
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                      {/* Step 1: Scan QR */}
+                      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-900">
+                          <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px]">
+                            1
+                          </span>
+                          Scan QR Code
+                        </div>
+                        <p className="text-[11px] text-slate-500">
+                          Open Google Authenticator on your mobile phone, tap &quot;+&quot;, and scan this code:
+                        </p>
+
+                        {qrCodeUrl && (
+                          <div className="bg-white p-3 rounded-xl border border-slate-200 inline-block shadow-xs">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={qrCodeUrl}
+                              alt="Google Authenticator QR Code"
+                              className="w-44 h-44 object-contain mx-auto"
+                            />
+                          </div>
+                        )}
+
+                        {secretKey && (
+                          <div className="pt-2">
+                            <span className="text-[10px] uppercase font-bold text-slate-500 block mb-1">
+                              Or Enter Key Manually
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                readOnly
+                                value={secretKey}
+                                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-800 select-all"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(secretKey);
+                                  setCopiedSecret(true);
+                                  setTimeout(() => setCopiedSecret(false), 2000);
+                                }}
+                                className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold shrink-0"
+                              >
+                                {copiedSecret ? 'Copied' : 'Copy'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Step 2: Verify Code */}
+                      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
+                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-900">
+                          <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px]">
+                            2
+                          </span>
+                          Verify 6-Digit Code
+                        </div>
+                        <p className="text-[11px] text-slate-500">
+                          Enter the current 6-digit code shown in Google Authenticator to confirm the pairing:
+                        </p>
+
+                        <form onSubmit={handleVerifyAndEnable2FA} className="space-y-4">
+                          <input
+                            type="text"
+                            maxLength={6}
+                            required
+                            placeholder="123456"
+                            value={twoFactorInputCode}
+                            onChange={(e) => setTwoFactorInputCode(e.target.value.replace(/\D/g, ''))}
+                            className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-center text-lg tracking-[0.4em] font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
+                          />
+
+                          <div className="flex flex-col gap-2">
+                            <button
+                              type="submit"
+                              disabled={loading2FA || twoFactorInputCode.length !== 6}
+                              className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs tracking-wider uppercase shadow-md shadow-amber-500/20 disabled:opacity-50 transition-all"
+                            >
+                              {loading2FA ? 'Verifying...' : 'Verify & Activate 2FA'}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShow2FASetup(false);
+                                setTwoFactorInputCode('');
+                                setQrCodeUrl(null);
+                                setSecretKey(null);
+                              }}
+                              className="w-full py-2 rounded-xl text-xs font-medium text-slate-500 hover:text-slate-800"
+                            >
+                              Cancel Setup
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* CARD 2: AFFILIATE PROFILE */}
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs">
+              <h2 className="text-lg font-serif text-slate-900 font-semibold mb-1">Affiliate Profile Details</h2>
+              <p className="text-xs text-slate-500 mb-6">Manage your contact details and partner profile.</p>
 
               {profileMessage && (
-                <div className={`p-4 rounded-xl text-xs mb-6 ${profileMessage.startsWith('Error') ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-700'}`}>
+                <div
+                  className={`p-4 rounded-xl text-xs mb-6 ${
+                    profileMessage.startsWith('Error')
+                      ? 'bg-rose-50 border border-rose-200 text-rose-700'
+                      : 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+                  }`}
+                >
                   {profileMessage}
                 </div>
               )}
 
               <form onSubmit={handleUpdateProfile} className="space-y-5">
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-1.5">Registered Email</label>
+                  <label className="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-1.5">
+                    Registered Email (Fixed)
+                  </label>
                   <input
                     type="email"
                     disabled
                     value={affiliate?.email || ''}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-600 select-all"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">Email is locked to your partner contract.</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Email address is permanently bound to your creator partner contract.
+                  </span>
                 </div>
 
-                <div>
-                  <label className="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
-                  />
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">Phone / WhatsApp</label>
-                  <input
-                    type="tel"
-                    value={profilePhone}
-                    onChange={(e) => setProfilePhone(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
-                  />
-                </div>
-
-                <div className="pt-4 border-t border-slate-100">
-                  <h3 className="text-xs uppercase tracking-wider font-bold text-slate-800 mb-3">Change Password</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-600 mb-1">Current Password</label>
-                      <input
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-600 mb-1">New Password</label>
-                      <input
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="At least 6 characters"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                      Phone / WhatsApp
+                    </label>
+                    <input
+                      type="tel"
+                      value={profilePhone}
+                      onChange={(e) => setProfilePhone(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
+                    />
                   </div>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-2">
                   <button
                     type="submit"
                     disabled={savingProfile}
                     className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs tracking-wider transition-colors disabled:opacity-50"
                   >
                     {savingProfile ? 'Saving Changes...' : 'Save Profile Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* CARD 3: CHANGE PASSWORD */}
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs">
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="text-lg font-serif text-slate-900 font-semibold">Change Password</h2>
+                <Link
+                  href="/affiliate/forgot-password"
+                  className="text-xs text-amber-700 hover:text-amber-800 font-semibold hover:underline"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+              <p className="text-xs text-slate-500 mb-6">Update your account password with your existing credentials.</p>
+
+              <form onSubmit={handleUpdateProfile} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-1">Current Password</label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-1">New Password</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="At least 6 characters"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={savingProfile || !newPassword}
+                    className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs tracking-wider transition-colors disabled:opacity-50"
+                  >
+                    {savingProfile ? 'Updating Password...' : 'Update Password'}
                   </button>
                 </div>
               </form>
@@ -1474,6 +1811,57 @@ export default function AffiliateDashboard() {
           </div>
         </div>
       )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: DISABLE 2FA */}
+      {/* ========================================================================= */}
+      {showDisable2FAModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-2xl relative">
+            <h3 className="text-lg font-serif font-semibold text-slate-900 mb-1">Disable Google Authenticator</h3>
+            <p className="text-xs text-slate-500 mb-4">
+              Enter your account password to confirm disabling two-factor authentication.
+            </p>
+
+            <form onSubmit={handleDisable2FA} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">
+                  Account Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={disablePassword}
+                  onChange={(e) => setDisablePassword(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDisable2FAModal(false);
+                    setDisablePassword('');
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-medium text-slate-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={disabling2FA || !disablePassword}
+                  className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs tracking-wider disabled:opacity-50"
+                >
+                  {disabling2FA ? 'Disabling...' : 'Confirm Disable 2FA'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
 
       {/* Footer */}
       <footer className="border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-16 bg-white">

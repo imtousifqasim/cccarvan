@@ -1,5 +1,6 @@
 import { getActiveWriteAdmin, queryAcrossAllShards, getAllAdminClients, getActiveWriteShardId } from '@/lib/supabase/admin';
 import { queryMysql, executeMysql } from '@/lib/mysql/db';
+import bcrypt from 'bcryptjs';
 import { 
   Affiliate, 
   AffiliateLink, 
@@ -1012,4 +1013,299 @@ export class AffiliateRepository {
 
     return updated as any;
   }
+
+  // ----------------------------------------------------------------------------
+  // 9. SECURITY & TWO-FACTOR AUTH (GOOGLE AUTHENTICATOR) & PASSWORD RESET
+  // ----------------------------------------------------------------------------
+  static async getAffiliateSecurity(affiliateId: string): Promise<{
+    two_factor_enabled: boolean;
+    two_factor_secret: string | null;
+    password_reset_token: string | null;
+    password_reset_expires: number | null;
+  }> {
+    const defaultSec = {
+      two_factor_enabled: false,
+      two_factor_secret: null,
+      password_reset_token: null,
+      password_reset_expires: null,
+    };
+
+    if (!affiliateId) return defaultSec;
+
+    // 1. Try MySQL affiliate_security table
+    try {
+      const rows = await queryMysql<any>(
+        'SELECT two_factor_enabled, two_factor_secret, password_reset_token, password_reset_expires FROM affiliate_security WHERE affiliate_id = ? LIMIT 1',
+        [affiliateId]
+      );
+      if (rows && rows.length > 0) {
+        return {
+          two_factor_enabled: Boolean(rows[0].two_factor_enabled),
+          two_factor_secret: rows[0].two_factor_secret || null,
+          password_reset_token: rows[0].password_reset_token || null,
+          password_reset_expires: rows[0].password_reset_expires ? Number(rows[0].password_reset_expires) : null,
+        };
+      }
+    } catch {}
+
+    // 2. Fallback to Supabase site_settings with key 'aff_sec_' + affiliateId
+    try {
+      const supabase = getActiveWriteAdmin();
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', `aff_sec_${affiliateId}`)
+        .maybeSingle();
+
+      if (data && data.value) {
+        const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+        return {
+          two_factor_enabled: Boolean(val.two_factor_enabled),
+          two_factor_secret: val.two_factor_secret || null,
+          password_reset_token: val.password_reset_token || null,
+          password_reset_expires: val.password_reset_expires ? Number(val.password_reset_expires) : null,
+        };
+      }
+    } catch {}
+
+    return defaultSec;
+  }
+
+  static async setAffiliateTwoFactor(
+    affiliateId: string,
+    secret: string | null,
+    enabled: boolean
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const current = await this.getAffiliateSecurity(affiliateId);
+      const updated = {
+        ...current,
+        two_factor_enabled: enabled,
+        two_factor_secret: secret,
+      };
+
+      // Write to MySQL affiliate_security
+      try {
+        await executeMysql(
+          `INSERT INTO affiliate_security (affiliate_id, two_factor_enabled, two_factor_secret, password_reset_token, password_reset_expires, updated_at)
+           VALUES (?, ?, ?, ?, ?, NOW())
+           ON DUPLICATE KEY UPDATE two_factor_enabled = ?, two_factor_secret = ?, updated_at = NOW()`,
+          [
+            affiliateId,
+            enabled ? 1 : 0,
+            secret,
+            updated.password_reset_token,
+            updated.password_reset_expires,
+            enabled ? 1 : 0,
+            secret,
+          ]
+        );
+      } catch (myErr) {
+        console.warn('MySQL setAffiliateTwoFactor error:', myErr);
+      }
+
+      // Write to Supabase across shards (site_settings)
+      try {
+        const shards = getAllAdminClients();
+        for (const { client } of shards) {
+          await client.from('site_settings').upsert({
+            key: `aff_sec_${affiliateId}`,
+            value: updated,
+            updated_at: new Date().toISOString(),
+          });
+        }
+      } catch (sbErr) {
+        console.warn('Supabase setAffiliateTwoFactor error:', sbErr);
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Failed to update 2FA settings' };
+    }
+  }
+
+  static async generateAffiliatePasswordResetToken(
+    email: string
+  ): Promise<{ success: boolean; error?: string; resetCode?: string }> {
+    try {
+      const cleanEmail = email.toLowerCase().trim();
+      const affiliate = await this.getAffiliateByEmail(cleanEmail);
+      if (!affiliate) {
+        return { success: false, error: 'No affiliate account registered with this email address.' };
+      }
+
+      // 6-digit numeric OTP code
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+
+      const currentSec = await this.getAffiliateSecurity(affiliate.id);
+      const updatedSec = {
+        ...currentSec,
+        password_reset_token: resetCode,
+        password_reset_expires: expiresAt,
+      };
+
+      // Save to MySQL affiliate_security
+      try {
+        await executeMysql(
+          `INSERT INTO affiliate_security (affiliate_id, two_factor_enabled, two_factor_secret, password_reset_token, password_reset_expires, updated_at)
+           VALUES (?, ?, ?, ?, ?, NOW())
+           ON DUPLICATE KEY UPDATE password_reset_token = ?, password_reset_expires = ?, updated_at = NOW()`,
+          [
+            affiliate.id,
+            currentSec.two_factor_enabled ? 1 : 0,
+            currentSec.two_factor_secret,
+            resetCode,
+            expiresAt,
+            resetCode,
+            expiresAt,
+          ]
+        );
+      } catch (myErr) {
+        console.warn('MySQL generateAffiliatePasswordResetToken error:', myErr);
+      }
+
+      // Save to Supabase across shards
+      try {
+        const shards = getAllAdminClients();
+        for (const { client } of shards) {
+          await client.from('site_settings').upsert({
+            key: `aff_sec_${affiliate.id}`,
+            value: updatedSec,
+            updated_at: new Date().toISOString(),
+          });
+          // Also store direct token lookup
+          await client.from('site_settings').upsert({
+            key: `aff_reset_${resetCode}`,
+            value: {
+              affiliate_id: affiliate.id,
+              email: affiliate.email,
+              expires_at: expiresAt,
+            },
+            updated_at: new Date().toISOString(),
+          });
+        }
+      } catch (sbErr) {
+        console.warn('Supabase generateAffiliatePasswordResetToken error:', sbErr);
+      }
+
+      return { success: true, resetCode };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Failed to generate reset code' };
+    }
+  }
+
+  static async resetAffiliatePasswordWithToken(
+    email: string,
+    resetCode: string,
+    newPassword: string
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      if (!newPassword || newPassword.length < 6) {
+        return { success: false, error: 'New password must be at least 6 characters long.' };
+      }
+
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanCode = resetCode.trim();
+
+      const affiliate = await this.getAffiliateByEmail(cleanEmail);
+      if (!affiliate) {
+        return { success: false, error: 'Affiliate account not found.' };
+      }
+
+      // Verify token
+      const security = await this.getAffiliateSecurity(affiliate.id);
+      let isValidToken = false;
+
+      if (
+        security.password_reset_token &&
+        security.password_reset_token === cleanCode &&
+        security.password_reset_expires &&
+        security.password_reset_expires > Date.now()
+      ) {
+        isValidToken = true;
+      }
+
+      // Fallback check direct token lookup from site_settings
+      if (!isValidToken) {
+        try {
+          const supabase = getActiveWriteAdmin();
+          const { data } = await supabase
+            .from('site_settings')
+            .select('value')
+            .eq('key', `aff_reset_${cleanCode}`)
+            .maybeSingle();
+
+          if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            if (
+              val.affiliate_id === affiliate.id &&
+              val.expires_at > Date.now()
+            ) {
+              isValidToken = true;
+            }
+          }
+        } catch {}
+      }
+
+      if (!isValidToken) {
+        return { success: false, error: 'Invalid or expired verification code. Please request a new code.' };
+      }
+
+      // Hash new password
+      const newHash = await bcrypt.hash(newPassword, 10);
+
+      // 1. Update in Supabase across all shards
+      try {
+        const shards = getAllAdminClients();
+        for (const { client } of shards) {
+          await client
+            .from('affiliates')
+            .update({
+              password_hash: newHash,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', affiliate.id);
+
+          // Invalidate reset keys
+          await client
+            .from('site_settings')
+            .delete()
+            .eq('key', `aff_reset_${cleanCode}`);
+
+          const clearedSec = {
+            ...security,
+            password_reset_token: null,
+            password_reset_expires: null,
+          };
+          await client.from('site_settings').upsert({
+            key: `aff_sec_${affiliate.id}`,
+            value: clearedSec,
+            updated_at: new Date().toISOString(),
+          });
+        }
+      } catch (sbErr) {
+        console.warn('Supabase password reset update error:', sbErr);
+      }
+
+      // 2. Update in MySQL
+      try {
+        await executeMysql(
+          'UPDATE affiliates SET password_hash = ?, updated_at = NOW() WHERE id = ?',
+          [newHash, affiliate.id]
+        );
+        await executeMysql(
+          'UPDATE affiliate_security SET password_reset_token = NULL, password_reset_expires = NULL, updated_at = NOW() WHERE affiliate_id = ?',
+          [affiliate.id]
+        );
+      } catch (myErr) {
+        console.warn('MySQL password reset update error:', myErr);
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Failed to reset password' };
+    }
+  }
 }
+

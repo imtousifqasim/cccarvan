@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { AffiliateRepository } from '@/repositories/affiliate.repository';
 import { createAffiliateSessionToken, AFFILIATE_COOKIE_NAME } from '@/lib/auth/affiliate';
+import { verifyTOTPCode } from '@/lib/auth/totp';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, twoFactorCode } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -30,6 +31,33 @@ export async function POST(req: NextRequest) {
         { error: 'Invalid email or password' },
         { status: 401 }
       );
+    }
+
+    // Check if Google Authenticator 2FA is enabled for this affiliate
+    const security = await AffiliateRepository.getAffiliateSecurity(affiliate.id);
+    if (security?.two_factor_enabled) {
+      if (!twoFactorCode) {
+        return NextResponse.json({
+          success: false,
+          requires2FA: true,
+          message: 'Google Authenticator 2FA verification code required.',
+        });
+      }
+
+      if (!security.two_factor_secret) {
+        return NextResponse.json(
+          { error: '2FA configuration error. Please contact administrator.' },
+          { status: 500 }
+        );
+      }
+
+      const isValid2FA = verifyTOTPCode(security.two_factor_secret, twoFactorCode);
+      if (!isValid2FA) {
+        return NextResponse.json(
+          { error: 'Invalid Google Authenticator code. Please check your app.' },
+          { status: 401 }
+        );
+      }
     }
 
     const token = await createAffiliateSessionToken({

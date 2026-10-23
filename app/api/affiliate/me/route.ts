@@ -29,10 +29,11 @@ export async function GET(req: NextRequest) {
       categoryId: null,
     }).catch(() => {});
 
-    // Fetch financial metrics and settings
-    const [financialSummary, settings] = await Promise.all([
+    // Fetch financial metrics, settings, and security status
+    const [financialSummary, settings, security] = await Promise.all([
       AffiliateRepository.getFinancialSummary(affiliate.id),
       AffiliateRepository.getSettings(),
+      AffiliateRepository.getAffiliateSecurity(affiliate.id),
     ]);
 
     return NextResponse.json({
@@ -40,6 +41,7 @@ export async function GET(req: NextRequest) {
       affiliate: safeAffiliate,
       financialSummary,
       settings,
+      two_factor_enabled: Boolean(security?.two_factor_enabled),
       isImpersonated: Boolean(session.impersonatedBy),
       impersonatedBy: session.impersonatedBy || null,
     });
