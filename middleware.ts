@@ -78,7 +78,8 @@ export async function middleware(req: NextRequest) {
     const isPublicAffiliatePath = 
       pathname === '/affiliate/login' || 
       pathname === '/affiliate/register' || 
-      pathname === '/affiliate/terms';
+      pathname === '/affiliate/terms' ||
+      pathname === '/affiliate/forgot-password';
 
     const sessionCookie = req.cookies.get(AFFILIATE_COOKIE_NAME)?.value;
     const session = sessionCookie ? await verifyAffiliateSessionToken(sessionCookie) : null;
@@ -102,7 +103,12 @@ export async function middleware(req: NextRequest) {
     }
 
     // Approved affiliate (or admin impersonating) visiting auth pages or pending page -> redirect to dashboard
-    if (pathname === '/affiliate/login' || pathname === '/affiliate/register' || (pathname === '/affiliate/pending' && isImpersonated)) {
+    if (
+      pathname === '/affiliate/login' || 
+      pathname === '/affiliate/register' || 
+      pathname === '/affiliate/forgot-password' || 
+      (pathname === '/affiliate/pending' && isImpersonated)
+    ) {
       return NextResponse.redirect(new URL('/affiliate', req.url));
     }
   }
