@@ -33,6 +33,8 @@ export default function AffiliateDashboard() {
   const [affiliate, setAffiliate] = useState<Affiliate | null>(null);
   const [summary, setSummary] = useState<AffiliateFinancialSummary | null>(null);
   const [settings, setSettings] = useState<AffiliateSettings | null>(null);
+  const [isImpersonated, setIsImpersonated] = useState(false);
+  const [impersonatedBy, setImpersonatedBy] = useState<string | null>(null);
 
   // Tab specific data
   const [links, setLinks] = useState<AffiliateLink[]>([]);
@@ -111,7 +113,10 @@ export default function AffiliateDashboard() {
       }
       const data = await res.json();
       if (data.affiliate) {
-        if (data.affiliate.status !== 'approved') {
+        if (data.isImpersonated) {
+          setIsImpersonated(true);
+          setImpersonatedBy(data.impersonatedBy || 'Admin');
+        } else if (data.affiliate.status !== 'approved') {
           router.push('/affiliate/pending');
           return;
         }
@@ -337,6 +342,31 @@ export default function AffiliateDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col selection:bg-amber-100 selection:text-amber-900 font-sans">
+      {/* Admin Impersonation Top Alert Banner */}
+      {isImpersonated && (
+        <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-4 py-2.5 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-sm sticky top-0 z-50 border-b border-amber-600/40">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-slate-950 animate-ping" />
+            <span className="bg-slate-950 text-amber-400 px-2 py-0.5 rounded text-[10px] uppercase tracking-wider font-black">
+              Admin Direct View
+            </span>
+            <span>
+              Logged in as: <strong className="underline decoration-slate-900">{affiliate?.full_name}</strong> ({affiliate?.email}) &bull; Status: <strong className="uppercase">{affiliate?.status}</strong>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/affiliates"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-bold tracking-wider flex items-center gap-1.5 transition shadow-sm"
+            >
+              <span>Return to Admin Panel</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-amber-400" />
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Top Navbar */}
       <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -359,9 +389,17 @@ export default function AffiliateDashboard() {
               </div>
             </Link>
 
-            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Approved Partner
+            <span className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border ${
+              affiliate?.status === 'approved' 
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80' 
+                : affiliate?.status === 'pending'
+                ? 'bg-amber-50 text-amber-800 border-amber-200/80'
+                : 'bg-rose-50 text-rose-700 border-rose-200/80'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                affiliate?.status === 'approved' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+              }`} />
+              <span className="capitalize">{affiliate?.status || 'Active'} Partner</span>
             </span>
           </div>
 

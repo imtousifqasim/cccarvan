@@ -40,6 +40,8 @@ export async function GET(req: NextRequest) {
       affiliate: safeAffiliate,
       financialSummary,
       settings,
+      isImpersonated: Boolean(session.impersonatedBy),
+      impersonatedBy: session.impersonatedBy || null,
     });
   } catch (error: any) {
     console.error('Affiliate me route error:', error);

@@ -92,15 +92,17 @@ export async function middleware(req: NextRequest) {
     }
 
     // Authenticated affiliate
-    if (session.status !== 'approved') {
+    const isImpersonated = Boolean(session.impersonatedBy);
+
+    if (session.status !== 'approved' && !isImpersonated) {
       if (pathname !== '/affiliate/pending') {
         return NextResponse.redirect(new URL('/affiliate/pending', req.url));
       }
       return NextResponse.next();
     }
 
-    // Approved affiliate visiting auth pages or pending page -> redirect to dashboard
-    if (pathname === '/affiliate/login' || pathname === '/affiliate/register' || pathname === '/affiliate/pending') {
+    // Approved affiliate (or admin impersonating) visiting auth pages or pending page -> redirect to dashboard
+    if (pathname === '/affiliate/login' || pathname === '/affiliate/register' || (pathname === '/affiliate/pending' && isImpersonated)) {
       return NextResponse.redirect(new URL('/affiliate', req.url));
     }
   }

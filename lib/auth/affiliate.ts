@@ -10,6 +10,7 @@ export interface AffiliateSessionPayload {
   status: AffiliateStatus;
   referral_code?: string | null;
   exp: number;
+  impersonatedBy?: string | null;
 }
 
 // Edge-compatible HMAC token handling via Web Crypto API
