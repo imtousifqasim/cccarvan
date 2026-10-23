@@ -172,19 +172,32 @@ export default function AdminAffiliatesPage() {
   };
 
   // Direct Login as Affiliate (Impersonate)
-  const handleImpersonate = async (id: string) => {
+  const handleImpersonate = async (id: string, newTab = false) => {
     setImpersonatingId(id);
+    let popupWindow: Window | null = null;
+    if (newTab) {
+      // Open blank window synchronously before await to prevent browser popup blockers
+      popupWindow = window.open('about:blank', '_blank');
+    }
+
     try {
       const res = await fetch(`/api/admin/affiliates/${id}/impersonate`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        window.open('/affiliate', '_blank');
+        if (newTab && popupWindow) {
+          popupWindow.location.href = '/affiliate';
+        } else {
+          // Direct navigation - guaranteed to work across all browsers without popup blocking
+          window.location.href = '/affiliate';
+        }
       } else {
+        if (popupWindow) popupWindow.close();
         alert(data.error || 'Failed to login as affiliate');
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (popupWindow) popupWindow.close();
       console.error(err);
-      alert('Error logging in as affiliate');
+      alert('Error logging in as affiliate: ' + (err?.message || 'Server error'));
     } finally {
       setImpersonatingId(null);
     }
@@ -528,7 +541,7 @@ export default function AdminAffiliatesPage() {
                                 ) : (
                                   <LogIn className="w-3.5 h-3.5 text-amber-700" />
                                 )}
-                                <span>Direct Login</span>
+                                <span>{impersonatingId === aff.id ? 'Connecting...' : 'Direct Login'}</span>
                               </button>
 
                               {/* Drill-down inspect */}
@@ -1070,7 +1083,7 @@ export default function AdminAffiliatesPage() {
                     ) : (
                       <LogIn className="w-3.5 h-3.5" />
                     )}
-                    <span>Direct Login to Dashboard</span>
+                    <span>{impersonatingId === detailData.affiliate.id ? 'Connecting to Dashboard...' : 'Direct Login to Dashboard'}</span>
                     <ExternalLink className="w-3 h-3 text-slate-950" />
                   </button>
                 )}
