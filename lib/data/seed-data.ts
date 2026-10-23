@@ -317,13 +317,13 @@ export const SEED_ANNOUNCEMENT: Announcement = {
   coupon_code: 'CC10',
   link_url: '/products',
   is_active: true,
-  whatsapp_number: '+92 326 7727318',
+  whatsapp_number: '+92 303 8212360',
   ticker_messages: [
     'Flat Rs. 100 Express Nationwide Delivery on all orders across Pakistan',
     'Winter Collection 2026: Fleece Tracksuits, Jackets, Hoodies & Warm Pajamas',
     '100% Genuine Quality Guaranteed & 7-Day Easy Return Policy',
     'First Order Privilege: Unlock 10% Off with Code CC10',
-    'Customer Helpline & Inquiries via WhatsApp: +92 326 7727318',
+    'Customer Helpline & Inquiries via WhatsApp: +92 303 8212360',
   ],
 };
 

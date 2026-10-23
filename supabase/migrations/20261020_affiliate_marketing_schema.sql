@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public.affiliates (
     commission_rate NUMERIC(5, 2),                 -- NULL = fallback to global default
     rejection_reason TEXT,
     approved_at TIMESTAMPTZ,
-    approved_by UUID,
+    approved_by TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS public.withdrawals (
     transaction_reference TEXT,                    -- Payment tracking ID provided by admin
     requested_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     processed_at TIMESTAMPTZ,
-    processed_by UUID
+    processed_by TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_withdrawals_affiliate_id ON public.withdrawals (affiliate_id);

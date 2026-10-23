@@ -13,6 +13,11 @@ import {
   CommissionStatus
 } from '@/types/database';
 
+function isUuid(val?: string | null): boolean {
+  if (!val) return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+}
+
 export class AffiliateRepository {
   // ----------------------------------------------------------------------------
   // 1. SETTINGS
@@ -281,7 +286,9 @@ export class AffiliateRepository {
 
     if (updates.status === 'approved') {
       payload.approved_at = new Date().toISOString();
-      if (updates.approvedBy) payload.approved_by = updates.approvedBy;
+      if (updates.approvedBy && isUuid(updates.approvedBy)) {
+        payload.approved_by = updates.approvedBy;
+      }
       if (!current.referral_code) {
         payload.referral_code = updates.referralCode || (await this.generateUniqueReferralCode(current.full_name));
       }
@@ -296,12 +303,24 @@ export class AffiliateRepository {
 
     // Write to Supabase
     const supabase = getActiveWriteAdmin();
-    const { data: updated, error } = await supabase
+    let { data: updated, error } = await supabase
       .from('affiliates')
       .update(payload)
       .eq('id', id)
       .select('*')
       .single();
+
+    if (error && error.message?.includes('invalid input syntax for type uuid')) {
+      delete payload.approved_by;
+      const retry = await supabase
+        .from('affiliates')
+        .update(payload)
+        .eq('id', id)
+        .select('*')
+        .single();
+      updated = retry.data;
+      error = retry.error;
+    }
 
     if (error || !updated) {
       throw new Error(error?.message || 'Failed to update affiliate');
@@ -311,9 +330,9 @@ export class AffiliateRepository {
     try {
       await executeMysql(
         `UPDATE affiliates 
-         SET status = ?, rejection_reason = ?, referral_code = COALESCE(?, referral_code), commission_rate = ?, approved_at = COALESCE(?, approved_at), updated_at = NOW()
+         SET status = ?, rejection_reason = ?, referral_code = COALESCE(?, referral_code), commission_rate = ?, approved_at = COALESCE(?, approved_at), approved_by = COALESCE(?, approved_by), updated_at = NOW()
          WHERE id = ?`,
-        [payload.status, payload.rejection_reason || null, payload.referral_code || null, payload.commission_rate ?? null, payload.approved_at || null, id]
+        [payload.status, payload.rejection_reason || null, payload.referral_code || null, payload.commission_rate ?? null, payload.approved_at || null, updates.approvedBy || null, id]
       );
     } catch {}
 
@@ -919,9 +938,11 @@ export class AffiliateRepository {
     };
     if (updates.adminNote !== undefined) payload.admin_note = updates.adminNote;
     if (updates.transactionReference !== undefined) payload.transaction_reference = updates.transactionReference;
-    if (updates.processedBy) payload.processed_by = updates.processedBy;
+    if (updates.processedBy && isUuid(updates.processedBy)) {
+      payload.processed_by = updates.processedBy;
+    }
 
-    const { data: updated, error } = await supabase
+    let { data: updated, error } = await supabase
       .from('withdrawals')
       .update(payload)
       .eq('id', id)
@@ -931,6 +952,21 @@ export class AffiliateRepository {
       `)
       .single();
 
+    if (error && error.message?.includes('invalid input syntax for type uuid')) {
+      delete payload.processed_by;
+      const retry = await supabase
+        .from('withdrawals')
+        .update(payload)
+        .eq('id', id)
+        .select(`
+          *,
+          affiliate:affiliates (id, full_name, email, phone)
+        `)
+        .single();
+      updated = retry.data;
+      error = retry.error;
+    }
+
     if (error || !updated) {
       throw new Error(error?.message || 'Failed to update withdrawal status');
     }
@@ -938,9 +974,9 @@ export class AffiliateRepository {
     try {
       await executeMysql(
         `UPDATE withdrawals 
-         SET status = ?, admin_note = ?, transaction_reference = ?, processed_at = NOW() 
+         SET status = ?, admin_note = ?, transaction_reference = ?, processed_at = NOW(), processed_by = COALESCE(?, processed_by)
          WHERE id = ?`,
-        [payload.status, payload.admin_note || null, payload.transaction_reference || null, id]
+        [payload.status, payload.admin_note || null, payload.transaction_reference || null, updates.processedBy || null, id]
       );
     } catch {}
 

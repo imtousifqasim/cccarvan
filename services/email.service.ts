@@ -232,8 +232,8 @@ export class EmailService {
                 <!-- Footer -->
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
-                    Concierge Helpline: +92 326 7727318 • concierge@cccarvan.com
+                    CC Carvan Haute Couture Atelier • Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan<br>
+                    Concierge Helpline: +92 303 8212360 • concierge@cccarvan.com
                   </td>
                 </tr>
               </table>
@@ -333,7 +333,7 @@ export class EmailService {
 
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    CC Carvan Haute Couture Atelier • Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan<br>
                     Security Notice: For your protection, never share your password with anyone.
                   </td>
                 </tr>
@@ -417,7 +417,7 @@ export class EmailService {
 
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    CC Carvan Haute Couture Atelier • Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan<br>
                     Standard delivery takes 2 to 3 business days across all major Pakistani cities.
                   </td>
                 </tr>
@@ -487,7 +487,7 @@ As a registered member of our Private Salon, your priority atelier reservations 
 
                 <tr>
                   <td style="background-color: #f7f5f2; padding: 26px 30px; text-align: center; border-top: 1px solid #eae7e2; font-size: 11px; color: #8c827a; line-height: 1.6;">
-                    CC Carvan Haute Couture Atelier • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan<br>
+                    CC Carvan Haute Couture Atelier • Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan<br>
                     You are receiving this bespoke bulletin as a distinguished member of CC Carvan VIP Club.
                   </td>
                 </tr>

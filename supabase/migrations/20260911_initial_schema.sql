@@ -613,10 +613,10 @@ INSERT INTO public.site_settings (key, value) VALUES
     "store_name": "CC Carvan",
     "tagline": "Haute Couture & Luxury Fashion Atelier",
     "store_email": "support@cccarvan.com",
-    "store_phone": "+92 326 7727318",
+    "store_phone": "+92 303 8212360",
     "currency": "PKR",
     "currency_symbol": "₨",
-    "address": "CC Carvan Atelier, Lahore, Pakistan",
+    "address": "Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan",
     "logo_url": "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=400&auto=format&fit=crop",
     "free_shipping_threshold": 5000,
     "default_shipping_fee": 100

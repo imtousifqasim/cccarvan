@@ -72,12 +72,12 @@ export default async function HomePage() {
         'logo': 'https://cccarvan.com/favicon.ico',
         'description':
           'Premier Pakistani haute couture store specializing in hand-embroidered unstitched suits, festive formals, pure wool shawls, and fine leather accessories.',
-        'telephone': '+923267727318',
+        'telephone': '+923038212360',
         'priceRange': 'PKR 1,500 - PKR 25,000',
         'address': {
           '@type': 'PostalAddress',
-          'streetAddress': 'Near Meezan Bank Branch, Peco Road',
-          'addressLocality': 'Lahore',
+          'streetAddress': 'Near HBL Bank, Hujra Shah Muqeem',
+          'addressLocality': 'Okara',
           'addressRegion': 'Punjab',
           'addressCountry': 'PK',
         },

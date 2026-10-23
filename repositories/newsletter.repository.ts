@@ -268,7 +268,7 @@ export class NewsletterRepository {
     }
 
     const storeUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cccarvan.com';
-    const storePhone = process.env.NEXT_PUBLIC_STORE_PHONE || '+92 326 7727318';
+    const storePhone = process.env.NEXT_PUBLIC_STORE_PHONE || '+92 303 8212360';
 
     // Build Luxury Branded HTML Email Template
     const brandedHtml = `
@@ -312,7 +312,7 @@ export class NewsletterRepository {
           <tr>
             <td style="padding: 24px 32px 32px; background-color: #0f0f13; border-top: 1px solid #22222a; text-align: center; color: #71717a; font-size: 11px; line-height: 1.7;">
               <p style="margin: 0 0 6px; color: #a1a1aa; font-weight: 600;">CC CARVAN HAUTE COUTURE • VIP CONCIERGE</p>
-              <p style="margin: 0 0 12px;">Helpline / WhatsApp: ${storePhone} • Near Meezan Bank Branch, Peco Road, Lahore, Punjab, Pakistan</p>
+              <p style="margin: 0 0 12px;">Helpline / WhatsApp: ${storePhone} • Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan</p>
               <p style="margin: 0 0 8px;">You are receiving this private communication as an esteemed patron of CC Carvan.</p>
               <p style="margin: 0;">
                 <a href="${storeUrl}" style="color: #d99026; text-decoration: none; margin-right: 15px;">Atelier Storefront</a>

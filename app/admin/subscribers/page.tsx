@@ -509,7 +509,7 @@ export default function AdminSubscribersPage() {
 
                 <div className="p-4 bg-slate-50 border-t border-slate-100 text-center text-[10px] text-slate-500 space-y-1">
                   <p className="font-bold text-slate-600">CC CARVAN HAUTE COUTURE • VIP CONCIERGE</p>
-                  <p>Helpline / WhatsApp: +92 326 7727318 • Near Meezan Bank Branch, Peco Road, Lahore</p>
+                  <p>Helpline / WhatsApp: +92 303 8212360 • Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan</p>
                   <p className="text-slate-400">Unsubscribe from VIP Bulletin</p>
                 </div>
               </div>

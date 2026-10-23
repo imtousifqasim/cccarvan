@@ -233,7 +233,7 @@ export default function WishlistPage() {
           <span>Bespoke Tailoring & Styling Assistance</span>
         </div>
         <p className="text-xs text-[#6b6b6b] leading-relaxed">
-          Need custom sleeve lining, specific lengths, or bespoke colorways? Connect with our master stylist on <a href="https://wa.me/923267727318" target="_blank" rel="noopener noreferrer" className="font-bold text-[#b87414] underline hover:text-[#d99026]">WhatsApp (+92 326 7727318)</a> quoting any garment from your wishlist.
+          Need custom sleeve lining, specific lengths, or bespoke colorways? Connect with our master stylist on <a href="https://wa.me/923038212360" target="_blank" rel="noopener noreferrer" className="font-bold text-[#b87414] underline hover:text-[#d99026]">WhatsApp (+92 303 8212360)</a> quoting any garment from your wishlist.
         </p>
       </div>
 
