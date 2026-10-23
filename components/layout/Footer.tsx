@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   Mail, Phone, MapPin, Sparkles, ArrowUpRight, 
   Truck, ShieldCheck, RefreshCw, MessageCircle, 
-  Clock, CheckCircle2, ChevronRight, Lock
+  Clock, CheckCircle2, Lock
 } from 'lucide-react';
 
 export function Footer() {
@@ -108,7 +108,6 @@ export function Footer() {
         {/* 2. VIP Salon Pre-Order & Gazette Banner */}
         <div className="mb-20 rounded-3xl bg-gradient-to-br from-[#15151c] via-[#101015] to-[#0a0a0d] border border-white/10 hover:border-amber-400/30 p-8 sm:p-12 lg:p-14 shadow-2xl relative overflow-hidden transition-all duration-500">
           
-          {/* Subtle auroral gold ambient element */}
           <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#d99026]/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
@@ -166,38 +165,38 @@ export function Footer() {
           </div>
         </div>
 
-        {/* 3. Main 4-Column Navigation Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-16 border-b border-white/[0.08]">
+        {/* 3. Main 4-Column Navigation Layout - Evenly Aligned Across Columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-16 border-b border-white/[0.08] items-start">
           
           {/* Column 1: Brand & Atelier Presence */}
-          <div className="space-y-5">
-            <Link href="/" className="inline-block group">
+          <div className="space-y-4">
+            <Link href="/" className="inline-block">
               <img
                 src="/logo.png"
                 alt="CC Carvan"
-                className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_4px_12px_rgba(217,144,38,0.15)]"
+                className="h-12 w-auto object-contain drop-shadow-[0_4px_12px_rgba(217,144,38,0.15)]"
               />
             </Link>
 
-            <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-              CC Carvan redefines contemporary Pakistani luxury fashion, marrying centuries-old artisanal craft with modern pret silhouettes for the discerning connoisseur.
+            <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+              CC Carvan redefines contemporary Pakistani luxury fashion, marrying centuries-old artisanal craft with modern pret silhouettes.
             </p>
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 text-[11px] text-neutral-300">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Flagship Atelier: <strong>Okara, Pakistan</strong></span>
+              <span>Atelier: <strong>Okara, Pakistan</strong></span>
             </div>
 
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400 block mb-3 font-sans">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-2.5 font-sans">
                 Follow The Atelier
               </span>
-              <div className="flex items-center gap-2.5 text-neutral-300">
+              <div className="flex items-center gap-2 text-neutral-400">
                 <a 
                   href="https://wa.me/923038212360" 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-emerald-400 hover:border-emerald-400/50 hover:bg-emerald-500/10 transition duration-300" 
+                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-emerald-400 hover:border-emerald-400/50 hover:bg-emerald-500/10 transition" 
                   aria-label="WhatsApp"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -206,7 +205,7 @@ export function Footer() {
                   href="https://instagram.com" 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-[#d99026] hover:border-[#d99026]/50 hover:bg-amber-500/10 transition duration-300" 
+                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-[#d99026] hover:border-[#d99026]/50 hover:bg-amber-500/10 transition" 
                   aria-label="Instagram"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
@@ -215,7 +214,7 @@ export function Footer() {
                   href="https://facebook.com" 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-[#d99026] hover:border-[#d99026]/50 hover:bg-amber-500/10 transition duration-300" 
+                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-[#d99026] hover:border-[#d99026]/50 hover:bg-amber-500/10 transition" 
                   aria-label="Facebook"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -224,7 +223,7 @@ export function Footer() {
                   href="https://youtube.com" 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-[#d99026] hover:border-[#d99026]/50 hover:bg-amber-500/10 transition duration-300" 
+                  className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center hover:text-[#d99026] hover:border-[#d99026]/50 hover:bg-amber-500/10 transition" 
                   aria-label="YouTube"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><polygon points="10 15 15 12 10 9 10 15"/></svg>
@@ -233,185 +232,142 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Curated Collections */}
+          {/* Column 2: Store Collections - Flush Left, Uniform Baseline */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-white mb-5 font-sans flex items-center gap-2">
-              <span>Haute Collections</span>
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white mb-5 font-sans">
+              Store Collections
             </h3>
-            <ul className="space-y-2.5 text-xs text-neutral-300 font-sans">
+            <ul className="space-y-3 text-xs text-neutral-400 font-sans">
               <li>
-                <Link href="/category/men" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all text-white font-medium">
-                  <ChevronRight className="w-3 h-3 text-[#d99026]" />
-                  <span>Men's Fashion &amp; Suits</span>
+                <Link href="/category/men" className="hover:text-amber-400 transition-colors block">
+                  Men's Fashion &amp; Suits
                 </Link>
               </li>
               <li>
-                <Link href="/category/men-winter-wear" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Men's Winter Wear &amp; Fleece</span>
-                  <span className="ml-1 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Hot</span>
+                <Link href="/category/men-winter-wear" className="hover:text-amber-400 transition-colors block">
+                  Men's Winter Wear &amp; Fleece
                 </Link>
               </li>
               <li>
-                <Link href="/category/women" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all text-white font-medium">
-                  <ChevronRight className="w-3 h-3 text-[#d99026]" />
-                  <span>Women's Festive &amp; Abayas</span>
+                <Link href="/category/women" className="hover:text-amber-400 transition-colors block">
+                  Women's Festive &amp; Abayas
                 </Link>
               </li>
               <li>
-                <Link href="/category/women-night-suits-pajamas" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Night Suits &amp; Velvet Sets</span>
+                <Link href="/category/women-night-suits-pajamas" className="hover:text-amber-400 transition-colors block">
+                  Night Suits &amp; Velvet Sets
                 </Link>
               </li>
               <li>
-                <Link href="/category/women-handbags" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Leather Handbags &amp; Clutches</span>
+                <Link href="/category/women-handbags" className="hover:text-amber-400 transition-colors block">
+                  Leather Handbags &amp; Clutches
                 </Link>
               </li>
               <li>
-                <Link href="/category/fragrances" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Artisanal Perfumes &amp; Oudh</span>
+                <Link href="/category/fragrances" className="hover:text-amber-400 transition-colors block">
+                  Artisanal Perfumes &amp; Oudh
                 </Link>
               </li>
               <li>
-                <Link href="/category/watches-gadgets" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Watches &amp; Bluetooth Audio</span>
+                <Link href="/category/watches-gadgets" className="hover:text-amber-400 transition-colors block">
+                  Watches &amp; Bluetooth Audio
                 </Link>
               </li>
-              <li className="pt-2 border-t border-white/[0.08]">
-                <Link href="/category/winter-collection" className="text-amber-400 font-bold hover:text-amber-300 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Winter Collection 2026</span>
-                  <span className="ml-1 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">New</span>
+              <li>
+                <Link href="/category/winter-collection" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors block">
+                  Winter Collection 2026
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: Customer Concierge & Patrons */}
+          {/* Column 3: Customer Concierge - Flush Left, Uniform Baseline */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-white mb-5 font-sans">
-              Patron Services
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white mb-5 font-sans">
+              Customer Concierge
             </h3>
-            <ul className="space-y-2.5 text-xs text-neutral-300 font-sans">
+            <ul className="space-y-3 text-xs text-neutral-400 font-sans">
               <li>
-                <Link href="/track-order" className="text-amber-400 font-bold hover:text-amber-300 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-amber-400" />
-                  <span>Track Consignment Live</span>
-                  <span className="ml-1 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Fast</span>
+                <Link href="/track-order" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors block">
+                  Track Consignment Live
                 </Link>
               </li>
               <li>
-                <Link href="/affiliate/register" className="text-emerald-400 font-bold hover:text-emerald-300 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-emerald-400" />
-                  <span>Affiliate Partner Program</span>
-                  <span className="ml-1 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Earn 10%</span>
+                <Link href="/affiliate/register" className="hover:text-amber-400 transition-colors block">
+                  Affiliate Partner Program
                 </Link>
               </li>
               <li>
-                <Link href="/account" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Patron Account Portal</span>
+                <Link href="/account" className="hover:text-amber-400 transition-colors block">
+                  Patron Account Portal
                 </Link>
               </li>
               <li>
-                <Link href="/account/orders" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Order History &amp; Receipts</span>
+                <Link href="/account/orders" className="hover:text-amber-400 transition-colors block">
+                  Order History &amp; Receipts
                 </Link>
               </li>
               <li>
-                <Link href="/wishlist" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Saved Atelier Wishlist</span>
+                <Link href="/wishlist" className="hover:text-amber-400 transition-colors block">
+                  Saved Atelier Wishlist
                 </Link>
               </li>
               <li>
-                <Link href="/compare" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Compare Fabric Silhouettes</span>
+                <Link href="/compare" className="hover:text-amber-400 transition-colors block">
+                  Compare Fabric Silhouettes
                 </Link>
               </li>
               <li>
-                <Link href="/affiliate/terms" className="hover:text-amber-400 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all">
-                  <ChevronRight className="w-3 h-3 text-neutral-500" />
-                  <span>Affiliate &amp; Partner Terms</span>
+                <Link href="/affiliate/terms" className="hover:text-amber-400 transition-colors block">
+                  Affiliate &amp; Partner Terms
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Flagship Atelier & Interactive Contact Card */}
+          {/* Column 4: Flagship Atelier & Contact - Flush Left, Uniform Baseline */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-white mb-5 font-sans">
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white mb-5 font-sans">
               Flagship Atelier
             </h3>
-            
-            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-amber-400/30 transition-all space-y-4">
-              
-              <div className="flex items-start gap-3">
+            <ul className="space-y-3.5 text-xs text-neutral-400 font-sans">
+              <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-[#d99026] shrink-0 mt-0.5" />
-                <span className="text-xs text-neutral-300 leading-relaxed font-sans">
-                  Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
+                <span className="leading-relaxed">Near HBL Bank, Hujra Shah Muqeem, Okara, Pakistan</span>
+              </li>
+              <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#d99026] shrink-0" />
-                <a href="tel:+923038212360" className="text-xs font-mono font-bold text-white hover:text-amber-400 transition">
+                <a href="tel:+923038212360" className="hover:text-amber-400 transition font-mono font-bold text-white">
                   +92 303 8212360
                 </a>
-              </div>
-
-              <div className="flex items-center gap-3">
+              </li>
+              <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-[#d99026] shrink-0" />
-                <a href="mailto:concierge@cccarvan.com" className="text-xs text-neutral-300 hover:text-white transition">
+                <a href="mailto:concierge@cccarvan.com" className="hover:text-white transition">
                   concierge@cccarvan.com
                 </a>
-              </div>
-
-              <div className="flex items-center gap-3 pt-2 border-t border-white/[0.08] text-[11px] text-neutral-400">
-                <Clock className="w-3.5 h-3.5 text-[#d99026] shrink-0" />
+              </li>
+              <li className="flex items-center gap-3">
+                <Clock className="w-4 h-4 text-[#d99026] shrink-0" />
                 <span>Mon - Sat: 11:00 AM - 9:00 PM PKT</span>
-              </div>
-
-              <a
-                href="https://wa.me/923038212360"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full mt-2 py-2.5 px-4 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm hover:shadow-emerald-600/20"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Direct WhatsApp Stylist</span>
-              </a>
-
-            </div>
+              </li>
+              <li className="pt-2">
+                <a
+                  href="https://wa.me/923038212360"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold text-xs inline-flex items-center justify-center gap-2 transition shadow-sm"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Live WhatsApp Concierge</span>
+                </a>
+              </li>
+            </ul>
           </div>
 
         </div>
 
-        {/* 4. Payment Methods & Verification Badges */}
-        <div className="py-8 flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.06] text-xs text-neutral-400">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
-            <span>Verified Payment Modes:</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2.5 text-[11px]">
-            <span className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 font-medium">Cash on Delivery (COD)</span>
-            <span className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 font-medium">Bank Transfer (HBL / Meezan)</span>
-            <span className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 font-medium">EasyPaisa</span>
-            <span className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 font-medium">JazzCash</span>
-            <span className="px-3 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-medium flex items-center gap-1.5">
-              <Lock className="w-3 h-3 text-emerald-400" />
-              <span>256-Bit SSL Encrypted</span>
-            </span>
-          </div>
-        </div>
-
-        {/* 5. Bottom Copyright & Sleek Developer Credit */}
+        {/* 4. Bottom Copyright & Sleek Developer Credit */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-sans">
           <p className="text-center sm:text-left text-neutral-400">
             © {new Date().getFullYear()} CC Carvan (Pvt) Ltd. All Rights Reserved. •{' '}
@@ -434,7 +390,7 @@ export function Footer() {
             <span>•</span>
             <Link href="/track-order" className="hover:text-white transition">Nationwide Dispatch</Link>
             <span>•</span>
-            <span className="text-neutral-400">Pakistan Luxury Apparel</span>
+            <span className="text-neutral-400">Cash on Delivery Available</span>
           </div>
         </div>
 
