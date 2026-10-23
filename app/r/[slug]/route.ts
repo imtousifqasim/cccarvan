@@ -9,24 +9,44 @@ export async function GET(
   try {
     const { slug } = await params;
     const cleanSlug = slug.toLowerCase().trim();
-
-    const link = await AffiliateRepository.getAffiliateLinkBySlug(cleanSlug);
     const siteUrl = req.nextUrl.origin;
+
+    // 1. Try finding link by slug first
+    let link = await AffiliateRepository.getAffiliateLinkBySlug(cleanSlug);
+
+    // 2. If no direct link slug match, check if this is an affiliate referral code
+    if (!link) {
+      const affiliateByRef = await AffiliateRepository.getAffiliateByReferralCode(cleanSlug);
+      if (affiliateByRef) {
+        link = await AffiliateRepository.createOrGetAffiliateLink({
+          affiliateId: affiliateByRef.id,
+          productId: null,
+          categoryId: null,
+        });
+      }
+    }
 
     if (!link) {
       return NextResponse.redirect(new URL('/', siteUrl));
     }
 
-    // Increment click count asynchronously
-    AffiliateRepository.incrementLinkClick(link.slug).catch(console.error);
+    // Await click increment so it's guaranteed to persist in Serverless runtime
+    try {
+      await AffiliateRepository.incrementLinkClick(link.id);
+    } catch (e) {
+      console.error('Failed to increment link click:', e);
+    }
 
     // Verify affiliate status
     const affiliate = await AffiliateRepository.getAffiliateById(link.affiliate_id);
     const isApproved = affiliate && affiliate.status === 'approved';
 
-    // Determine target redirect path
+    // Determine target redirect path (priority: ?target= param -> product slug -> category slug -> home)
+    const targetQuery = req.nextUrl.searchParams.get('target');
     let targetPath = '/';
-    if (link.product && (link.product as any).slug) {
+    if (targetQuery && targetQuery.startsWith('/')) {
+      targetPath = targetQuery;
+    } else if (link.product && (link.product as any).slug) {
       targetPath = `/products/${(link.product as any).slug}`;
     } else if (link.category && (link.category as any).slug) {
       targetPath = `/category/${(link.category as any).slug}`;
@@ -34,7 +54,7 @@ export async function GET(
 
     const redirectResponse = NextResponse.redirect(new URL(targetPath, siteUrl));
 
-    // If affiliate is approved, set tracking cookie (Last-click wins)
+    // If affiliate is approved, set tracking cookie (Last-click wins, 30 days)
     if (isApproved) {
       const settings = await AffiliateRepository.getSettings();
       const cookieDays = settings.cookie_days || 30;

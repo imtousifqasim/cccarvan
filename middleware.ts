@@ -5,6 +5,23 @@ import { AFFILIATE_COOKIE_NAME, verifyAffiliateSessionToken } from './lib/auth/a
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
+  // 0. Affiliate Referral Interception (?ref=CODE -> Route via /r/code tracking engine)
+  if (
+    searchParams.has('ref') &&
+    !pathname.startsWith('/r/') &&
+    !pathname.startsWith('/api/') &&
+    !pathname.startsWith('/_next/')
+  ) {
+    const refCode = searchParams.get('ref')?.trim();
+    if (refCode) {
+      const targetUrl = new URL(`/r/${encodeURIComponent(refCode.toLowerCase())}`, req.url);
+      if (pathname && pathname !== '/') {
+        targetUrl.searchParams.set('target', pathname);
+      }
+      return NextResponse.redirect(targetUrl);
+    }
+  }
+
   // 1. SEO 301 Redirect: Legacy /products?category=... -> Clean /category/...
   if (pathname === '/products' && searchParams.has('category')) {
     const categorySlug = searchParams.get('category');
@@ -12,7 +29,7 @@ export async function middleware(req: NextRequest) {
       const targetUrl = new URL(`/category/${encodeURIComponent(categorySlug)}`, req.url);
       // Preserve other filter/sorting params (e.g. sortBy)
       searchParams.forEach((value, key) => {
-        if (key !== 'category') {
+        if (key !== 'category' && key !== 'ref') {
           targetUrl.searchParams.set(key, value);
         }
       });
@@ -24,7 +41,9 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/collections/')) {
     const slug = pathname.replace('/collections/', '');
     const targetUrl = new URL(`/category/${slug}`, req.url);
-    searchParams.forEach((value, key) => targetUrl.searchParams.set(key, value));
+    searchParams.forEach((value, key) => {
+      if (key !== 'ref') targetUrl.searchParams.set(key, value);
+    });
     return NextResponse.redirect(targetUrl, 301);
   }
 
@@ -91,9 +110,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/affiliate/:path*',
-    '/products',
-    '/collections/:path*',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
   ],
 };

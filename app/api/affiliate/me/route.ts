@@ -22,6 +22,13 @@ export async function GET(req: NextRequest) {
     // Never return password hash
     const { password_hash, ...safeAffiliate } = affiliate;
 
+    // Ensure master storefront link exists so clicks are accurately reflected in summary
+    await AffiliateRepository.createOrGetAffiliateLink({
+      affiliateId: affiliate.id,
+      productId: null,
+      categoryId: null,
+    }).catch(() => {});
+
     // Fetch financial metrics and settings
     const [financialSummary, settings] = await Promise.all([
       AffiliateRepository.getFinancialSummary(affiliate.id),

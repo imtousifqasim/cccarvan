@@ -10,6 +10,13 @@ export async function GET(req: NextRequest) {
     const session = await verifyAffiliateSessionToken(token);
     if (!session) return NextResponse.json({ error: 'Session expired' }, { status: 401 });
 
+    // Ensure master storefront link exists so its clicks/visits are tracked and displayed
+    await AffiliateRepository.createOrGetAffiliateLink({
+      affiliateId: session.id,
+      productId: null,
+      categoryId: null,
+    }).catch(() => {});
+
     const links = await AffiliateRepository.getAffiliateLinks(session.id);
     return NextResponse.json({ success: true, links });
   } catch (error: any) {

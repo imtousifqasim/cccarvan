@@ -161,11 +161,14 @@ export class AffiliateRepository {
 
   static async getAffiliateByReferralCode(code: string): Promise<Affiliate | null> {
     if (!code) return null;
-    const cleanCode = code.toUpperCase().trim();
+    const cleanCode = code.trim();
 
     // Try MySQL
     try {
-      const rows = await queryMysql<any>('SELECT * FROM affiliates WHERE referral_code = ? LIMIT 1', [cleanCode]);
+      const rows = await queryMysql<any>(
+        'SELECT * FROM affiliates WHERE UPPER(referral_code) = UPPER(?) LIMIT 1',
+        [cleanCode]
+      );
       if (rows && rows.length > 0) return rows[0] as Affiliate;
     } catch {}
 
@@ -175,7 +178,7 @@ export class AffiliateRepository {
       const { data } = await supabase
         .from('affiliates')
         .select('*')
-        .eq('referral_code', cleanCode)
+        .ilike('referral_code', cleanCode)
         .maybeSingle();
 
       if (data) return data as Affiliate;
@@ -462,9 +465,18 @@ export class AffiliateRepository {
     const { data: existing } = await checkQuery.maybeSingle();
     if (existing) return existing as AffiliateLink;
 
-    // Generate unique slug (e.g. "ccc-4a9f2b")
-    const randomHex = Math.random().toString(36).substring(2, 8);
-    const slug = `ccc-${randomHex}`;
+    // Generate unique slug
+    let slug = '';
+    if (!data.productId && !data.categoryId) {
+      const aff = await this.getAffiliateById(data.affiliateId);
+      if (aff?.referral_code) {
+        slug = aff.referral_code.toLowerCase().trim();
+      }
+    }
+    if (!slug) {
+      const randomHex = Math.random().toString(36).substring(2, 8);
+      slug = `ccc-${randomHex}`;
+    }
 
     const { data: created, error } = await supabase
       .from('affiliate_links')
@@ -494,30 +506,48 @@ export class AffiliateRepository {
     return created as AffiliateLink;
   }
 
-  static async incrementLinkClick(slugOrId: string): Promise<void> {
+  static async incrementLinkClick(slugOrId: string): Promise<number | null> {
+    if (!slugOrId) return null;
+    const clean = slugOrId.trim();
+    const isId = isUuid(clean);
+
+    let updatedCount: number | null = null;
+
     try {
       const supabase = getActiveWriteAdmin();
-      // Try by slug first, then by id
-      const { data: link } = await supabase
-        .from('affiliate_links')
-        .select('id, click_count')
-        .or(`slug.eq.${slugOrId},id.eq.${slugOrId}`)
-        .maybeSingle();
+      let query = supabase.from('affiliate_links').select('id, click_count');
 
-      if (link) {
-        await supabase
-          .from('affiliate_links')
-          .update({ click_count: (link.click_count || 0) + 1 })
-          .eq('id', link.id);
+      if (isId) {
+        query = query.eq('id', clean);
+      } else {
+        query = query.ilike('slug', clean);
       }
-    } catch {}
+
+      const { data: link, error } = await query.maybeSingle();
+
+      if (!error && link) {
+        const nextCount = (Number(link.click_count) || 0) + 1;
+        const { error: updateError } = await supabase
+          .from('affiliate_links')
+          .update({ click_count: nextCount })
+          .eq('id', link.id);
+
+        if (!updateError) {
+          updatedCount = nextCount;
+        }
+      }
+    } catch (err) {
+      console.error('[AffiliateRepository.incrementLinkClick] Supabase error:', err);
+    }
 
     try {
       await executeMysql(
-        'UPDATE affiliate_links SET click_count = click_count + 1 WHERE slug = ? OR id = ?',
-        [slugOrId, slugOrId]
+        'UPDATE affiliate_links SET click_count = COALESCE(click_count, 0) + 1 WHERE id = ? OR LOWER(slug) = LOWER(?)',
+        [clean, clean]
       );
     } catch {}
+
+    return updatedCount;
   }
 
   // ----------------------------------------------------------------------------

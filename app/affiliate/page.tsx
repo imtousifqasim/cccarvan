@@ -8,7 +8,7 @@ import {
   CreditCard, User, Copy, Check, Share2, Search, Filter, 
   ExternalLink, ArrowUpRight, ShieldCheck, Clock, CheckCircle2, 
   XCircle, AlertCircle, Plus, LogOut, ChevronRight, Layers, Sparkles,
-  BarChart3, Wallet, ArrowDownRight, Eye, Info
+  BarChart3, Wallet, ArrowDownRight, Eye, Info, RefreshCw
 } from 'lucide-react';
 import { 
   Affiliate, 
@@ -81,10 +81,30 @@ export default function AffiliateDashboard() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
 
+  const [refreshingLinks, setRefreshingLinks] = useState(false);
+
+  // Load Tracking Links
+  const fetchLinks = async () => {
+    try {
+      setRefreshingLinks(true);
+      const res = await fetch('/api/affiliate/links');
+      const d = await res.json();
+      if (d.links) setLinks(d.links);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setRefreshingLinks(false);
+    }
+  };
+
   // Initial Load
   const fetchDashboardData = async () => {
     try {
-      const res = await fetch('/api/affiliate/me');
+      const [res, linksRes] = await Promise.all([
+        fetch('/api/affiliate/me'),
+        fetch('/api/affiliate/links'),
+      ]);
+
       if (res.status === 401) {
         router.push('/affiliate/login');
         return;
@@ -101,6 +121,11 @@ export default function AffiliateDashboard() {
         setSummary(data.financialSummary);
         setSettings(data.settings);
       }
+
+      const linksData = await linksRes.json();
+      if (linksData.links) {
+        setLinks(linksData.links);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -115,9 +140,7 @@ export default function AffiliateDashboard() {
   // Lazy tab loaders
   useEffect(() => {
     if (activeTab === 'links') {
-      fetch('/api/affiliate/links').then(r => r.json()).then(d => {
-        if (d.links) setLinks(d.links);
-      });
+      fetchLinks();
     } else if (activeTab === 'sales') {
       const url = salesStatusFilter ? `/api/affiliate/sales?status=${salesStatusFilter}` : '/api/affiliate/sales';
       fetch(url).then(r => r.json()).then(d => {
@@ -175,6 +198,7 @@ export default function AffiliateDashboard() {
       if (data.link) {
         const fullUrl = `${window.location.origin}/r/${data.link.slug}`;
         setGeneratedLinkUrl(fullUrl);
+        fetchLinks();
       }
     } catch (e) {
       console.error(e);
@@ -302,8 +326,14 @@ export default function AffiliateDashboard() {
   }
 
   const storefrontRefUrl = typeof window !== 'undefined' && affiliate?.referral_code
-    ? `${window.location.origin}/?ref=${affiliate.referral_code}`
+    ? `${window.location.origin}/r/${affiliate.referral_code.toLowerCase()}`
     : '';
+
+  const masterLink = links.find((l) => !l.product_id && !l.category_id);
+  const masterClicks = masterLink ? (masterLink.click_count || 0) : 0;
+  const totalAllClicks = links.length > 0
+    ? links.reduce((acc, l) => acc + (l.click_count || 0), 0)
+    : (summary?.totalClicks || 0);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col selection:bg-amber-100 selection:text-amber-900 font-sans">
@@ -403,32 +433,61 @@ export default function AffiliateDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* Master Referral Link Modern Light Banner */}
-            <div className="bg-gradient-to-r from-amber-50/80 via-white to-amber-50/60 border border-amber-200/80 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs relative overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-50/80 via-white to-amber-50/60 border border-amber-200/80 rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-xs relative overflow-hidden">
               <div className="relative z-10 max-w-xl">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-semibold tracking-wide mb-3">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                  Referral Code: <span className="font-mono font-bold tracking-wider">{affiliate?.referral_code}</span>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-semibold tracking-wide">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    Referral Code: <span className="font-mono font-bold tracking-wider">{affiliate?.referral_code}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold shadow-2xs">
+                    <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{masterClicks} {masterClicks === 1 ? 'Person' : 'People'} Opened Your Link</span>
+                  </span>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-serif text-slate-900 font-medium">Your Master Storefront Link</h2>
                 <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                  Share this master link across your Instagram, TikTok, WhatsApp, or blogs. Any customer arriving through your link is tracked for <strong>30 full days</strong>.
+                  Share this master link across WhatsApp, Instagram, TikTok, or blogs. Jab bhi koi is link ko open karay ga to <strong>30 full days</strong> tak us ki har purchase par aap ko commission milay ga.
                 </p>
               </div>
 
-              <div className="w-full md:w-auto flex items-center gap-2 shrink-0 relative z-10">
+              <div className="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 relative z-10">
                 <input
                   type="text"
                   readOnly
                   value={storefrontRefUrl}
-                  className="w-full md:w-80 bg-white border border-slate-300 rounded-xl px-4 py-3 text-xs text-slate-800 font-mono select-all focus:outline-none shadow-xs"
+                  className="w-full lg:w-72 bg-white border border-slate-300 rounded-xl px-4 py-3 text-xs text-slate-800 font-mono select-all focus:outline-none shadow-xs"
                 />
-                <button
-                  onClick={() => handleCopy(storefrontRefUrl, 'master')}
-                  className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs tracking-wider flex items-center gap-2 transition-all shadow-md shadow-amber-500/20 shrink-0"
-                >
-                  {copiedSlug === 'master' ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
-                  {copiedSlug === 'master' ? 'Copied' : 'Copy'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleCopy(storefrontRefUrl, 'master')}
+                    className="flex-1 sm:flex-none px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-amber-500/20 shrink-0"
+                  >
+                    {copiedSlug === 'master' ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
+                    {copiedSlug === 'master' ? 'Copied' : 'Copy'}
+                  </button>
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(`Check out CC Carvan Luxury Jewelry & Collections: ${storefrontRefUrl}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/20 shrink-0"
+                    title="Share directly on WhatsApp"
+                  >
+                    <Share2 className="w-4 h-4 text-white" />
+                    <span>WhatsApp</span>
+                  </a>
+                  <button
+                    onClick={() => {
+                      fetchLinks();
+                      fetchDashboardData();
+                    }}
+                    disabled={refreshingLinks}
+                    className="p-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs transition-colors shadow-xs"
+                    title="Refresh click count"
+                  >
+                    <RefreshCw className={`w-4 h-4 text-slate-600 ${refreshingLinks ? 'animate-spin' : ''}`} />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -501,11 +560,12 @@ export default function AffiliateDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-medium text-slate-500">Total Unique Clicks</span>
-                  <p className="text-2xl font-bold text-slate-900 mt-0.5">{summary?.totalClicks || 0}</p>
+                  <span className="text-xs font-medium text-slate-500">Total Visitors / Link Opens</span>
+                  <p className="text-2xl font-bold text-slate-900 mt-0.5">{totalAllClicks.toLocaleString()}</p>
+                  <span className="text-[11px] text-slate-400">Total people who opened your links</span>
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <LinkIcon className="w-5 h-5" />
+                  <Eye className="w-5 h-5" />
                 </div>
               </div>
 
@@ -513,6 +573,7 @@ export default function AffiliateDashboard() {
                 <div>
                   <span className="text-xs font-medium text-slate-500">Attributed Orders</span>
                   <p className="text-2xl font-bold text-slate-900 mt-0.5">{summary?.totalOrders || 0}</p>
+                  <span className="text-[11px] text-slate-400">Purchases made via your links</span>
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                   <ShoppingBag className="w-5 h-5" />
@@ -523,6 +584,7 @@ export default function AffiliateDashboard() {
                 <div>
                   <span className="text-xs font-medium text-slate-500">Conversion Rate</span>
                   <p className="text-2xl font-bold text-amber-700 mt-0.5">{summary?.conversionRate || 0}%</p>
+                  <span className="text-[11px] text-slate-400">Orders per 100 link opens</span>
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
                   <BarChart3 className="w-5 h-5" />
@@ -682,9 +744,32 @@ export default function AffiliateDashboard() {
         {/* ========================================================================= */}
         {activeTab === 'links' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-serif text-slate-900 font-medium">Generated Tracking Links</h2>
-              <span className="text-xs text-slate-500">{links.length} total links</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-serif text-slate-900 font-medium">Tracking Links & Visitor Counts</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  See real-time visitors and link opens for every link you have created and shared.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200 shadow-xs">
+                  <Eye className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Total {totalAllClicks} Opens / Visitors</span>
+                </span>
+                <button
+                  onClick={() => {
+                    fetchLinks();
+                    fetchDashboardData();
+                  }}
+                  disabled={refreshingLinks}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 shadow-xs transition-colors"
+                  title="Refresh visitor counts"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${refreshingLinks ? 'animate-spin' : ''}`} />
+                  <span>{refreshingLinks ? 'Updating...' : 'Refresh Clicks'}</span>
+                </button>
+              </div>
             </div>
 
             <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs">
@@ -693,55 +778,85 @@ export default function AffiliateDashboard() {
                   <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] tracking-wider border-b border-slate-200 font-semibold">
                     <tr>
                       <th className="py-4 px-5">Target Destination</th>
-                      <th className="py-4 px-5">Tracking Slug</th>
-                      <th className="py-4 px-5">Clicks</th>
+                      <th className="py-4 px-5">Tracking Link</th>
+                      <th className="py-4 px-5">Visitors / Opens</th>
                       <th className="py-4 px-5">Created Date</th>
-                      <th className="py-4 px-5 text-right">Action</th>
+                      <th className="py-4 px-5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
                     {links.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="py-12 text-center text-slate-400">
-                          No tracking links created yet. Browse products to create your first link.
+                          No tracking links created yet. Browse products or copy your Master link to start tracking visitors.
                         </td>
                       </tr>
                     ) : (
                       links.map((link) => {
-                        const targetName = link.product?.name || link.category?.name || 'Storefront Home';
+                        const isMaster = !link.product_id && !link.category_id;
+                        const targetName = link.product?.name || link.category?.name || 'Master Storefront Link';
                         const linkUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/r/${link.slug}`;
+                        const shareText = isMaster
+                          ? `Check out CC Carvan luxury collections: ${linkUrl}`
+                          : `Check out ${targetName} on CC Carvan: ${linkUrl}`;
 
                         return (
                           <tr key={link.id} className="hover:bg-slate-50/70 transition-colors">
-                            <td className="py-4 px-5 font-medium text-slate-900 max-w-xs truncate">
-                              {targetName}
+                            <td className="py-4 px-5 font-medium text-slate-900 max-w-xs">
+                              {isMaster ? (
+                                <div className="flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                                  <span className="font-semibold text-slate-900">Master Storefront Link</span>
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">Default</span>
+                                </div>
+                              ) : (
+                                <span className="truncate block font-medium">{targetName}</span>
+                              )}
                             </td>
                             <td className="py-4 px-5 font-mono text-amber-700 font-medium">
-                              /r/{link.slug}
+                              <span className="bg-slate-100 px-2.5 py-1 rounded-md text-[11px] border border-slate-200">
+                                /r/{link.slug}
+                              </span>
                             </td>
-                            <td className="py-4 px-5 font-semibold text-slate-900">
-                              {link.click_count || 0}
+                            <td className="py-4 px-5">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/90 shadow-2xs">
+                                <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>{link.click_count || 0} {link.click_count === 1 ? 'Person Opened' : 'People Opened'}</span>
+                              </span>
                             </td>
                             <td className="py-4 px-5 text-slate-500">
                               {new Date(link.created_at).toLocaleDateString()}
                             </td>
                             <td className="py-4 px-5 text-right">
-                              <button
-                                onClick={() => handleCopy(linkUrl, link.slug)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors"
-                              >
-                                {copiedSlug === link.slug ? (
-                                  <>
-                                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                    Copied
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="w-3.5 h-3.5" />
-                                    Copy Link
-                                  </>
-                                )}
-                              </button>
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => handleCopy(linkUrl, link.slug)}
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors"
+                                  title="Copy tracking link"
+                                >
+                                  {copiedSlug === link.slug ? (
+                                    <>
+                                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                      <span>Copied</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-3.5 h-3.5" />
+                                      <span>Copy</span>
+                                    </>
+                                  )}
+                                </button>
+                                <a
+                                  href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition-colors"
+                                  title="Share directly to WhatsApp"
+                                >
+                                  <Share2 className="w-3.5 h-3.5" />
+                                  <span>WhatsApp</span>
+                                </a>
+                              </div>
                             </td>
                           </tr>
                         );
