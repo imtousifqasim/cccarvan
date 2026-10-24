@@ -1,11 +1,30 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { NavigationProgressBar } from '@/components/layout/NavigationProgressBar';
+import { PwaProvider } from '@/components/pwa/PwaContext';
+import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cccarvan.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icons/icon-192x192.png', type: 'image/png', sizes: '192x192' },
+      { url: '/icons/icon-512x512.png', type: 'image/png', sizes: '512x512' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'CC Carvan',
+  },
   title: {
     default: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     template: '%s | CC Carvan',
@@ -72,6 +91,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased bg-white text-[#141414] selection:bg-[#d99026]/20 selection:text-[#141414]">
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <meta name="theme-color" content="#141414" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="CC Carvan" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://i.postimg.cc" crossOrigin="anonymous" />
@@ -79,9 +105,13 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-white text-[#141414] overflow-x-hidden">
-        <NavigationProgressBar />
-        {children}
+        <PwaProvider>
+          <NavigationProgressBar />
+          {children}
+          <InstallPromptBanner />
+        </PwaProvider>
       </body>
     </html>
   );
 }
+

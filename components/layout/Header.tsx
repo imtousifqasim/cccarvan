@@ -19,11 +19,13 @@ import {
   MessageCircle,
   Flame,
   ShieldCheck,
-  Truck
+  Truck,
+  Download
 } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useCustomer } from '@/components/providers/CustomerProvider';
+import { usePwa } from '@/components/pwa/PwaContext';
 import { ExternalImage } from '@/components/media/ExternalImage';
 
 interface NavCategory {
@@ -276,6 +278,7 @@ export function Header() {
   const { itemCount, openCartDrawer } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
   const { customer } = useCustomer();
+  const { isApp, installApp } = usePwa();
 
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -1231,6 +1234,24 @@ export function Header() {
                     </span>
                     <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
                   </Link>
+
+                  {/* Install Mobile App option - only visible on web, completely hidden inside the installed app */}
+                  {!isApp && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        installApp();
+                      }}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-[#b87414] bg-[#fbf6ee] hover:bg-[#f6ebd7] active:bg-[#f2e1c3] transition border border-[#b87414]/20 cursor-pointer shadow-2xs"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Download className="w-4 h-4 text-[#b87414]" />
+                        <span>Install Mobile App</span>
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#b87414] text-white font-medium">Free</span>
+                    </button>
+                  )}
                 </div>
               </nav>
 

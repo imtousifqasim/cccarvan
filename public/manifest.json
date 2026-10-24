@@ -1,0 +1,82 @@
+{
+  "id": "/?source=pwa",
+  "name": "CC Carvan | Haute Couture & Luxury Fashion Atelier",
+  "short_name": "CC Carvan",
+  "description": "Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, and heirloom pashmina shawls with nationwide express delivery.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#141414",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "shopping",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore Collection",
+      "short_name": "Collection",
+      "description": "Browse Haute Couture & pret wear",
+      "url": "/products",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Track Consignment",
+      "short_name": "Track Order",
+      "description": "Track your luxury shipment in real-time",
+      "url": "/track-order",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Saved Wishlist",
+      "short_name": "Wishlist",
+      "description": "View your saved pieces",
+      "url": "/wishlist",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
