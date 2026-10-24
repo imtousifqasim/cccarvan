@@ -18,22 +18,22 @@ export const metadata: Metadata = {
     absolute: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
   },
   description:
-    'Official online store for CC Carvan (cccarvan.com). Discover handcrafted luxury Pakistani unstitched lawn, festive velvet formals, bespoke pret, pure wool shawls, and signature fragrances with nationwide express delivery.',
+    'Official online store for CC Carvan (cccarvan.com). Discover premium Pakistani unstitched cotton sotton suits, festive katan silk ensembles, modest georgette abayas, winter outerwear, and signature fragrances with nationwide express delivery.',
   alternates: {
     canonical: 'https://cccarvan.com',
   },
   openGraph: {
     title: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     description:
-      'Where centuries of artisan heritage meet contemporary Pakistani grandeur. Handcrafted raw silk, organza, and zardozi thread ensembles at cccarvan.com.',
+      'Where timeless artisan craftsmanship meets contemporary Pakistani elegance. Handcrafted unstitched fabrics, modest abayas, and winter outerwear at cccarvan.com.',
     url: 'https://cccarvan.com',
     siteName: 'CC Carvan',
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop',
-        width: 1600,
-        height: 900,
-        alt: 'CC Carvan Luxury Pret & Haute Couture',
+        url: 'https://cccarvan.com/products/beige-katan-silk-3piece-suit-1.webp',
+        width: 1200,
+        height: 800,
+        alt: 'CC Carvan Luxury Unstitched Suits & Modest Fashion',
       },
     ],
     type: 'website',
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'CC Carvan | Haute Couture & Luxury Fashion Atelier',
     description:
-      'Centuries of Lahore artisan heritage tailored for the contemporary connoisseur at cccarvan.com.',
+      'Premium Pakistani unstitched cotton suits, festive silk, and luxury abayas at cccarvan.com.',
     images: [
-      'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop',
+      'https://cccarvan.com/products/beige-katan-silk-3piece-suit-1.webp',
     ],
   },
 };
