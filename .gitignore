@@ -49,6 +49,8 @@ scratch-*.mjs
 # Private credentials & machine transfer files (NEVER commit to GitHub)
 *.private.*
 SECRETS_TRANSFER_PACKAGE*
+MIGRATE_SETUP_AUTOMATIC.mjs
+CC_CARVAN_MASTER_MIGRATION_PACKAGE.json
 
 .vercel
 .env*
