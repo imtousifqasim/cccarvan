@@ -14,7 +14,7 @@ import {
 import { useCustomer } from '@/components/providers/CustomerProvider';
 
 export default function CheckoutPage() {
-  const { items, subtotal, shipping, grandTotal, couponCode, couponDiscount, clearCart } = useCart();
+  const { items, subtotal, shipping, grandTotal, advanceAmount, codAmount, couponCode, couponDiscount, clearCart } = useCart();
   const { customer, refreshCustomer } = useCustomer();
 
   const [fullName, setFullName] = useState('');
@@ -110,6 +110,7 @@ export default function CheckoutPage() {
     try {
       const finalNotes = [
         notes.trim(),
+        `[Payment Policy: 25% Advance = ${formatPrice(advanceAmount)} | COD Balance = ${formatPrice(codAmount)}]`,
         transactionId.trim() ? `[Payment TID / Ref: ${transactionId.trim()}]` : ''
       ].filter(Boolean).join(' | ');
 
@@ -212,7 +213,7 @@ export default function CheckoutPage() {
             <div className="flex justify-between text-[#6b6b6b]">
               <span>Merchandise Subtotal:</span>
               <span className="font-mono font-medium text-[#141414]">
-                {formatPrice(confirmedOrder.subtotal ?? (confirmedOrder.grand_total - (confirmedOrder.shipping_amount ?? 100)))}
+                {formatPrice(confirmedOrder.subtotal ?? (confirmedOrder.grand_total - (confirmedOrder.shipping_amount ?? 200)))}
               </span>
             </div>
             {(confirmedOrder.discount_amount ?? 0) > 0 && (
@@ -224,12 +225,34 @@ export default function CheckoutPage() {
             <div className="flex justify-between text-[#6b6b6b]">
               <span>Nationwide Courier Delivery:</span>
               <span className="font-mono font-bold text-[#141414]">
-                {formatPrice(confirmedOrder.shipping_amount ?? 100)}
+                {formatPrice(confirmedOrder.shipping_amount ?? 200)}
               </span>
             </div>
             <div className="flex justify-between pt-2 border-t border-[#eae7e2] font-bold text-[#141414] text-sm">
-              <span>Total Payable:</span>
+              <span>Grand Total:</span>
               <span className="font-mono text-[#b87414]">{formatPrice(confirmedOrder.grand_total)}</span>
+            </div>
+
+            {/* Modern 25% Advance & Cash on Delivery Breakdown */}
+            <div className="mt-3 pt-3 border-t border-dashed border-[#eae7e2] space-y-2 bg-[#faf8f5] p-3.5 rounded-xl">
+              <div className="flex justify-between items-center text-xs font-bold text-[#b87414]">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#b87414]" />
+                  <span>25% Advance Amount:</span>
+                </span>
+                <span className="font-mono text-sm font-black text-[#b87414]">
+                  {formatPrice(Math.round(confirmedOrder.grand_total * 0.25))}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-bold text-[#141414]">
+                <span>Remaining Cash on Delivery (COD):</span>
+                <span className="font-mono text-sm font-black text-emerald-800">
+                  {formatPrice(confirmedOrder.grand_total - Math.round(confirmedOrder.grand_total * 0.25))}
+                </span>
+              </div>
+              <p className="text-[10px] text-[#6b6b6b] leading-tight pt-1">
+                * Please ensure the 25% advance is transferred if choosing COD booking. The remaining 75% will be collected in cash upon doorstep delivery.
+              </p>
             </div>
           </div>
 
@@ -611,8 +634,112 @@ export default function CheckoutPage() {
               })}
             </div>
 
+            {/* If COD is selected, display dedicated 25% Advance Booking Card */}
+            {selectedPayment === 'cod' && (
+              <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#1c1c1f] to-[#121214] text-white border border-[#333338] shadow-lg space-y-4 animate-in fade-in-50 duration-200">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                      <Truck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                        Cash on Delivery — 25% Advance Policy
+                      </h4>
+                      <p className="text-[10px] text-slate-400">
+                        Pay 25% advance to confirm your order; pay remaining 75% on delivery
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
+                    25% Advance Required
+                  </span>
+                </div>
+
+                {/* Amount Split Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="bg-white/5 border border-amber-400/30 p-3 rounded-xl bg-amber-400/5">
+                    <span className="text-[10px] uppercase font-bold text-amber-300 block">⚡ 25% Advance (Pay Now)</span>
+                    <span className="font-mono text-base font-black text-amber-400 block mt-0.5">{formatPrice(advanceAmount)}</span>
+                    <span className="text-[10px] text-slate-300 block mt-1">Transferred via JazzCash / Easypaisa / Bank to confirm dispatch</span>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+                    <span className="text-[10px] uppercase font-bold text-slate-300 block">📦 75% Remaining (Doorstep COD)</span>
+                    <span className="font-mono text-base font-black text-white block mt-0.5">{formatPrice(codAmount)}</span>
+                    <span className="text-[10px] text-slate-400 block mt-1">Pay to courier rider in cash upon receiving parcel</span>
+                  </div>
+                </div>
+
+                {/* Payment Accounts available to transfer 25% advance */}
+                {paymentMethods.filter(pm => pm.code !== 'cod' && (pm.account_title || pm.account_number || pm.till_id || pm.iban)).length > 0 && (
+                  <div className="space-y-2 pt-2 border-t border-white/10">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">
+                      Transfer 25% Advance ({formatPrice(advanceAmount)}) to Any Official Account:
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {paymentMethods.filter(pm => pm.code !== 'cod' && (pm.account_title || pm.account_number || pm.till_id || pm.iban)).map(pm => (
+                        <div key={pm.code} className="bg-white/5 border border-white/10 p-3 rounded-xl space-y-1.5 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-amber-300 text-xs">{pm.name}</span>
+                            {pm.till_id ? (
+                              <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">Till ID: {pm.till_id}</span>
+                            ) : null}
+                          </div>
+                          {pm.account_title && (
+                            <div className="text-[11px] text-slate-300">
+                              <span className="text-slate-400">Title:</span> <strong className="text-white">{pm.account_title}</strong>
+                            </div>
+                          )}
+                          {pm.account_number && (
+                            <div className="flex items-center justify-between text-xs pt-0.5">
+                              <span className="font-mono text-white font-bold tracking-wider">{pm.account_number}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleCopy(pm.account_number!, `pm_${pm.code}`)}
+                                className="text-[10px] text-slate-300 hover:text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded flex items-center gap-1 transition cursor-pointer"
+                              >
+                                {copiedField === `pm_${pm.code}` ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                                <span>{copiedField === `pm_${pm.code}` ? 'Copied' : 'Copy'}</span>
+                              </button>
+                            </div>
+                          )}
+                          {pm.iban && (
+                            <div className="text-[10px] text-slate-400 font-mono break-all pt-0.5">
+                              IBAN: {pm.iban}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Transaction ID Input for Advance */}
+                <div className="pt-2 border-t border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Advance Transfer TID / Ref Number</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400">Optional at booking</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                    placeholder="e.g. 12-digit JazzCash/Easypaisa/Bank TID"
+                    className="w-full text-xs p-3.5 rounded-xl bg-black/40 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono"
+                  />
+                  <p className="text-[10px] text-slate-400 leading-tight">
+                    * If you haven&apos;t transferred yet, you can still place your order now; our concierge will contact you on WhatsApp / SMS for 25% advance verification before dispatching.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Selected Method Details & Credentials (for JazzCash, Easypaisa, Bank Transfer, SadaPay, NayaPay) */}
-            {activePaymentConfig && (activePaymentConfig.account_title || activePaymentConfig.till_id || activePaymentConfig.account_number || activePaymentConfig.iban) && (
+            {selectedPayment !== 'cod' && activePaymentConfig && (activePaymentConfig.account_title || activePaymentConfig.till_id || activePaymentConfig.account_number || activePaymentConfig.iban) && (
               <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#1c1c1f] to-[#121214] text-white border border-[#333338] shadow-lg space-y-4 animate-in fade-in-50 duration-200">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div className="flex items-center gap-2.5">
@@ -628,12 +755,28 @@ export default function CheckoutPage() {
                       <h4 className="text-xs font-bold uppercase tracking-wider text-white">
                         {activePaymentConfig.name} — Payment Credentials
                       </h4>
-                      <p className="text-[10px] text-slate-400">Transfer total order amount to complete verification</p>
+                      <p className="text-[10px] text-slate-400">
+                        Transfer 25% Advance ({formatPrice(advanceAmount)}) or Full Order ({formatPrice(grandTotal)})
+                      </p>
                     </div>
                   </div>
                   <span className="text-[10px] font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
                     Official Business Gateway
                   </span>
+                </div>
+
+                {/* Amount Guidance Split */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                    <span className="text-[10px] uppercase font-bold text-amber-300 block">25% Advance Amount</span>
+                    <span className="font-mono text-sm font-bold text-white">{formatPrice(advanceAmount)}</span>
+                    <span className="text-[9px] text-slate-400 block">Remaining {formatPrice(codAmount)} on COD</span>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                    <span className="text-[10px] uppercase font-bold text-slate-300 block">Full Order Total</span>
+                    <span className="font-mono text-sm font-bold text-amber-400">{formatPrice(grandTotal)}</span>
+                    <span className="text-[9px] text-slate-400 block">No COD collection needed</span>
+                  </div>
                 </div>
 
                 {/* Account Details Box */}
@@ -647,7 +790,7 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => handleCopy(activePaymentConfig.account_title!, 'title')}
-                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition"
+                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition cursor-pointer"
                         title="Copy Account Title"
                       >
                         {copiedField === 'title' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -664,7 +807,7 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => handleCopy(activePaymentConfig.till_id!, 'till')}
-                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition"
+                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition cursor-pointer"
                         title="Copy Till ID"
                       >
                         {copiedField === 'till' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -681,7 +824,7 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => handleCopy(activePaymentConfig.account_number!, 'acc')}
-                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition"
+                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition cursor-pointer"
                         title="Copy Account Number"
                       >
                         {copiedField === 'acc' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -705,7 +848,7 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => handleCopy(activePaymentConfig.iban!, 'iban')}
-                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition shrink-0 ml-2"
+                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition shrink-0 ml-2 cursor-pointer"
                         title="Copy IBAN"
                       >
                         {copiedField === 'iban' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -731,7 +874,7 @@ export default function CheckoutPage() {
                     className="w-full text-xs p-3.5 rounded-xl bg-black/40 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono"
                   />
                   <p className="text-[10px] text-slate-400 leading-tight">
-                    * Once you transfer {formatPrice(grandTotal)} via your app, paste the transaction reference ID from your SMS receipt above.
+                    * Once you transfer 25% Advance ({formatPrice(advanceAmount)}) or Full Amount ({formatPrice(grandTotal)}) via your banking/wallet app, paste the transaction reference ID from your SMS receipt above.
                   </p>
                 </div>
               </div>
@@ -805,6 +948,47 @@ export default function CheckoutPage() {
                   {formatPrice(grandTotal)}
                 </span>
               </div>
+            </div>
+
+            {/* Modern 25% Advance & Cash on Delivery Split Card */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#1c1c1f] to-[#121214] text-white border border-[#333338] shadow-md space-y-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                    Order Payment Policy (25%)
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full">
+                  25% + 75% COD
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between items-center bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div>
+                    <span className="font-bold text-slate-200 block">25% Advance Payable</span>
+                    <span className="text-[10px] text-slate-400">Pay now to confirm order dispatch</span>
+                  </div>
+                  <span className="font-mono text-base font-black text-amber-400">
+                    {formatPrice(advanceAmount)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div>
+                    <span className="font-bold text-slate-200 block">Remaining on Delivery</span>
+                    <span className="text-[10px] text-slate-400">Cash on delivery (COD) at your door</span>
+                  </div>
+                  <span className="font-mono text-base font-black text-white">
+                    {formatPrice(codAmount)}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-slate-400 leading-relaxed pt-0.5">
+                * A 25% advance secures your order. The remaining 75% balance ({formatPrice(codAmount)}) is collected by the courier rider upon delivery!
+              </p>
             </div>
 
             {errorMessage && (

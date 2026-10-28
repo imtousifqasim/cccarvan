@@ -486,6 +486,16 @@ export default function AdminOrderDetailPage() {
                 <span>Grand Total</span>
                 <span className="text-slate-900 font-mono font-black">{formatPrice(order.grand_total)}</span>
               </div>
+              <div className="pt-2 border-t border-dashed border-slate-200 space-y-1">
+                <div className="flex justify-between text-xs font-bold text-amber-700">
+                  <span>⚡ 25% Advance Required:</span>
+                  <span className="font-mono">{formatPrice(Math.round(order.grand_total * 0.25))}</span>
+                </div>
+                <div className="flex justify-between text-xs font-bold text-slate-700">
+                  <span>📦 75% Doorstep COD Balance:</span>
+                  <span className="font-mono">{formatPrice(order.grand_total - Math.round(order.grand_total * 0.25))}</span>
+                </div>
+              </div>
             </div>
           </div>
 

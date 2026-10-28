@@ -37,6 +37,8 @@ interface CartContextType {
   deliveryCharge: number;
   freeDeliveryThreshold: number | null;
   refreshShipping: () => Promise<void>;
+  advanceAmount: number;
+  codAmount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -45,7 +47,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [couponCode, setCouponCode] = useState<string>('');
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
-  const [deliveryCharge, setDeliveryCharge] = useState<number>(100);
+  const [deliveryCharge, setDeliveryCharge] = useState<number>(200);
   const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState<number | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
@@ -235,6 +237,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     freeDeliveryThreshold && subtotal >= freeDeliveryThreshold ? 0 : deliveryCharge
   );
   const grandTotal = Math.max(0, subtotal - couponDiscount + shipping);
+  const advanceAmount = Math.round(grandTotal * 0.25);
+  const codAmount = Math.max(0, grandTotal - advanceAmount);
 
   const applyCoupon = useCallback(async (code: string): Promise<{ success: boolean; message: string }> => {
     const clean = code.trim().toUpperCase();
@@ -277,6 +281,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         subtotal,
         shipping,
         grandTotal,
+        advanceAmount,
+        codAmount,
         couponCode,
         couponDiscount,
         deliveryCharge,

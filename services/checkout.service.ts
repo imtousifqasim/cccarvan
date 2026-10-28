@@ -119,11 +119,13 @@ export class CheckoutService {
       }
     }
 
-    // 3. Calculate Shipping (Loaded dynamically from site settings; defaults to fixed Rs. 100)
+    // 3. Calculate Shipping (Loaded dynamically from site settings; defaults to fixed Rs. 200)
     const shippingSettings = await SettingsRepository.getShippingSettings();
     const isFree = shippingSettings.freeDeliveryThreshold && subtotal >= shippingSettings.freeDeliveryThreshold;
-    const shippingAmount = isFree ? 0 : (shippingSettings.deliveryCharge ?? 100);
+    const shippingAmount = isFree ? 0 : (shippingSettings.deliveryCharge ?? 200);
     const grandTotal = Math.max(0, subtotal - discountAmount + shippingAmount);
+    const advanceAmount = Math.round(grandTotal * 0.25);
+    const codBalance = Math.max(0, grandTotal - advanceAmount);
 
     // 4. Handle Account Creation or Existing Customer Detection
     let finalCustomerId = req.customerId || null;
@@ -220,7 +222,10 @@ export class CheckoutService {
       items: validatedItems,
       shippingAddress: req.shippingAddress,
       billingAddress: req.billingAddress || req.shippingAddress,
-      notes: req.notes,
+      notes: [
+        req.notes,
+        `[Payment Policy: 25% Advance = Rs. ${advanceAmount.toLocaleString()} | 75% COD Balance = Rs. ${codBalance.toLocaleString()}]`
+      ].filter(Boolean).join(' | '),
       affiliateId,
       affiliateLinkId,
     });

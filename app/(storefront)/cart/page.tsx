@@ -29,6 +29,8 @@ export default function CartPage() {
     subtotal,
     shipping,
     grandTotal,
+    advanceAmount,
+    codAmount,
     couponCode,
     couponDiscount,
     deliveryCharge,
@@ -394,6 +396,47 @@ export default function CartPage() {
                   {formatPrice(grandTotal)}
                 </span>
               </div>
+            </div>
+
+            {/* Modern 25% Advance & Cash on Delivery Split */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#1c1c1f] to-[#121214] text-white border border-[#333338] shadow-md space-y-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                    Order Advance Policy (25%)
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full">
+                  25% + 75% COD
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between items-center bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div>
+                    <span className="font-bold text-slate-200 block">25% Advance Payable Now</span>
+                    <span className="text-[10px] text-slate-400">Secures bespoke booking & instant dispatch</span>
+                  </div>
+                  <span className="font-mono text-sm sm:text-base font-black text-amber-400">
+                    {formatPrice(advanceAmount)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div>
+                    <span className="font-bold text-slate-200 block">Remaining Cash on Delivery</span>
+                    <span className="text-[10px] text-slate-400">Payable to rider upon doorstep delivery</span>
+                  </div>
+                  <span className="font-mono text-sm sm:text-base font-black text-white">
+                    {formatPrice(codAmount)}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-slate-400 leading-relaxed pt-0.5">
+                * Transfer the 25% advance at checkout to activate express courier dispatch. The rest is collected at your door!
+              </p>
             </div>
 
             {/* Checkout CTA Button */}

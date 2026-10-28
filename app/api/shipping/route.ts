@@ -15,7 +15,7 @@ export async function GET() {
     console.error('Failed to get shipping settings:', error);
     return NextResponse.json({
       success: true,
-      deliveryCharge: 100,
+      deliveryCharge: 200,
       freeDeliveryThreshold: null,
     });
   }

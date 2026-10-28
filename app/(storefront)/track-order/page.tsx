@@ -373,13 +373,23 @@ function TrackOrderContent() {
                 </div>
                 <div className="flex justify-between items-center text-[#141414]">
                   <span className="font-semibold">Delivery Fee:</span>
-                  <span className="font-mono font-bold text-[#141414]">{formatPrice(orderData.shipping_amount ?? 100)}</span>
+                  <span className="font-mono font-bold text-[#141414]">{formatPrice(orderData.shipping_amount ?? 200)}</span>
                 </div>
                 <div className="flex justify-between items-center text-[#141414] pt-2 border-t border-[#eae7e2]">
                   <span className="font-bold text-sm">Grand Total:</span>
                   <span className="font-bold font-mono text-base text-[#141414]">
                     {formatPrice(orderData.grand_total ?? orderData.grandTotal ?? 0)}
                   </span>
+                </div>
+                <div className="pt-2 border-t border-dashed border-[#eae7e2] space-y-1">
+                  <div className="flex justify-between text-xs font-bold text-[#b87414]">
+                    <span>⚡ 25% Advance:</span>
+                    <span className="font-mono">{formatPrice(Math.round((orderData.grand_total ?? orderData.grandTotal ?? 0) * 0.25))}</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-bold text-[#141414]">
+                    <span>📦 75% Balance (COD):</span>
+                    <span className="font-mono">{formatPrice((orderData.grand_total ?? orderData.grandTotal ?? 0) - Math.round((orderData.grand_total ?? orderData.grandTotal ?? 0) * 0.25))}</span>
+                  </div>
                 </div>
               </div>
 

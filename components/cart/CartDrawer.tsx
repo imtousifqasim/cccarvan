@@ -26,6 +26,8 @@ export function CartDrawer() {
     subtotal, 
     shipping, 
     grandTotal, 
+    advanceAmount,
+    codAmount,
     deliveryCharge,
     freeDeliveryThreshold,
     isCartDrawerOpen, 
@@ -339,6 +341,37 @@ export function CartDrawer() {
                 <span className="font-mono font-black text-[#b87414] text-base">
                   PKR {grandTotal.toLocaleString()}
                 </span>
+              </div>
+            </div>
+
+            {/* Modern 25% Advance & COD Split Card */}
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#1c1c1f] to-[#121214] text-white border border-[#333338] shadow-md space-y-2">
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 pb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>Payment Split (25% Advance)</span>
+                </div>
+                <span className="bg-amber-400/15 text-amber-300 px-1.5 py-0.5 rounded text-[9px] tracking-widest font-mono">
+                  25% + 75% COD
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-white/5 border border-white/10 p-2 rounded-xl">
+                  <span className="text-[10px] uppercase font-bold text-slate-300 block">25% Advance</span>
+                  <span className="font-mono text-xs sm:text-sm font-black text-amber-400 block">
+                    PKR {advanceAmount.toLocaleString()}
+                  </span>
+                  <span className="text-[9px] text-slate-400 block mt-0.5">Pay now to dispatch</span>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 p-2 rounded-xl">
+                  <span className="text-[10px] uppercase font-bold text-slate-300 block">COD at Doorstep</span>
+                  <span className="font-mono text-xs sm:text-sm font-black text-white block">
+                    PKR {codAmount.toLocaleString()}
+                  </span>
+                  <span className="text-[9px] text-slate-400 block mt-0.5">Pay cash to courier</span>
+                </div>
               </div>
             </div>
 

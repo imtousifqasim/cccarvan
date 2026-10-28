@@ -205,6 +205,14 @@ export class EmailService {
                         <td style="font-size: 16px; font-weight: bold; color: #141414; padding-top: 10px;">Grand Total</td>
                         <td style="font-size: 18px; font-weight: bold; color: #d99026; text-align: right; padding-top: 10px; font-family: monospace;">${formatPrice(order.grand_total)}</td>
                       </tr>
+                      <tr>
+                        <td style="font-size: 13px; font-weight: 700; color: #b87414; padding-top: 12px; border-top: 1px dashed #eae7e2;">⚡ 25% Advance Amount</td>
+                        <td style="font-size: 14px; font-weight: 700; color: #b87414; text-align: right; padding-top: 12px; border-top: 1px dashed #eae7e2; font-family: monospace;">${formatPrice(Math.round(order.grand_total * 0.25))}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-size: 13px; font-weight: 700; color: #141414; padding-top: 4px;">📦 Balance on Delivery (COD)</td>
+                        <td style="font-size: 14px; font-weight: 700; color: #141414; text-align: right; padding-top: 4px; font-family: monospace;">${formatPrice(order.grand_total - Math.round(order.grand_total * 0.25))}</td>
+                      </tr>
                     </table>
 
                     <!-- Shipping Destination -->

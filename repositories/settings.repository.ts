@@ -14,7 +14,7 @@ export class SettingsRepository {
   private static mockAnnouncement = { ...SEED_ANNOUNCEMENT };
   private static mockPaymentMethods = [...SEED_PAYMENT_METHODS];
   private static mockCouriers = [...SEED_COURIERS];
-  private static mockShippingSettings: ShippingSettings = { deliveryCharge: 100, freeDeliveryThreshold: null };
+  private static mockShippingSettings: ShippingSettings = { deliveryCharge: 200, freeDeliveryThreshold: null };
   private static mockNotifications: NotificationSetting[] = [
     { id: 'notif-1', event_key: 'order_confirmation', event_name: 'Order Confirmation Email', is_email_enabled: true, description: 'Sent immediately upon successful checkout.' },
     { id: 'notif-2', event_key: 'order_processing', event_name: 'Order Processing Email', is_email_enabled: true, description: 'Sent when warehouse starts preparing parcel.' },
@@ -110,7 +110,7 @@ export class SettingsRepository {
       const rows = await queryMysql<{ key: string; value: any }>('SELECT * FROM site_settings WHERE `key` = ?', ['general']);
       if (rows && rows.length > 0) {
         const val = typeof rows[0].value === 'string' ? JSON.parse(rows[0].value) : rows[0].value;
-        const deliveryCharge = typeof val.default_shipping_fee === 'number' ? val.default_shipping_fee : 100;
+        const deliveryCharge = typeof val.default_shipping_fee === 'number' ? val.default_shipping_fee : 200;
         const freeDeliveryThreshold = val.free_shipping_threshold ? Number(val.free_shipping_threshold) : null;
         this.mockShippingSettings = { deliveryCharge, freeDeliveryThreshold };
         return this.mockShippingSettings;
@@ -129,7 +129,7 @@ export class SettingsRepository {
 
       if (!error && data?.value) {
         const val = data.value as any;
-        const deliveryCharge = typeof val.default_shipping_fee === 'number' ? val.default_shipping_fee : 100;
+        const deliveryCharge = typeof val.default_shipping_fee === 'number' ? val.default_shipping_fee : 200;
         const freeDeliveryThreshold = val.free_shipping_threshold ? Number(val.free_shipping_threshold) : null;
         this.mockShippingSettings = { deliveryCharge, freeDeliveryThreshold };
         return this.mockShippingSettings;
@@ -142,7 +142,7 @@ export class SettingsRepository {
     deliveryCharge: number;
     freeDeliveryThreshold?: number | null;
   }): Promise<ShippingSettings> {
-    const deliveryCharge = Number(settings.deliveryCharge) || 100;
+    const deliveryCharge = Number(settings.deliveryCharge) || 200;
     const freeDeliveryThreshold = settings.freeDeliveryThreshold ? Number(settings.freeDeliveryThreshold) : null;
     this.mockShippingSettings = { deliveryCharge, freeDeliveryThreshold };
 
