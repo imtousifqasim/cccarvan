@@ -32,7 +32,7 @@ export default function AdminSettingsPage() {
 
   // Dynamic Pakistani Payment Gateways Manager
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodConfig[]>(SEED_PAYMENT_METHODS);
-  const [activeTabGateway, setActiveTabGateway] = useState<string>('jazzcash');
+  const [activeTabGateway, setActiveTabGateway] = useState<string>('bank_transfer');
   const [isSavingGateways, setIsSavingGateways] = useState(false);
   const [savedMsg, setSavedMsg] = useState('');
 
@@ -45,6 +45,9 @@ export default function AdminSettingsPage() {
           const data = await res.json();
           if (data.success && Array.isArray(data.paymentMethods) && data.paymentMethods.length > 0) {
             setPaymentMethods(data.paymentMethods);
+            if (!data.paymentMethods.some((pm: PaymentMethodConfig) => pm.code === activeTabGateway)) {
+              setActiveTabGateway(data.paymentMethods[0].code);
+            }
           }
         }
       } catch (err) {

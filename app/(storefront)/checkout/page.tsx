@@ -256,6 +256,66 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* WhatsApp Payment Verification & Screenshot Submission Card */}
+          <div className="p-5 sm:p-6 bg-gradient-to-br from-[#12281e] to-[#0a1812] text-white border border-emerald-600/40 rounded-3xl space-y-4 shadow-md text-left">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-500/20 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                  <Smartphone className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                    Advance Payment & WhatsApp Screenshot Verification
+                  </h4>
+                  <p className="text-[10px] text-emerald-200/80">
+                    Order Number: <strong className="font-mono text-white">{confirmedOrder.order_number}</strong>
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/15 px-3 py-1 rounded-full border border-emerald-500/30 shrink-0 self-start sm:self-auto">
+                Meezan Bank Verified
+              </span>
+            </div>
+
+            <div className="space-y-2.5 text-xs text-slate-200">
+              <p className="leading-relaxed">
+                Shukriya! Apne order ki dispatch confirm karwane ke liye 25% advance amount ({formatPrice(Math.round(confirmedOrder.grand_total * 0.25))}) ya full amount hamare <strong>Meezan Bank</strong> account mein transfer karein aur screenshot WhatsApp par send kar dein:
+              </p>
+
+              {/* Meezan Bank Snapshot Box */}
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 font-mono text-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-slate-400">Bank Name:</span>
+                  <span className="font-sans font-bold text-white">Meezan Bank</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-slate-400">Account Title:</span>
+                  <span className="font-bold text-amber-300">Amina</span>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                  <span className="text-[10px] uppercase font-bold text-slate-400">Account Number:</span>
+                  <span className="font-mono font-black text-emerald-400 text-sm tracking-wider">26720114722809</span>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-300 leading-relaxed italic">
+                * Agar aap payment abhi send nahi kar saktay toh pareshan na hon, order book ho chuka hai! Hamari customer support team aap se khud WhatsApp ya Call par rabta kar ke payment collect/confirm karegi.
+              </p>
+            </div>
+
+            <div className="pt-1">
+              <a
+                href={`https://wa.me/923038212360?text=${encodeURIComponent(`Assalam-o-Alaikum CC Carvan! Maine Order #${confirmedOrder.order_number} place kiya hai (Total: ${formatPrice(confirmedOrder.grand_total)}). Ye raha mera Meezan Bank advance payment screenshot / confirmation:`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-full transition shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <Smartphone className="w-4 h-4 text-black" />
+                <span>Send Screenshot on WhatsApp (+92 303 8212360)</span>
+              </a>
+            </div>
+          </div>
+
           {/* Booked Items & Selected Sizes */}
           {confirmedOrder.items && confirmedOrder.items.length > 0 && (
             <div className="p-4 bg-white border border-[#eae7e2] rounded-2xl space-y-2 text-xs">
@@ -661,7 +721,7 @@ export default function CheckoutPage() {
                   <div className="bg-white/5 border border-amber-400/30 p-3 rounded-xl bg-amber-400/5">
                     <span className="text-[10px] uppercase font-bold text-amber-300 block">⚡ 25% Advance (Pay Now)</span>
                     <span className="font-mono text-base font-black text-amber-400 block mt-0.5">{formatPrice(advanceAmount)}</span>
-                    <span className="text-[10px] text-slate-300 block mt-1">Transferred via JazzCash / Easypaisa / Bank to confirm dispatch</span>
+                    <span className="text-[10px] text-slate-300 block mt-1">Transferred via Meezan Bank to confirm dispatch</span>
                   </div>
 
                   <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
@@ -675,15 +735,15 @@ export default function CheckoutPage() {
                 {paymentMethods.filter(pm => pm.code !== 'cod' && (pm.account_title || pm.account_number || pm.till_id || pm.iban)).length > 0 && (
                   <div className="space-y-2 pt-2 border-t border-white/10">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">
-                      Transfer 25% Advance ({formatPrice(advanceAmount)}) to Any Official Account:
+                      Transfer 25% Advance ({formatPrice(advanceAmount)}) to Official Account:
                     </span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {paymentMethods.filter(pm => pm.code !== 'cod' && (pm.account_title || pm.account_number || pm.till_id || pm.iban)).map(pm => (
                         <div key={pm.code} className="bg-white/5 border border-white/10 p-3 rounded-xl space-y-1.5 text-xs">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-amber-300 text-xs">{pm.name}</span>
-                            {pm.till_id ? (
-                              <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">Till ID: {pm.till_id}</span>
+                            {pm.bank_name ? (
+                              <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold">{pm.bank_name}</span>
                             ) : null}
                           </div>
                           {pm.account_title && (
@@ -693,7 +753,7 @@ export default function CheckoutPage() {
                           )}
                           {pm.account_number && (
                             <div className="flex items-center justify-between text-xs pt-0.5">
-                              <span className="font-mono text-white font-bold tracking-wider">{pm.account_number}</span>
+                              <span className="font-mono text-emerald-400 font-bold tracking-wider">{pm.account_number}</span>
                               <button
                                 type="button"
                                 onClick={() => handleCopy(pm.account_number!, `pm_${pm.code}`)}
@@ -712,6 +772,26 @@ export default function CheckoutPage() {
                         </div>
                       ))}
                     </div>
+
+                    {/* WhatsApp Payment Verification Note */}
+                    <div className="p-3 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-emerald-200 text-xs space-y-1.5 mt-2">
+                      <div className="flex items-center gap-2 font-bold text-emerald-300">
+                        <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>WhatsApp Payment Screenshot & Order Verification</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-100/90 leading-relaxed">
+                        Meezan Bank mein advance payment send kar ke screenshot aur Order Number hamare WhatsApp (<strong className="text-white">+92 303 8212360</strong>) par bhej dein. Agar aap abhi send nahi kar saktay toh order book kar dein, hamari team khud aap se rabta karegi.
+                      </p>
+                      <a
+                        href="https://wa.me/923038212360?text=Assalam-o-Alaikum%20CC%20Carvan%2C%20I%20have%20an%20inquiry%20regarding%20advance%20payment%20for%20my%20order."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-black font-extrabold rounded-lg text-[10px] uppercase tracking-wider transition shadow-xs mt-1"
+                      >
+                        <Smartphone className="w-3.5 h-3.5" />
+                        <span>WhatsApp Helpline: +92 303 8212360</span>
+                      </a>
+                    </div>
                   </div>
                 )}
 
@@ -728,11 +808,11 @@ export default function CheckoutPage() {
                     type="text"
                     value={transactionId}
                     onChange={(e) => setTransactionId(e.target.value)}
-                    placeholder="e.g. 12-digit JazzCash/Easypaisa/Bank TID"
+                    placeholder="e.g. Meezan Bank / 1-Link Transfer Reference / TID"
                     className="w-full text-xs p-3.5 rounded-xl bg-black/40 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono"
                   />
                   <p className="text-[10px] text-slate-400 leading-tight">
-                    * If you haven&apos;t transferred yet, you can still place your order now; our concierge will contact you on WhatsApp / SMS for 25% advance verification before dispatching.
+                    * Agar aap ne transfer kar diya hai toh reference TID yahan likh dein, ya screenshot WhatsApp par bhej dein. Agar abhi nahi kiya toh hamari team aap se khud contact kar le gi.
                   </p>
                 </div>
               </div>
@@ -857,6 +937,26 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
+                {/* WhatsApp Payment Verification Note for Bank Transfer */}
+                <div className="p-3.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-emerald-200 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 font-bold text-emerald-300">
+                    <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>WhatsApp Payment Screenshot & Verification</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-100/90 leading-relaxed">
+                    Meezan Bank mein advance amount send karne ke baad screenshot aur Order Number hamare WhatsApp (<strong className="text-white">+92 303 8212360</strong>) par share karein. Agar aap abhi transfer nahi kar sake, toh fikar na karein — order place kar dein, hamari team aap se khud WhatsApp / Call par rabta kar ke payment confirm karegi.
+                  </p>
+                  <a
+                    href="https://wa.me/923038212360?text=Assalam-o-Alaikum%20CC%20Carvan%2C%20I%20want%20to%20send%20my%20order%20payment%20details."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-black font-extrabold rounded-lg text-[10px] uppercase tracking-wider transition shadow-xs mt-1"
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>WhatsApp Helpline: +92 303 8212360</span>
+                  </a>
+                </div>
+
                 {/* Customer Transaction Reference Input (TID) */}
                 <div className="pt-2 border-t border-white/10 space-y-2">
                   <div className="flex items-center justify-between">
@@ -864,17 +964,17 @@ export default function CheckoutPage() {
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>Transaction ID (TID) / Reference Number</span>
                     </label>
-                    <span className="text-[10px] text-slate-400">Required for instant dispatch</span>
+                    <span className="text-[10px] text-slate-400">Optional at booking</span>
                   </div>
                   <input
                     type="text"
                     value={transactionId}
                     onChange={(e) => setTransactionId(e.target.value)}
-                    placeholder="e.g. 12-digit JazzCash/Easypaisa TID (129038472910)"
+                    placeholder="e.g. Meezan Bank / 1-Link Transfer Reference / TID"
                     className="w-full text-xs p-3.5 rounded-xl bg-black/40 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono"
                   />
                   <p className="text-[10px] text-slate-400 leading-tight">
-                    * Once you transfer 25% Advance ({formatPrice(advanceAmount)}) or Full Amount ({formatPrice(grandTotal)}) via your banking/wallet app, paste the transaction reference ID from your SMS receipt above.
+                    * Advance ya full amount transfer karne ke baad agar TID SMS receipt mili hai toh yahan darj karein, ya screenshot WhatsApp par bhej dein. Ya hamari team aap se khud rabta kar ke payment mangwa le gi.
                   </p>
                 </div>
               </div>
