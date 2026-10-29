@@ -204,9 +204,9 @@ export default function AdminSettingsPage() {
                   }`}
                 >
                   {pm.logo_url && (
-                    <div className="w-4 h-4 rounded bg-white p-0.5 flex items-center justify-center shrink-0 border border-slate-100">
+                    <div className="w-6 h-6 rounded-lg bg-white p-0.5 flex items-center justify-center shrink-0 border border-slate-100 shadow-2xs">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={pm.logo_url} alt={pm.name} className="max-w-full max-h-full object-contain" />
+                      <img src={pm.logo_url} alt={pm.name} className="w-full h-full object-contain" />
                     </div>
                   )}
                   <span>{pm.name.split(' ')[0]}</span>

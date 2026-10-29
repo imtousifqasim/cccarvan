@@ -404,7 +404,7 @@ export const SEED_PAYMENT_METHODS: PaymentMethodConfig[] = [
     bank_name: 'Meezan Bank',
     account_number: '26720114722809',
     iban: 'PK89MEZN0026720114722809',
-    logo_url: '/images/meezan-bank-logo.svg',
+    logo_url: '/images/meezan-bank-logo.png',
     badge: 'Official Bank Account',
     requires_reference: true,
     is_active: true,

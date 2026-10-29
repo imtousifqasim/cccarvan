@@ -283,10 +283,16 @@ export default function CheckoutPage() {
               </p>
 
               {/* Meezan Bank Snapshot Box */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 font-mono text-xs space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold text-slate-400">Bank Name:</span>
-                  <span className="font-sans font-bold text-white">Meezan Bank</span>
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 font-mono text-xs space-y-2">
+                <div className="flex items-center gap-3 pb-2.5 border-b border-white/10">
+                  <div className="w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/meezan-bank-logo.png" alt="Meezan Bank" className="w-full h-full object-contain" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block font-sans">Official Bank Account</span>
+                    <span className="font-sans font-bold text-white text-sm">Meezan Bank</span>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-bold text-slate-400">Account Title:</span>
@@ -650,27 +656,27 @@ export default function CheckoutPage() {
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3.5">
                         {pm.logo_url ? (
-                          <div className="w-10 h-10 rounded-xl bg-[#f7f5f2] border border-[#eae7e2] p-1.5 flex items-center justify-center shrink-0">
+                          <div className="w-14 h-14 rounded-2xl bg-white border border-[#eae7e2] p-2 flex items-center justify-center shrink-0 shadow-sm">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={pm.logo_url}
                               alt={pm.name}
-                              className="max-w-full max-h-full object-contain"
+                              className="w-full h-full object-contain"
                             />
                           </div>
                         ) : (
-                          <div className="w-10 h-10 rounded-xl bg-[#f7f5f2] border border-[#eae7e2] flex items-center justify-center shrink-0 text-[#b87414]">
-                            <CreditCard className="w-5 h-5" />
+                          <div className="w-14 h-14 rounded-2xl bg-white border border-[#eae7e2] flex items-center justify-center shrink-0 text-[#b87414] shadow-sm">
+                            <CreditCard className="w-6 h-6" />
                           </div>
                         )}
                         <div>
-                          <span className="font-bold text-xs uppercase tracking-wider text-[#141414] block">
+                          <span className="font-bold text-sm uppercase tracking-wider text-[#141414] block">
                             {pm.name}
                           </span>
                           {pm.badge && (
-                            <span className="inline-block mt-0.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#d99026]/15 text-[#b87414]">
+                            <span className="inline-block mt-1 text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-[#d99026]/15 text-[#b87414] border border-[#d99026]/20">
                               {pm.badge}
                             </span>
                           )}
@@ -740,11 +746,19 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {paymentMethods.filter(pm => pm.code !== 'cod' && (pm.account_title || pm.account_number || pm.till_id || pm.iban)).map(pm => (
                         <div key={pm.code} className="bg-white/5 border border-white/10 p-3 rounded-xl space-y-1.5 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-amber-300 text-xs">{pm.name}</span>
-                            {pm.bank_name ? (
-                              <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold">{pm.bank_name}</span>
-                            ) : null}
+                          <div className="flex items-center gap-2.5">
+                            {pm.logo_url && (
+                              <div className="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-xs border border-white/15">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={pm.logo_url} alt={pm.name} className="w-full h-full object-contain" />
+                              </div>
+                            )}
+                            <div>
+                              <span className="font-bold text-amber-300 text-xs block">{pm.name}</span>
+                              {pm.bank_name ? (
+                                <span className="text-[9px] text-slate-300 block">{pm.bank_name}</span>
+                              ) : null}
+                            </div>
                           </div>
                           {pm.account_title && (
                             <div className="text-[11px] text-slate-300">
@@ -822,20 +836,22 @@ export default function CheckoutPage() {
             {selectedPayment !== 'cod' && activePaymentConfig && (activePaymentConfig.account_title || activePaymentConfig.till_id || activePaymentConfig.account_number || activePaymentConfig.iban) && (
               <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#1c1c1f] to-[#121214] text-white border border-[#333338] shadow-lg space-y-4 animate-in fade-in-50 duration-200">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-3">
                     {activePaymentConfig.logo_url ? (
-                      <div className="w-7 h-7 rounded-lg bg-white p-1 flex items-center justify-center shrink-0">
+                      <div className="w-14 h-14 rounded-2xl bg-white p-2 flex items-center justify-center shrink-0 shadow-md border border-white/20">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={activePaymentConfig.logo_url} alt={activePaymentConfig.name} className="max-w-full max-h-full object-contain" />
+                        <img src={activePaymentConfig.logo_url} alt={activePaymentConfig.name} className="w-full h-full object-contain" />
                       </div>
                     ) : (
-                      <Building2 className="w-5 h-5 text-amber-400" />
+                      <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center shrink-0 border border-white/20 text-amber-400">
+                        <Building2 className="w-6 h-6" />
+                      </div>
                     )}
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-white">
                         {activePaymentConfig.name} — Payment Credentials
                       </h4>
-                      <p className="text-[10px] text-slate-400">
+                      <p className="text-[11px] text-slate-300">
                         Transfer 25% Advance ({formatPrice(advanceAmount)}) or Full Order ({formatPrice(grandTotal)})
                       </p>
                     </div>
